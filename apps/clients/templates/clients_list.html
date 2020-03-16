@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+    <a href="{% url "clients:client_new" %}" class="btn btn-secondary mb-2">Dodaj nowego klienta</a>
+    <table class="table table-bordered">
+  <thead>
+    <tr class="d-flex">
+        <th class="col-1">Numer SAP</th>
+        <th class="col-8">Klient</th>
+        <th class="col-3">Akcje</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for client in clients %}
+    <tr class="d-flex">
+      <td class="col-sm-1">{{client.client_sap_id}}</td>
+      <td class="col-sm-8">{{client.client_name}}</td>
+    <td class="col-sm-3">
+        <a href="{% url "clients:client_update" client.id %}" class="btn btn-secondary p-1 m-0">Edytuj</a>
+        <a href="{% url "clients:client_delete" client.id %}" class="btn btn-secondary p-1 m-0">Usuń </a>
+    </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
