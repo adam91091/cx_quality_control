@@ -1,10 +1,23 @@
 {% extends 'base.html' %}
 {% block content %}
-<div id="form">
-<form method="post">
-    {% csrf_token %}
-    {{ client_form.as_p }}
-    <input type="submit" value="Dodaj">
-</form>
+<div class="card m-2 p-2 rounded" >
+    <div class="header p-2 grey lighten-2">
+        <h3 class="m-2">Dodaj nowego klienta</h3>
     </div>
+    <hr class="border border-default">
+    <form method="post" class="mb-0">
+    {% csrf_token %}
+    <div class="form-group card-body mb-0">
+        {% for field in client_form %}
+            <div class="row">
+                <div class="col-sm-6 mb-2">
+                {{ field.label_tag }}
+                {{ field }}
+                </div>
+            </div>
+        {% endfor %}
+        <input type="submit" value="Zatwierdź" class="mt-3 btn btn-secondary">
+    </div>
+    </form>
+</div>
 {% endblock %}
