@@ -1,5 +1,5 @@
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.contrib import messages
 
 from apps.clients.forms import ClientForm
 from apps.clients.models import Client
@@ -16,12 +16,13 @@ def client_new(request):
         if client_form.is_valid():
             client = client_form.save(commit=False)
             client.save()
-            return redirect('clients:clients_list')
+            messages.success(request, 'Utworzono nowego klienta')
         else:
-            return HttpResponse(status=500)
+            messages.error(request, 'Wystąpił błąd formularza. Nie utworzono nowego klienta')
+        return redirect('clients:clients_list')
     else:
         client_form = ClientForm()
-    return render(request, 'client_form.html', {'client_form': client_form})
+        return render(request, 'client_form.html', {'client_form': client_form, 'type': 'new'})
 
 
 def client_delete(request, client_id):
@@ -40,9 +41,11 @@ def client_update(request, client_id):
         if client_form.is_valid():
             client = client_form.save(commit=False)
             client.save()
-            return redirect('clients:clients_list')
+            messages.success(request, f'Zaktualizowano dane klienta')
         else:
-            return HttpResponse(status=500)
+            messages.error(request, 'Wystąpił błąd formularza. Nie zaktualizowano danych klienta')
+        return redirect('clients:clients_list')
+
     else:
         client_form = ClientForm(instance=client)
-    return render(request, 'client_form.html', {'client_form': client_form})
+        return render(request, 'client_form.html', {'client_form': client_form, 'type': 'update'})

@@ -2,7 +2,9 @@
 {% block content %}
 <div class="card m-2 p-2 rounded" >
     <div class="header p-2 grey lighten-2">
-        <h3 class="m-2">Dodaj nowego klienta</h3>
+        <h3 class="m-2">
+            {% if type == 'new' %} Dodaj nowego klienta {% else %} Zaktualizuj dane klienta {% endif %}
+        </h3>
     </div>
     <hr class="border border-default">
     <form method="post" class="mb-0">
@@ -16,7 +18,10 @@
                 </div>
             </div>
         {% endfor %}
-        <input type="submit" value="Zatwierdź" class="mt-3 btn btn-secondary">
+        <span>
+            <input type="submit" value="Zatwierdź" class="mt-3 btn btn-secondary">
+            <a href="{% url 'clients:clients_list' %}" class="ml-2 mt-3 btn btn-primary">Anuluj</a>
+        </span>
     </div>
     </form>
 </div>

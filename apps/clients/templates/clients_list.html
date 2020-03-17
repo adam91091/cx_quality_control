@@ -16,7 +16,17 @@
       <td class="col-sm-8">{{client.client_name}}</td>
     <td class="col-sm-3">
         <a href="{% url "clients:client_update" client.id %}" class="btn btn-secondary p-1 m-0">Edytuj</a>
-        <a href="{% url "clients:client_delete" client.id %}" class="btn btn-secondary p-1 m-0">Usuń </a>
+        <div class="modal fade" tabindex="-1" role="dialog" id="modal">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content"></div>
+            </div>
+        </div>
+        <button class="del-btn btn btn-secondary p-1 m-0" type="button" name="button">Usuń </button>
+        <script type="text/javascript">
+          $(function () {
+            $(".del-btn").modalForm({formURL: "{% url 'clients:client_delete' client.id %}"});
+          });
+    </script>
     </td>
     </tr>
     {% endfor %}
