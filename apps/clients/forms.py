@@ -1,5 +1,4 @@
 from django import forms
-from bootstrap_modal_forms.forms import BSModalForm
 
 from .models import Client
 
@@ -18,6 +17,6 @@ class ClientForm(forms.ModelForm):
             'client_name': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
-
-class ConfirmClientDeleteForm(BSModalForm):
-    pass
+        error_messages = {
+            'client_sap_id': {'unique': "Klient o podanym numerze SAP już istnieje."}
+        }
