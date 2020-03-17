@@ -9,11 +9,11 @@ class ClientsViewTest(TestCase):
     def setUp(self) -> None:
         self.client = ViewClient()
         self.number_of_clients = 6
-        for client_id in range(self.number_of_clients):
+        for client_id in range(100000, 100000 + self.number_of_clients):
             Client.objects.create(client_sap_id=client_id,
                                   client_name=f"Client_with_id_{client_id}")
-        self.client_to_be_deleted = Client.objects.get(client_sap_id=1)
-        self.client_to_be_updated = Client.objects.get(client_sap_id=2)
+        self.client_to_be_deleted = Client.objects.get(client_sap_id=100001)
+        self.client_to_be_updated = Client.objects.get(client_sap_id=100002)
 
     def test_list(self):
         response = self._assert_response_get(url_name='clients:clients_list', exp_status_code=200,
