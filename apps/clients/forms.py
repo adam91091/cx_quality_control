@@ -5,6 +5,9 @@ from .models import Client
 
 class ClientForm(forms.ModelForm):
 
+    validation_hints = {'client_sap_id': 'Numer SAP musi się składać z 6 cyfr oraz nie może być polem pustym',
+                        'client_name': 'Pole z nazwą klienta nie może być puste'}
+
     class Meta:
         model = Client
         exclude = ()
@@ -13,10 +16,12 @@ class ClientForm(forms.ModelForm):
             'client_name': "Nazwa klienta",
         }
         widgets = {
-            'client_sap_id': forms.TextInput(attrs={'class': 'form-control'}),
-            'client_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'client_sap_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': '^([0-9]{6})$',
+                                                    'required': 'true'}),
+            'client_name': forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),
         }
 
         error_messages = {
-            'client_sap_id': {'unique': "Klient o podanym numerze SAP już istnieje."}
+            'client_sap_id': {'unique': "Klient o podanym numerze SAP już istnieje.",
+                              }
         }

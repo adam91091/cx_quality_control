@@ -18,11 +18,12 @@ def client_new(request):
             client = client_form.save(commit=False)
             client.save()
             messages.success(request, 'Utworzono nowego klienta')
+            return redirect('clients:clients_list')
         else:
             add_error_messages(request, main_msg="Nie utworzono nowego klienta. "
                                                  "Wystąpiły następujące błędy formularza:",
                                form=client_form)
-        return redirect('clients:clients_list')
+            return render(request, 'client_form.html', {'client_form': client_form, 'type': 'new'})
     else:
         client_form = ClientForm()
         return render(request, 'client_form.html', {'client_form': client_form, 'type': 'new'})
@@ -46,11 +47,12 @@ def client_update(request, client_id):
             client = client_form.save(commit=False)
             client.save()
             messages.success(request, f'Zaktualizowano dane klienta')
+            return redirect('clients:clients_list')
         else:
             add_error_messages(request, main_msg="Nie zaktualizowano danych klienta. "
                                                  "Wystąpiły następujące błędy formularza:",
                                form=client_form)
-        return redirect('clients:clients_list')
+            return render(request, 'client_form.html', {'client_form': client_form, 'type': 'update'})
 
     else:
         client_form = ClientForm(instance=client)

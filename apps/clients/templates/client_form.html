@@ -7,7 +7,7 @@
         </h3>
     </div>
     <hr class="border border-default">
-    <form method="post" class="mb-0">
+    <form id="client-form" method="post" class="mb-0 needs-validation" novalidate>
     {% csrf_token %}
     <div class="form-group card-body mb-0">
         {% for field in client_form %}
@@ -15,6 +15,16 @@
                 <div class="col-sm-6 mb-2">
                 {{ field.label_tag }}
                 {{ field }}
+                <div class="invalid-feedback">
+                    {% for key, value in client_form.validation_hints.items %}
+                        {% if key == field.name %}
+                            {{ value }}
+                        {% endif %}
+                        {% endfor %}
+                </div>
+                <div class="valid-feedback">
+                    Wprowadzone dane mają poprawny format
+                </div>
                 </div>
             </div>
         {% endfor %}
@@ -25,4 +35,25 @@
     </div>
     </form>
 </div>
+    <script type="text/javascript">
+    (function () {
+        'use strict';
+        window.addEventListener('load', function() {
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.getElementsByClassName('needs-validation');
+        // Loop over them and prevent submission
+        var validation = Array.prototype.filter.call(forms, function(form) {
+        ['keyup', 'submit'].forEach(function(e) {
+        form.addEventListener(e, function(event) {
+        if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+        })
+        }, false);
+        });
+        }, false);
+        })();
+    </script>
 {% endblock %}
