@@ -17,11 +17,6 @@ jobs:
       script: python -m flake8 --statistics --ignore=E265,E501,F401,F841,*migrations --max-line-length 120 .
 
     - stage: test
-      cache:
-        - pip
-          # Cache the virtualenv packages folder so virtualenv doesn't waste
-          # time installing locally cached packages
-          - '/home/travis/virtualenv/python3.6.3/lib/python3.6/site-packages'
       script: python manage.py test apps --failfast
 
 cache:

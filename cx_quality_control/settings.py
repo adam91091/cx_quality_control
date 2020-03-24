@@ -37,8 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # frontend tools
     'bootstrap4',
+    'bootstrap_modal_forms',
+    # apps
     'apps.users',
+    'apps.clients',
 ]
 
 MIDDLEWARE = [
@@ -74,20 +78,33 @@ WSGI_APPLICATION = 'cx_quality_control.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
+if os.getenv('TRAVIS', None):
+    DEBUG = False
+    TEMPLATE_DEBUG = True
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'cx_quality_control_db',
-        'USER': 'cx_quality_control_user',
-        'PASSWORD': 'password1!A',
-        'HOST': 'localhost',
-        'PORT': '3306',
-        'TEST': {
-            'NAME': 'test_cx_quality_control_db',
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'travis_ci_db',
+            'USER': 'travis',
+            'PASSWORD': '',
+            'HOST': '127.0.0.1',
         }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'cx_quality_control_db',
+            'USER': 'cx_quality_control_user',
+            'PASSWORD': 'password1!A',
+            'HOST': 'localhost',
+            'PORT': '3306',
+            'TEST': {
+                'NAME': 'test_cx_quality_control_db',
+            }
+        }
+    }
 
 
 # Password validation
