@@ -9,9 +9,6 @@ install:
   - pip install -r pkg_install_requirements.txt
 
 # Run scripts specified in Jobs rather than one global script.
-before_script: 
-- mysql -e 'create database test;' -u root
-
 script: skip
 
 jobs:
