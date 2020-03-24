@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load filters %}
 {% block content %}
 <div class="card m-2 p-2 rounded" >
     <div class="header p-2 grey lighten-2">
@@ -16,11 +18,7 @@
                 {{ field.label_tag }}
                 {{ field }}
                 <div class="invalid-feedback">
-                    {% for key, value in client_form.validation_hints.items %}
-                        {% if key == field.name %}
-                            {{ value }}
-                        {% endif %}
-                        {% endfor %}
+                    {{ client_form.validation_hints|get_item:field.name }}
                 </div>
                 <div class="valid-feedback">
                     Wprowadzone dane mają poprawny format
@@ -35,25 +33,5 @@
     </div>
     </form>
 </div>
-    <script type="text/javascript">
-    (function () {
-        'use strict';
-        window.addEventListener('load', function() {
-        // Fetch all the forms we want to apply custom Bootstrap validation styles to
-        var forms = document.getElementsByClassName('needs-validation');
-        // Loop over them and prevent submission
-        var validation = Array.prototype.filter.call(forms, function(form) {
-        ['keyup', 'submit'].forEach(function(e) {
-        form.addEventListener(e, function(event) {
-        if (form.checkValidity() === false) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
-        form.classList.add('was-validated');
-        })
-        }, false);
-        });
-        }, false);
-        })();
-    </script>
+    <script type="text/javascript" src="{% static 'clientSideValidation.js' %}"></script>
 {% endblock %}
