@@ -1,4 +1,5 @@
 Django==2.2.4
 mysqlclient==1.4.6
 django-bootstrap4
+django-bootstrap-modal-forms
 flake8
