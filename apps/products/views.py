@@ -12,7 +12,11 @@ def products_list(request):
 
 
 def product_detail(request, product_id):
-    return None
+    product = Product.objects.get(id=product_id)
+    product_form = ProductForm(instance=product, read_only=True)
+    spec_form = SpecificationForm(instance=product.specification, read_only=True)
+    return render(request, 'product_form.html', {'product_form': product_form, 'spec_form': spec_form,
+                                                 'type': 'detail'})
 
 
 def product_new(request):

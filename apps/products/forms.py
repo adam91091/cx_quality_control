@@ -9,6 +9,13 @@ class ProductForm(ModelForm):
     validation_hints = {'product_sap_id': "Numer SAP musi się składać z 6 cyfr oraz nie może być polem pustym",
                         'description': "Pole z opisem nie może być puste"}
 
+    def __init__(self, read_only=False, *args, **kwargs):
+        super(ProductForm, self).__init__(*args, **kwargs)
+        if read_only:
+            for field in self.fields.values():
+                field.widget.attrs['readonly'] = True
+                field.widget.attrs['disabled'] = 'true'
+
     class Meta:
         model = Product
         exclude = ()
@@ -33,6 +40,13 @@ class ProductForm(ModelForm):
 
 class SpecificationForm(ModelForm):
     validation_hints = {}
+
+    def __init__(self, read_only=False, *args, **kwargs):
+        super(SpecificationForm, self).__init__(*args, **kwargs)
+        if read_only:
+            for field in self.fields.values():
+                field.widget.attrs['readonly'] = True
+                field.widget.attrs['disabled'] = 'true'
 
     class Meta:
         model = Specification

@@ -1,0 +1,13 @@
+<form method="post">
+  {% csrf_token %}
+
+ <div class="modal-header">
+    <h5 class="modal-title">Czy na pewno chcesz usunąć wybrany produkt?</h5>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary " data-dismiss="modal">Anuluj</button>
+    <button type="submit" class="btn btn-secondary">Usuń</button>
+  </div>
+
+</form>

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+    <a href="{% url "products:product_new" %}" class="btn btn-secondary mb-2">Dodaj nowy produkt</a>
+    <table class="table table-bordered">
+  <thead>
+    <tr class="d-flex">
+        <th class="col-1">Numer SAP</th>
+        <th class="col-2">Indeks</th>
+        <th class="col-6">Opis</th>
+        <th class="col-3">Akcje</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for product in products %}
+    <tr class="d-flex">
+      <td class="col-sm-1">{{product.product_sap_id}}</td>
+      <td class="col-sm-2">{{product.index}}</td>
+      <td class="col-sm-6">{{product.description}}</td>
+    <td class="col-sm-3">
+        <a href="{% url 'products:product_detail' product.id %}" class="btn btn-secondary p-1 m-0">Pokaż specyfikację</a>
+        <a href="{% url "products:product_update" product.id %}" class="btn btn-secondary p-1 m-0">Edytuj</a>
+        <div class="modal fade" tabindex="-1" role="dialog" id="modal">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content"></div>
+            </div>
+        </div>
+        <button class="del-btn btn btn-secondary p-1 m-0" type="button" name="button">Usuń </button>
+        <script type="text/javascript">
+          $(function () {
+            $(".del-btn").modalForm({formURL: "{% url 'products:product_delete' product.id %}"});
+          });
+    </script>
+    </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
