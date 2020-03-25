@@ -2,10 +2,10 @@
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
   <ul class="nav navbar-nav mr-auto">
       <li>
-          <a class="nav-link" href="#">Produkty</a>
+          <a class="nav-link" href="{% url 'products:products_list' %}">Produkty</a>
       </li>
       <li>
-          <a class="nav-link" href="{% url "clients:clients_list" %}">Klienci</a>
+          <a class="nav-link" href="{% url 'clients:clients_list' %}">Klienci</a>
       </li>
       <li>
           <a class="nav-link" href="#">Zlecenia produkcyjne</a>
