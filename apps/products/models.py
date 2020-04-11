@@ -3,7 +3,7 @@ from django.db import models
 
 class Product(models.Model):
     product_sap_id = models.IntegerField(unique=True)
-    index = models.CharField(max_length=30)
+    index = models.CharField(max_length=30, null=True, blank=True)
     description = models.CharField(max_length=100)
 
     def __str__(self):

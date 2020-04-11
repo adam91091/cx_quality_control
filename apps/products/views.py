@@ -21,8 +21,8 @@ def product_detail(request, product_id):
 
 def product_new(request):
     if request.method == 'POST':
-        product_form = ProductForm(request.POST)
-        spec_form = SpecificationForm(request.POST)
+        product_form = ProductForm(data=request.POST)
+        spec_form = SpecificationForm(data=request.POST)
         if product_form.is_valid() and spec_form.is_valid():
             product = product_form.save(commit=False)
             product.save()
@@ -46,11 +46,12 @@ def product_new(request):
 def product_update(request, product_id):
     product = Product.objects.get(id=product_id)
     if request.method == 'POST':
-        product_form = ProductForm(request.POST, instance=product)
-        spec_form = SpecificationForm(request.POST, instance=product.specification)
+        product_form = ProductForm(data=request.POST, instance=product)
+        spec_form = SpecificationForm(data=request.POST, instance=product.specification)
         if product_form.is_valid() and spec_form.is_valid():
             product = product_form.save(commit=False)
             product.save()
+            messages.success(request, VIEW_MSG['product']['update_success'])
             specification = spec_form.save(commit=False)
             specification.product = product
             specification.save()

@@ -7,7 +7,8 @@ from apps.validators import REGEXPS
 
 class ProductForm(ModelForm):
     validation_hints = {'product_sap_id': "Numer SAP musi się składać z 6 cyfr oraz nie może być polem pustym",
-                        'description': "Pole z opisem nie może być puste"}
+                        'description': "Pole z opisem nie może być puste",
+                        'index': "To pole jest opcjonalne"}
 
     def __init__(self, read_only=False, *args, **kwargs):
         super(ProductForm, self).__init__(*args, **kwargs)
@@ -110,9 +111,9 @@ class SpecificationForm(ModelForm):
                                              'required': 'true'}),
             'maximum_height_of_pallet': forms.TextInput(attrs={'class': 'form-control',
                                              'required': 'true'}),
-            'pallet_wrapped_with_stretch_film': forms.Select(attrs={'class': 'form-control'}),
-            'pallet_protected_with_paper_edges': forms.Select(attrs={'class': 'form-control'}),
-            'cores_packed_in': forms.Select(attrs={'class': 'form-control'}),
+            'pallet_wrapped_with_stretch_film': forms.Select(attrs={'class': 'form-control no-hints'}),
+            'pallet_protected_with_paper_edges': forms.Select(attrs={'class': 'form-control no-hints'}),
+            'cores_packed_in': forms.Select(attrs={'class': 'form-control no-hints'}),
             'quantity_on_the_pallet': forms.TextInput(attrs={'class': 'form-control',
                                                                              'required': 'true'}),
             'remarks': forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'cols': 40,

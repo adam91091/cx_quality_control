@@ -1,0 +1,7 @@
+.form-control {
+  background-image: none !important;
+}
+
+.form-control.no-hints {
+  border-color: #ced4da !important;
+}
