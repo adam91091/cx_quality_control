@@ -14,7 +14,7 @@
     {% for product in products %}
     <tr class="d-flex">
       <td class="col-sm-1">{{product.product_sap_id}}</td>
-      <td class="col-sm-2">{{product.index}}</td>
+      <td class="col-sm-2">{{product.index|default_if_none:""}}</td>
       <td class="col-sm-6">{{product.description}}</td>
     <td class="col-sm-3">
         <a href="{% url 'products:product_detail' product.id %}" class="btn btn-secondary p-1 m-0">Pokaż specyfikację</a>

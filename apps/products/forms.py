@@ -1,14 +1,13 @@
 from django import forms
 from django.forms import ModelForm
 
+from apps.forms_utils import NUM_STYLE, INT_STYLE, BASIC_REQ_STYLE, BASIC_STYLE, BASIC_NO_HINTS_STYLE, SAP_STYLE
 from apps.products.models import Product, Specification
-from apps.validators import REGEXPS
 
 
 class ProductForm(ModelForm):
     validation_hints = {'product_sap_id': "Numer SAP musi się składać z 6 cyfr oraz nie może być polem pustym",
-                        'description': "Pole z opisem nie może być puste",
-                        'index': "To pole jest opcjonalne"}
+                        'description': "Pole z opisem nie może być puste", }
 
     def __init__(self, read_only=False, *args, **kwargs):
         super(ProductForm, self).__init__(*args, **kwargs)
@@ -26,21 +25,17 @@ class ProductForm(ModelForm):
             'description': "Opis produktu",
         }
         widgets = {
-            'product_sap_id': forms.TextInput(attrs={'class': 'form-control',
-                                                     'pattern': REGEXPS['client']['client_sap_id'],
-                                                     'required': 'true'}),
-            'index': forms.TextInput(attrs={'class': 'form-control'}),
-            'description': forms.TextInput(attrs={'class': 'form-control',
-                                                  'required': 'true'})
+            'product_sap_id': forms.TextInput(attrs=SAP_STYLE),
+            'index': forms.TextInput(attrs=BASIC_STYLE),
+            'description': forms.TextInput(attrs=BASIC_REQ_STYLE)
         }
         error_messages = {
-            'product_sap_id': {'unique': "Produkt o podanym numerze SAP już istnieje.",
-                               }
+            'product_sap_id': {'unique': "Produkt o podanym numerze SAP już istnieje.", }
         }
 
 
 class SpecificationForm(ModelForm):
-    validation_hints = {}
+    validation_hints = {'remarks': "Pole z uwagami nie może być puste"}
 
     def __init__(self, read_only=False, *args, **kwargs):
         super(SpecificationForm, self).__init__(*args, **kwargs)
@@ -69,53 +64,30 @@ class SpecificationForm(ModelForm):
             'remarks': "Uwagi",
         }
         widgets = {
-            'internal_diameter_target': forms.TextInput(attrs={'class': 'form-control',
-                                                               'required': 'true'}),
-            'internal_diameter_tolerance_top': forms.TextInput(attrs={'class': 'form-control',
-                                                               'required': 'true'}),
-            'internal_diameter_tolerance_bottom': forms.TextInput(attrs={'class': 'form-control',
-                                                                      'required': 'true'}),
-            'external_diameter_target': forms.TextInput(attrs={'class': 'form-control',
-                                                                      'required': 'true'}),
-            'external_diameter_tolerance_top': forms.TextInput(attrs={'class': 'form-control',
-                                                                      'required': 'true'}),
-            'external_diameter_tolerance_bottom': forms.TextInput(attrs={'class': 'form-control',
-                                                                         'required': 'true'}),
-            'wall_thickness_target': forms.TextInput(attrs={'class': 'form-control',
-                                                               'required': 'true'}),
-            'wall_thickness_tolerance_top': forms.TextInput(attrs={'class': 'form-control',
-                                                                      'required': 'true'}),
-            'wall_thickness_tolerance_bottom': forms.TextInput(attrs={'class': 'form-control',
-                                                                         'required': 'true'}),
-            'length_target': forms.TextInput(attrs={'class': 'form-control',
-                                                            'required': 'true'}),
-            'length_tolerance_top': forms.TextInput(attrs={'class': 'form-control',
-                                                                   'required': 'true'}),
-            'length_tolerance_bottom': forms.TextInput(attrs={'class': 'form-control',
-                                                                      'required': 'true'}),
-            'flat_crush_resistance_target': forms.TextInput(attrs={'class': 'form-control',
-                                                            'required': 'true'}),
-            'flat_crush_resistance_tolerance_top': forms.TextInput(attrs={'class': 'form-control',
-                                                                   'required': 'true'}),
-            'flat_crush_resistance_tolerance_bottom': forms.TextInput(attrs={'class': 'form-control',
-                                                                      'required': 'true'}),
-            'moisture_content_target': forms.TextInput(attrs={'class': 'form-control',
-                                                                   'required': 'true'}),
-            'moisture_content_tolerance_top': forms.TextInput(attrs={'class': 'form-control',
-                                                                          'required': 'true'}),
-            'moisture_content_tolerance_bottom': forms.TextInput(attrs={'class': 'form-control',
-                                                                             'required': 'true'}),
-            'colour': forms.TextInput(attrs={'class': 'form-control',
-                                                                             'required': 'true'}),
-            'finish': forms.TextInput(attrs={'class': 'form-control',
-                                             'required': 'true'}),
-            'maximum_height_of_pallet': forms.TextInput(attrs={'class': 'form-control',
-                                             'required': 'true'}),
-            'pallet_wrapped_with_stretch_film': forms.Select(attrs={'class': 'form-control no-hints'}),
-            'pallet_protected_with_paper_edges': forms.Select(attrs={'class': 'form-control no-hints'}),
-            'cores_packed_in': forms.Select(attrs={'class': 'form-control no-hints'}),
-            'quantity_on_the_pallet': forms.TextInput(attrs={'class': 'form-control',
-                                                                             'required': 'true'}),
-            'remarks': forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'cols': 40,
-                                                                             'required': 'true'})
+            'internal_diameter_target': forms.TextInput(attrs=NUM_STYLE),
+            'internal_diameter_tolerance_top': forms.TextInput(attrs=NUM_STYLE),
+            'internal_diameter_tolerance_bottom': forms.TextInput(attrs=NUM_STYLE),
+            'external_diameter_target': forms.TextInput(attrs=NUM_STYLE),
+            'external_diameter_tolerance_top': forms.TextInput(attrs=NUM_STYLE),
+            'external_diameter_tolerance_bottom': forms.TextInput(attrs=NUM_STYLE),
+            'wall_thickness_target': forms.TextInput(attrs=NUM_STYLE),
+            'wall_thickness_tolerance_top': forms.TextInput(attrs=NUM_STYLE),
+            'wall_thickness_tolerance_bottom': forms.TextInput(attrs=NUM_STYLE),
+            'length_target': forms.TextInput(attrs=NUM_STYLE),
+            'length_tolerance_top': forms.TextInput(attrs=NUM_STYLE),
+            'length_tolerance_bottom': forms.TextInput(attrs=NUM_STYLE),
+            'flat_crush_resistance_target': forms.TextInput(attrs=INT_STYLE),
+            'flat_crush_resistance_tolerance_top': forms.TextInput(attrs=INT_STYLE),
+            'flat_crush_resistance_tolerance_bottom': forms.TextInput(attrs=INT_STYLE),
+            'moisture_content_target': forms.TextInput(attrs=INT_STYLE),
+            'moisture_content_tolerance_top': forms.TextInput(attrs=INT_STYLE),
+            'moisture_content_tolerance_bottom': forms.TextInput(attrs=INT_STYLE),
+            'colour': forms.TextInput(attrs=BASIC_REQ_STYLE),
+            'finish': forms.TextInput(attrs=BASIC_REQ_STYLE),
+            'maximum_height_of_pallet': forms.TextInput(attrs=NUM_STYLE),
+            'pallet_wrapped_with_stretch_film': forms.Select(attrs=BASIC_NO_HINTS_STYLE),
+            'pallet_protected_with_paper_edges': forms.Select(attrs=BASIC_NO_HINTS_STYLE),
+            'cores_packed_in': forms.Select(attrs=BASIC_NO_HINTS_STYLE),
+            'quantity_on_the_pallet': forms.TextInput(attrs=INT_STYLE),
+            'remarks': forms.Textarea(attrs={**BASIC_REQ_STYLE, **{'rows': 5, 'cols': 40}, })
         }

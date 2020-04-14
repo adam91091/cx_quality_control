@@ -1,8 +1,10 @@
 from django.db import models
 
+from apps.validators import validate_sap_id, validate_num_field, validate_int_field
+
 
 class Product(models.Model):
-    product_sap_id = models.IntegerField(unique=True)
+    product_sap_id = models.IntegerField(unique=True, validators=[validate_sap_id(), ])
     index = models.CharField(max_length=30, null=True, blank=True)
     description = models.CharField(max_length=100)
 
@@ -19,35 +21,35 @@ class Specification(models.Model):
     product = models.OneToOneField(
         Product, on_delete=models.CASCADE, primary_key=True, related_name="specification"
     )
-    internal_diameter_target = models.FloatField()
-    internal_diameter_tolerance_top = models.FloatField()
-    internal_diameter_tolerance_bottom = models.FloatField()
+    internal_diameter_target = models.FloatField(validators=[validate_num_field(), ])
+    internal_diameter_tolerance_top = models.FloatField(validators=[validate_num_field(), ])
+    internal_diameter_tolerance_bottom = models.FloatField(validators=[validate_num_field(), ])
 
-    external_diameter_target = models.FloatField()
-    external_diameter_tolerance_top = models.FloatField()
-    external_diameter_tolerance_bottom = models.FloatField()
+    external_diameter_target = models.FloatField(validators=[validate_num_field(), ])
+    external_diameter_tolerance_top = models.FloatField(validators=[validate_num_field(), ])
+    external_diameter_tolerance_bottom = models.FloatField(validators=[validate_num_field(), ])
 
-    wall_thickness_target = models.FloatField()
-    wall_thickness_tolerance_top = models.FloatField()
-    wall_thickness_tolerance_bottom = models.FloatField()
+    wall_thickness_target = models.FloatField(validators=[validate_num_field(), ])
+    wall_thickness_tolerance_top = models.FloatField(validators=[validate_num_field(), ])
+    wall_thickness_tolerance_bottom = models.FloatField(validators=[validate_num_field(), ])
 
-    length_target = models.FloatField()
-    length_tolerance_top = models.FloatField()
-    length_tolerance_bottom = models.FloatField()
+    length_target = models.FloatField(validators=[validate_num_field(), ])
+    length_tolerance_top = models.FloatField(validators=[validate_num_field(), ])
+    length_tolerance_bottom = models.FloatField(validators=[validate_num_field(), ])
 
-    flat_crush_resistance_target = models.IntegerField()
-    flat_crush_resistance_tolerance_top = models.IntegerField()
-    flat_crush_resistance_tolerance_bottom = models.IntegerField()
+    flat_crush_resistance_target = models.IntegerField(validators=[validate_int_field(), ])
+    flat_crush_resistance_tolerance_top = models.IntegerField(validators=[validate_int_field(), ])
+    flat_crush_resistance_tolerance_bottom = models.IntegerField(validators=[validate_int_field(), ])
 
-    moisture_content_target = models.IntegerField()
-    moisture_content_tolerance_top = models.IntegerField()
-    moisture_content_tolerance_bottom = models.IntegerField()
+    moisture_content_target = models.IntegerField(validators=[validate_int_field(), ])
+    moisture_content_tolerance_top = models.IntegerField(validators=[validate_int_field(), ])
+    moisture_content_tolerance_bottom = models.IntegerField(validators=[validate_int_field(), ])
 
     colour = models.CharField(max_length=100, blank=True)
     finish = models.CharField(max_length=100, blank=True)
 
-    maximum_height_of_pallet = models.FloatField()
-    quantity_on_the_pallet = models.IntegerField()
+    maximum_height_of_pallet = models.FloatField(validators=[validate_num_field(), ])
+    quantity_on_the_pallet = models.IntegerField(validators=[validate_int_field(), ])
     pallet_protected_with_paper_edges = models.CharField(max_length=10, choices=BOOLEAN_CHOICES,
                                                          default=BOOLEAN_CHOICES[0])
     pallet_wrapped_with_stretch_film = models.CharField(max_length=10, choices=BOOLEAN_CHOICES,

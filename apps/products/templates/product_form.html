@@ -40,11 +40,13 @@
                 <tbody>
                 <tr>
                     <th scope="row">{{ spec_form.internal_diameter_target.label }}</th>
-                    <td>{{ spec_form.internal_diameter_target}}</td>
+                    <td>{{ spec_form.internal_diameter_target}}
+                    </td>
                     <td>
                         <div class="row">
                         <div class="p-2 mx-2">+</div>
-                            <div class="col-sm-4 mb-2">{{ spec_form.internal_diameter_tolerance_top }}</div>
+                            <div class="col-sm-4 mb-2">{{ spec_form.internal_diameter_tolerance_top }}
+                            </div>
                             <div class="p-2">-</div>
                             <div class="col-sm-4 mb-2">{{ spec_form.internal_diameter_tolerance_bottom }}</div>
                     </div>
@@ -52,7 +54,8 @@
                 </tr>
                 <tr>
                     <th scope="row">{{ spec_form.external_diameter_target.label }}</th>
-                    <td>{{ spec_form.external_diameter_target}}</td>
+                    <td>{{ spec_form.external_diameter_target}}
+                    </td>
                     <td>
                         <div class="row">
                         <div class="p-2 mx-2">+</div>
@@ -149,7 +152,9 @@
                         </tr>
                         <tr>
                             <th scope="row">{{ spec_form.remarks.label }}</th>
-                            <td> {{ spec_form.remarks }}</td>
+                            <td> {{ spec_form.remarks }}
+                                <div class="invalid-feedback">{{ spec_form.validation_hints|get_item:'remarks' }}</div>
+                            </td>
                         </tr>
                     </tbody>
                     </table>

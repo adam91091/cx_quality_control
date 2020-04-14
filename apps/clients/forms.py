@@ -1,7 +1,7 @@
 from django import forms
 
 from .models import Client
-from ..validators import REGEXPS
+from ..forms_utils import SAP_STYLE, BASIC_REQ_STYLE
 
 
 class ClientForm(forms.ModelForm):
@@ -17,13 +17,10 @@ class ClientForm(forms.ModelForm):
             'client_name': "Nazwa klienta",
         }
         widgets = {
-            'client_sap_id': forms.TextInput(attrs={'class': 'form-control',
-                                                    'pattern': REGEXPS['client']['client_sap_id'],
-                                                    'required': 'true'}),
-            'client_name': forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),
+            'client_sap_id': forms.TextInput(attrs=SAP_STYLE),
+            'client_name': forms.TextInput(attrs=BASIC_REQ_STYLE),
         }
 
         error_messages = {
-            'client_sap_id': {'unique': "Klient o podanym numerze SAP już istnieje.",
-                              }
+            'client_sap_id': {'unique': "Klient o podanym numerze SAP już istnieje.", }
         }
