@@ -15,7 +15,7 @@ class ClientModelTest(TestCase):
     def test_form_sap_id_validation_positive(self):
         self.client_form.client_sap_id = 765463
         self.client = self.client_form.save(commit=False)
-        self.client.save()
+        self.assertEqual(self.client.save(), None)
 
     def test_form_sap_id_validation_negative(self):
         data = [0, 234, 'test', 14467]
