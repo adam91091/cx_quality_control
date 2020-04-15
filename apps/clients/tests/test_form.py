@@ -7,19 +7,17 @@ from apps.clients.models import Client
 
 class ClientModelTest(TestCase):
     def setUp(self) -> None:
-        client_sap_id = 987654
-        self.client = Client.objects.create(client_sap_id=client_sap_id,
-                                            client_name=f"Client model with sap_id{client_sap_id}")
-        self.client_form = ClientForm(instance=self.client)
+        self.data = {'client_sap_id': '987654', 'client_name': 'TestForm'}
+        self.client = Client.objects.create(**self.data)
 
     def test_form_sap_id_validation_positive(self):
-        self.client_form.client_sap_id = 765463
-        self.client = self.client_form.save(commit=False)
-        self.assertEqual(self.client.save(), None)
+        self.data['client_sap_id'] = '765432'
+        client_form = ClientForm(data=self.data, instance=self.client)
+        self.assertTrue(client_form.is_valid())
 
     def test_form_sap_id_validation_negative(self):
-        data = [0, 234, 'test', 14467]
+        data = ['0', '234', 'test', '14467']
         for value in data:
-            with self.assertRaises(AttributeError) as context:
-                self.client_form.client_sap_id = value
-                self.client_form.save()
+            self.data['client_sap_id'] = value
+            client_form = ClientForm(data=self.data, instance=self.client)
+            self.assertFalse(client_form.is_valid())
