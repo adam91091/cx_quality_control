@@ -1,24 +1,24 @@
 from django.test import TestCase, Client as ViewClient
 
+from .factories import ClientFactory
+
 from apps.clients.forms import ClientForm
 from apps.clients.models import Client
 from apps.unittest_utils import assert_response_get, assert_response_post
 
 
 class ClientsViewTest(TestCase):
-    def setUp(self) -> None:
-        self.view_client = ViewClient()
-        self.number_of_clients = 6
-        for client_id in range(100000, 100000 + self.number_of_clients):
-            Client.objects.create(client_sap_id=client_id,
-                                  client_name=f"Client_with_id_{client_id}")
-        self.client_to_be_deleted = Client.objects.get(client_sap_id=100001)
-        self.client_to_be_updated = Client.objects.get(client_sap_id=100002)
+    @classmethod
+    def setUpTestData(cls) -> None:
+        cls.view_client = ViewClient()
+        cls.clients = ClientFactory.create_batch(size=6)
+        cls.client_to_be_deleted = cls.clients[0]
+        cls.client_to_be_updated = cls.clients[1]
 
     def test_list(self):
         response = assert_response_get(test_case=self, url_name='clients:clients_list', exp_status_code=200,
                                        exp_template='clients_list.html')
-        self.assertEqual(len(response.context['clients']), self.number_of_clients)
+        self.assertEqual(len(response.context['clients']), len(self.clients))
 
     def test_new_get(self):
         response = assert_response_get(test_case=self, url_name='clients:client_new', exp_status_code=200,
@@ -29,7 +29,6 @@ class ClientsViewTest(TestCase):
         client_sap_id = 123456
         assert_response_post(test_case=self, url_name='clients:client_new', exp_status_code=302,
                              data={'client_sap_id': client_sap_id, 'client_name': 'New with Post'})
-        self.number_of_clients += 1
         self.assertTrue(Client.objects.get(client_sap_id=client_sap_id))
 
     def test_delete_get(self):
@@ -40,7 +39,6 @@ class ClientsViewTest(TestCase):
     def test_delete_post(self):
         assert_response_post(test_case=self, url_name='clients:client_delete', exp_status_code=302,
                              data={}, id=self.client_to_be_deleted.id)
-        self.number_of_clients -= 1
         self.assertFalse(Client.objects.filter(id=self.client_to_be_deleted.id))
 
     def test_update_get(self):

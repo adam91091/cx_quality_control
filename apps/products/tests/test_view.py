@@ -2,39 +2,31 @@ from django.test import TestCase, Client as ViewClient
 
 from apps.products.forms import ProductForm, SpecificationForm
 from apps.products.models import Product, Specification
+from apps.products.tests.factories import ProductFactory, SpecificationFactory
 from apps.unittest_utils import assert_response_post, assert_response_get
 
 
 class ProductsViewTest(TestCase):
-    def setUp(self) -> None:
-        self.view_client = ViewClient()
-        self.number_of_products = 3
-        for product_id in range(100000, 100000 + self.number_of_products):
-            product = Product(product_sap_id=product_id, description="Product_description")
-            spec = Specification(product=product)
-            for field in spec._meta.get_fields():
-                if field.name != 'product':
-                    setattr(spec, field.name, 1)
-            product.specification = spec
-            product.save()
-            spec.product = product
-            spec.save()
+    @classmethod
+    def setUpTestData(cls) -> None:
+        cls.view_client = ViewClient()
+        cls.products = ProductFactory.create_batch(size=6)
+        cls.specifications = [SpecificationFactory.create(product=product) for product in cls.products]
+        cls.product_to_be_deleted = cls.products[0]
+        cls.product_to_be_updated = cls.products[1]
 
-        self.product_to_be_deleted = Product.objects.get(product_sap_id=100001)
-        self.product_to_be_updated = Product.objects.get(product_sap_id=100002)
-
-        self.data_to_post = {'product_sap_id': 123456, 'description': "Product new", 'index': ""}
+        cls.form_data = {'product_sap_id': 999999, 'description': "product_form_data", 'index': ""}
         for field in Specification._meta.get_fields():
             if field.name != 'product':
-                self.data_to_post[field.name] = '1'
-        self.data_to_post['pallet_protected_with_paper_edges'] = 'Y'
-        self.data_to_post['cores_packed_in'] = 'Horizontal'
-        self.data_to_post['pallet_wrapped_with_stretch_film'] = 'Y'
+                cls.form_data[field.name] = '999'
+        cls.form_data['pallet_protected_with_paper_edges'] = 'Y'
+        cls.form_data['cores_packed_in'] = 'Horizontal'
+        cls.form_data['pallet_wrapped_with_stretch_film'] = 'Y'
 
     def test_list(self):
         response = assert_response_get(test_case=self, url_name='products:products_list',
                                        exp_status_code=200, exp_template='products_list.html')
-        self.assertEqual(len(response.context['products']), self.number_of_products)
+        self.assertEqual(len(response.context['products']), len(self.products))
 
     def test_new_get(self):
         response = assert_response_get(test_case=self, url_name='products:product_new',
@@ -43,10 +35,9 @@ class ProductsViewTest(TestCase):
         self.assertTrue(isinstance(response.context['spec_form'], SpecificationForm))
 
     def test_new_post(self):
-        product_sap_id = self.data_to_post['product_sap_id']
+        product_sap_id = self.form_data['product_sap_id']
         assert_response_post(test_case=self, url_name='products:product_new',
-                             exp_status_code=302, data=self.data_to_post)
-        self.number_of_products += 1
+                             exp_status_code=302, data=self.form_data)
         self.assertTrue(Product.objects.get(product_sap_id=product_sap_id))
 
     def test_delete_get(self):
@@ -57,7 +48,6 @@ class ProductsViewTest(TestCase):
     def test_delete_post(self):
         assert_response_post(test_case=self, url_name='products:product_delete', exp_status_code=302,
                              data={}, id=self.product_to_be_deleted.id)
-        self.number_of_products -= 1
         self.assertFalse(Product.objects.filter(id=self.product_to_be_deleted.id))
 
     def test_update_get(self):
@@ -68,7 +58,7 @@ class ProductsViewTest(TestCase):
 
     def test_update_post(self):
         updated_product_desc = 'Updated_description'
-        self.data_to_post['description'] = updated_product_desc
+        self.form_data['description'] = updated_product_desc
         assert_response_post(test_case=self, url_name='products:product_update', exp_status_code=302,
-                             data=self.data_to_post, id=self.product_to_be_updated.id)
+                             data=self.form_data, id=self.product_to_be_updated.id)
         self.assertEqual(Product.objects.get(id=self.product_to_be_updated.id).description, updated_product_desc)
