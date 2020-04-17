@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.shortcuts import redirect, render
 
 VIEW_MSG = {'client': {'new_success': "Utworzono nowego klienta",
                        'new_error': "Nie utworzono nowego klienta. "
@@ -24,3 +25,32 @@ def add_error_messages(request, main_msg, form, secondary_forms=None):
         for form in secondary_forms:
             for err_msg in form.errors:
                 messages.error(request, form.errors[err_msg])
+
+
+def render_form_response(request, method, form, model_name):
+    if form.is_valid():
+        obj = form.save(commit=False)
+        obj.save()
+        messages.success(request, VIEW_MSG[model_name][f'{method}_success'])
+        return redirect(f'{model_name}s:{model_name}s_list')
+    if request.method == 'POST':
+        add_error_messages(request, main_msg=VIEW_MSG[model_name][f'{method}_error'],
+                           form=form)
+    return render(request, f'{model_name}_form.html', {f'{model_name}_form': form, 'type': method})
+
+
+def render_one_to_one_form_response(request, method, parent_form, child_form, parent_name, child_name):
+    if parent_form.is_valid() and child_form.is_valid():
+        parent = parent_form.save(commit=False)
+        parent.save()
+        messages.success(request, VIEW_MSG[parent_name][f'{method}_success'])
+        child = child_form.save(commit=False)
+        setattr(child, parent_name, parent)
+        child.save()
+        return redirect(f'{parent_name}s:{parent_name}s_list')
+    if request.method == 'POST':
+        add_error_messages(request, main_msg=VIEW_MSG[parent_name][f'{method}_error'], form=parent_form,
+                           secondary_forms=[child_form, ])
+    return render(request, f'{parent_name}_form.html', {f'{parent_name}_form': parent_form,
+                                                        f'{child_name}_form': child_form,
+                                                        'type': method})
