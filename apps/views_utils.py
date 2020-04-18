@@ -14,6 +14,13 @@ VIEW_MSG = {'client': {'new_success': "Utworzono nowego klienta",
                         'update_success': "Zaktualizowano dane produktu",
                         'update_error': "Nie zaktualizowano danych produktu",
                         'delete': "Produkt został usunięty", },
+            'order': {'new_success': "Utworzono nowe zlecenie produkcyjne",
+                       'new_error': "Nie utworzono nowego zlecenia produkcyjnego. "
+                                    "Wystąpiły następujące błędy formularza:",
+                       'update_success': "Zaktualizowano dane zlecenia produkcyjnego",
+                       'update_error': "Nie zaktualizowano danych zlecenia produkcyjnego. "
+                                       "Wystąpiły następujące błędy formularza:",
+                       'delete': "Zlecenie produkcyjne zostało usunięte", },
             }
 
 
@@ -54,3 +61,12 @@ def render_one_to_one_form_response(request, method, parent_form, child_form, pa
     return render(request, f'{parent_name}_form.html', {f'{parent_name}_form': parent_form,
                                                         f'{child_name}_form': child_form,
                                                         'type': method})
+
+
+def check_if_object_exists(request, model, identifier_name, identifier_value, model_name):
+    try:
+        obj = model.objects.get(**{identifier_name: identifier_value})
+    except model.DoesNotExist:
+        messages.error(request, f"{model_name}: {identifier_value}  nie istnieje w bazie danych")
+        return None
+    return obj

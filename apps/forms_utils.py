@@ -1,3 +1,4 @@
+import datetime
 from apps.validators import REGEXPS
 
 # Widget attrs helper dicts
@@ -6,6 +7,9 @@ BASIC_STYLE = {'class': 'form-control'}
 BASIC_REQ_STYLE = {'class': 'form-control', 'required': 'true'}
 
 BASIC_NO_HINTS_STYLE = {'class': 'form-control no-hints'}
+
+NUM_STYLE_NO_REQ = {'class': 'form-control',
+                    'pattern': REGEXPS['common']['num_field'], }
 
 NUM_STYLE = {'class': 'form-control',
              'required': 'true',
@@ -18,3 +22,5 @@ INT_STYLE = {'class': 'form-control',
 SAP_STYLE = {'class': 'form-control',
              'required': 'true',
              'pattern': REGEXPS['common']['sap_id'], }
+
+DATE_STYLE = {'class': 'form-control', }
