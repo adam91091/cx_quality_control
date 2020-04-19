@@ -15,12 +15,12 @@ VIEW_MSG = {'client': {'new_success': "Utworzono nowego klienta",
                         'update_error': "Nie zaktualizowano danych produktu",
                         'delete': "Produkt został usunięty", },
             'order': {'new_success': "Utworzono nowe zlecenie produkcyjne",
-                       'new_error': "Nie utworzono nowego zlecenia produkcyjnego. "
-                                    "Wystąpiły następujące błędy formularza:",
-                       'update_success': "Zaktualizowano dane zlecenia produkcyjnego",
-                       'update_error': "Nie zaktualizowano danych zlecenia produkcyjnego. "
-                                       "Wystąpiły następujące błędy formularza:",
-                       'delete': "Zlecenie produkcyjne zostało usunięte", },
+                      'new_error': "Nie utworzono nowego zlecenia produkcyjnego. "
+                                   "Wystąpiły następujące błędy formularza:",
+                      'update_success': "Zaktualizowano dane zlecenia produkcyjnego",
+                      'update_error': "Nie zaktualizowano danych zlecenia produkcyjnego. "
+                                      "Wystąpiły następujące błędy formularza:",
+                      'delete': "Zlecenie produkcyjne zostało usunięte", },
             }
 
 

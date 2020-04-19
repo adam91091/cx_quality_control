@@ -42,7 +42,8 @@ class OrderForm(ModelForm):
         widgets = {
             'order_sap_id': forms.TextInput(attrs=SAP_STYLE),
             'date_of_production': DatePickerInput(options={'minDate': (dt.datetime.today()).strftime(STRFTIME_STRING),
-                                                           'showClear': False}, attrs=BASIC_NO_HINTS_STYLE),
+                                                           'showClear': False, 'locale': 'pl', },
+                                                  attrs=BASIC_NO_HINTS_STYLE),
             'product': forms.TextInput(attrs=SAP_STYLE),
             'client': forms.TextInput(attrs=SAP_STYLE),
             'internal_diameter_reference': forms.TextInput(attrs=NUM_STYLE_NO_REQ),

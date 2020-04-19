@@ -61,4 +61,3 @@ class Measurement(models.Model):
     def __str__(self):
         return f"Pomiar palety nr {self.pallet_number}. " \
                f"Raport pomiarowy zlecenia produkcyjnego nr: {self.measurement_report.order.order_sap_id}"
-
