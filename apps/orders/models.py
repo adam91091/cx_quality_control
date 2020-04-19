@@ -12,8 +12,8 @@ class Order(models.Model):
                       ('Open', 'W trakcie'),
                       ('Done', 'Zakończony')]
     order_sap_id = models.IntegerField(unique=True, validators=[validate_sap_id(), ])
-    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='orders')
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='orders')
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='orders', to_field='client_sap_id')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='orders', to_field='product_sap_id')
     date_of_production = models.DateField(default=datetime.date.today)
     status = models.CharField(choices=STATUS_CHOICES, default=STATUS_CHOICES[0][0], max_length=30)
     quantity = models.IntegerField(validators=[validate_int_field(), ], null=True, blank=True)
@@ -61,3 +61,4 @@ class Measurement(models.Model):
     def __str__(self):
         return f"Pomiar palety nr {self.pallet_number}. " \
                f"Raport pomiarowy zlecenia produkcyjnego nr: {self.measurement_report.order.order_sap_id}"
+

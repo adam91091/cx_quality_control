@@ -7,6 +7,10 @@ from apps.forms_utils import NUM_STYLE, INT_STYLE, BASIC_REQ_STYLE, BASIC_STYLE,
 from apps.orders.models import Order, MeasurementReport, Measurement
 from apps.products.models import Product
 
+# Zadania na niedzielę:
+# dodac datetimepicker
+# customizowac error z datefield od backendu
+
 
 class OrderForm(ModelForm):
     validation_hints = {'order_sap_id': "Numer partii musi się składać z 6 cyfr oraz nie może być polem pustym",
@@ -15,6 +19,13 @@ class OrderForm(ModelForm):
                         'date_of_production': "Data produkcji musi być w formacie dd.mm.rrrr oraz nie może być "
                                               "wcześniejsa od dzisiejszej"
                         }
+
+    def __init__(self, read_only=False, *args, **kwargs):
+        super(OrderForm, self).__init__(*args, **kwargs)
+        if read_only:
+            for field in self.fields.values():
+                field.widget.attrs['readonly'] = True
+                field.widget.attrs['disabled'] = 'true'
 
     class Meta:
         model = Order
@@ -31,7 +42,7 @@ class OrderForm(ModelForm):
         }
         widgets = {
             'order_sap_id': forms.TextInput(attrs=SAP_STYLE),
-            'date_of_production': forms.DateInput(attrs=DATE_STYLE, format='%d.%m.%Y'),
+            'date_of_production': forms.DateInput(attrs=DATE_STYLE),
             'product': forms.TextInput(attrs=SAP_STYLE),
             'client': forms.TextInput(attrs=SAP_STYLE),
             'internal_diameter_reference': forms.TextInput(attrs=NUM_STYLE_NO_REQ),

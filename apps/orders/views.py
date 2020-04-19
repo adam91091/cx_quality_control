@@ -5,7 +5,7 @@ from .forms import OrderForm
 from .models import Order
 from ..clients.models import Client
 from ..products.models import Product
-from ..views_utils import render_form_response, check_if_object_exists, VIEW_MSG
+from ..views_utils import render_form_response, VIEW_MSG, check_if_related_object_exists
 
 
 def orders_list(request):
@@ -13,19 +13,21 @@ def orders_list(request):
     return render(request, 'orders_list.html', {'orders': orders})
 
 
+def order_detail(request, order_id):
+    order = Order.objects.get(id=order_id)
+    order_form = OrderForm(instance=order, read_only=True)
+    return render(request, 'order_form.html', {'order_form': order_form, 'type': 'detail'})
+
+
 def order_new(request):
     if request.method == 'POST':
-        data = request.POST.copy()
-        product = check_if_object_exists(request=request, model=Product, identifier_name='product_sap_id',
-                                         identifier_value=data['product'], model_name='Kod produktu')
-        client = check_if_object_exists(request=request, model=Client, identifier_name='client_sap_id',
-                                        identifier_value=data['client'], model_name='Nr sap klienta')
+        product = check_if_related_object_exists(request=request, model=Product, sap_id_name='product_sap_id',
+                                                 sap_id_value=request.POST.get('product'), model_name='Produkt')
+        client = check_if_related_object_exists(request=request, model=Client, sap_id_name='client_sap_id',
+                                                sap_id_value=request.POST.get('client'), model_name='Klient')
+        order_form = OrderForm(data=request.POST)
         if None in [product, client]:
-            return render(request, 'order_form.html', {'order_form': OrderForm(data=data), 'type': 'new'})
-
-        data['product'] = product.id
-        data['client'] = client.id
-        order_form = OrderForm(data=data)
+            return render(request, 'order_form.html', {'order_form': order_form, 'type': 'new'})
     else:
         order_form = OrderForm()
     return render_form_response(request=request, method='new', form=order_form, model_name='order')
@@ -34,29 +36,15 @@ def order_new(request):
 def order_update(request, order_id):
     order = Order.objects.get(id=order_id)
     if request.method == 'POST':
-        data = request.POST.copy()
-        product = check_if_object_exists(request=request, model=Product, identifier_name='product_sap_id',
-                                         identifier_value=data['product'], model_name='Kod produktu')
-        client = check_if_object_exists(request=request, model=Client, identifier_name='client_sap_id',
-                                        identifier_value=data['client'], model_name='Nr sap klienta')
+        product = check_if_related_object_exists(request=request, model=Product, sap_id_name='product_sap_id',
+                                                 sap_id_value=request.POST.get('product'), model_name='Produkt')
+        client = check_if_related_object_exists(request=request, model=Client, sap_id_name='client_sap_id',
+                                                sap_id_value=request.POST.get('client'), model_name='Klient')
+        order_form = OrderForm(data=request.POST, instance=order)
         if None in [product, client]:
-            order_form = OrderForm(data=data, instance=order)
             return render(request, 'order_form.html', {'order_form': order_form, 'type': 'update'})
-
-        data['product'] = product.id
-        data['client'] = client.id
-        order_form = OrderForm(data=data, instance=order)
     else:
-        data = {'product': order.product.product_sap_id,
-                'client': order.client.client_sap_id,
-                'order_sap_id': order.order_sap_id,
-                'date_of_production': order.date_of_production,
-                'quantity': order.quantity,
-                'external_diameter_reference': order.external_diameter_reference,
-                'internal_diameter_reference': order.internal_diameter_reference,
-                'length': order.length,
-                }
-        order_form = OrderForm(data=data, instance=order)
+        order_form = OrderForm(instance=order)
     return render_form_response(request=request, method='update', form=order_form, model_name='order')
 
 

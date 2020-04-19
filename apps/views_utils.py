@@ -63,10 +63,11 @@ def render_one_to_one_form_response(request, method, parent_form, child_form, pa
                                                         'type': method})
 
 
-def check_if_object_exists(request, model, identifier_name, identifier_value, model_name):
+def check_if_related_object_exists(request, model, sap_id_name, sap_id_value, model_name):
     try:
-        obj = model.objects.get(**{identifier_name: identifier_value})
+        obj = model.objects.get(**{sap_id_name: sap_id_value})
     except model.DoesNotExist:
-        messages.error(request, f"{model_name}: {identifier_value}  nie istnieje w bazie danych")
+        messages.error(request, f"Operacja anulowana. "
+                                f"{model_name} o numerze SAP: {sap_id_value}  nie istnieje w bazie danych")
         return None
     return obj

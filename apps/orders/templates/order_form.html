@@ -5,7 +5,8 @@
 <div class="card m-2 p-2 rounded" >
     <div class="header p-2 grey lighten-2">
         <h3 class="m-2">
-            {% if type == 'new' %} Dodaj nowe zlecenie produkcyjne {% else %} Zaktualizuj zlecenie produkcyjne {% endif %}
+            {% if type == 'new' %} Dodaj nowe zlecenie produkcyjne {% elif type == 'detail' %}
+                Dane zlecenia produkcyjnego {% else %} Zaktualizuj dane zlecenia produkcyjnego {% endif %}
         </h3>
     </div>
     <hr class="border border-default">
@@ -24,8 +25,12 @@
             </div>
         {% endfor %}
         <span>
-            <input type="submit" value="Zatwierdź" class="mt-3 btn btn-secondary">
-            <a href="{% url 'orders:orders_list' %}" class="ml-2 mt-3 btn btn-primary">Anuluj</a>
+            {% if type == 'detail' %}
+                <a href="{% url 'orders:orders_list' %}" class="mt-3 btn btn-primary">Wstecz</a>
+            {% else %}
+                <input type="submit" value="Zatwierdź" class="mt-3 btn btn-secondary">
+                <a href="{% url 'orders:orders_list' %}" class="ml-2 mt-3 btn btn-primary">Anuluj</a>
+            {% endif %}
         </span>
     </div>
     </form>
