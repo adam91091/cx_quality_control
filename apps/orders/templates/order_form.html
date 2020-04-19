@@ -11,6 +11,7 @@
     </div>
     <hr class="border border-default">
     <form method="post" class="mb-0 needs-validation" novalidate>
+    {{ order_form.media }}
     {% csrf_token %}
     <div class="form-group card-body mb-0">
         {% for field in order_form %}

@@ -1,15 +1,14 @@
+import datetime as dt
+
 from django import forms
 from django.forms import ModelForm
 
-from apps.clients.models import Client
-from apps.forms_utils import NUM_STYLE, INT_STYLE, BASIC_REQ_STYLE, BASIC_STYLE, BASIC_NO_HINTS_STYLE, SAP_STYLE, \
-    NUM_STYLE_NO_REQ, DATE_STYLE
-from apps.orders.models import Order, MeasurementReport, Measurement
-from apps.products.models import Product
+from bootstrap_datepicker_plus import DatePickerInput
 
-# Zadania na niedzielę:
-# dodac datetimepicker
-# customizowac error z datefield od backendu
+from apps.forms_utils import SAP_STYLE, NUM_STYLE_NO_REQ, BASIC_NO_HINTS_STYLE
+from apps.orders.models import Order
+
+STRFTIME_STRING = '%Y-%m-%d 00:00:00'
 
 
 class OrderForm(ModelForm):
@@ -42,7 +41,8 @@ class OrderForm(ModelForm):
         }
         widgets = {
             'order_sap_id': forms.TextInput(attrs=SAP_STYLE),
-            'date_of_production': forms.DateInput(attrs=DATE_STYLE),
+            'date_of_production': DatePickerInput(options={'minDate': (dt.datetime.today()).strftime(STRFTIME_STRING),
+                                                           'showClear': False}, attrs=BASIC_NO_HINTS_STYLE),
             'product': forms.TextInput(attrs=SAP_STYLE),
             'client': forms.TextInput(attrs=SAP_STYLE),
             'internal_diameter_reference': forms.TextInput(attrs=NUM_STYLE_NO_REQ),

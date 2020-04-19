@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     # frontend tools
     'bootstrap4',
     'bootstrap_modal_forms',
+    'bootstrap_datepicker_plus',
     # apps
     'apps.users',
     'apps.clients',
