@@ -40,10 +40,12 @@ INSTALLED_APPS = [
     # frontend tools
     'bootstrap4',
     'bootstrap_modal_forms',
+    'bootstrap_datepicker_plus',
     # apps
     'apps.users',
     'apps.clients',
     'apps.products',
+    'apps.orders',
 ]
 
 MIDDLEWARE = [
@@ -131,13 +133,11 @@ AUTH_USER_MODEL = 'users.CxUser'
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pl'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Warsaw'
 
 USE_I18N = True
-
-USE_L10N = True
 
 USE_TZ = True
 

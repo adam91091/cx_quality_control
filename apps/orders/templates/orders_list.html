@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+    <a href="{% url "orders:order_new" %}" class="btn btn-secondary mb-2">Dodaj nowe zlecenie produkcyjne</a>
+    <table class="table table-bordered">
+  <thead>
+    <tr class="d-flex">
+        <th class="col-2">Klient</th>
+        <th class="col-1">Nr partii</th>
+        <th class="col-1">Kod produktu</th>
+        <th class="col-2">Data produkcji</th>
+        <th class="col-2">Wymiary nominalne</th>
+        <th class="col-1">Status</th>
+        <th class="col-3">Akcje</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for order in orders %}
+    <tr class="d-flex">
+      <td class="col-sm-2">{{order.client.client_name}}</td>
+      <td class="col-sm-1">{{order.order_sap_id}}</td>
+      <td class="col-sm-1">{{order.product.product_sap_id}}</td>
+      <td class="col-sm-2">{{order.date_of_production}}</td>
+      <td class="col-sm-2">{{order.product.product_sap_id}}</td>
+      <td class="col-sm-1">{{order.status}}</td>
+    <td class="col-sm-3">
+        <a href="{% url "orders:order_detail" order.id %}" class="btn btn-secondary p-1 m-0">Szczegóły</a>
+        <a href="{% url "orders:order_update" order.id %}" class="btn btn-secondary p-1 m-0">Edytuj</a>
+        <div class="modal fade" tabindex="-1" role="dialog" id="modal">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content"></div>
+            </div>
+        </div>
+        <button id="{{ order.id }}" class="btn btn-secondary p-1 m-0" type="button" name="button">Usuń </button>
+        <script type="text/javascript">
+          $(function () {
+            $("#{{ order.id }}").modalForm({formURL: "{% url 'orders:order_delete' order.id %}"});
+          });
+    </script>
+    </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -3,7 +3,7 @@ from django.core.validators import RegexValidator
 REGEXPS = {
     'common': {'sap_id': '^([0-9]{6})$',
                'num_field': '^([0-9]*|[0-9]*\.\d+)$',
-               'int_field': '^[0-9]*$'},
+               'int_field': '^[0-9]*$', },
 }
 
 

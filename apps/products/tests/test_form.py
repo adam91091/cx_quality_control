@@ -1,11 +1,11 @@
 from django.test import TestCase
 
 from apps.products.forms import ProductForm, SpecificationForm
-from apps.products.models import Product, Specification
+from apps.products.models import Specification
 from apps.products.tests.factories import ProductFactory, SpecificationFactory
 
 
-class ClientModelTest(TestCase):
+class ProductFormTest(TestCase):
     def setUp(self) -> None:
         self.product = ProductFactory.create()
         self.spec = SpecificationFactory.create(product=self.product)
