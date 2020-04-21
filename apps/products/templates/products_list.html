@@ -24,10 +24,10 @@
             <div class="modal-content"></div>
             </div>
         </div>
-        <button class="del-btn btn btn-secondary p-1 m-0" type="button" name="button">Usuń </button>
+        <button id="{{ product.id }}" class="btn btn-secondary p-1 m-0" type="button" name="button">Usuń </button>
         <script type="text/javascript">
           $(function () {
-            $(".del-btn").modalForm({formURL: "{% url 'products:product_delete' product.id %}"});
+            $("#{{ product.id }}").modalForm({formURL: "{% url 'products:product_delete' product.id %}"});
           });
     </script>
     </td>
