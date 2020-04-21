@@ -4,7 +4,7 @@ from .factories import ClientFactory
 from apps.clients.forms import ClientForm
 
 
-class ClientModelTest(TestCase):
+class ClientFormTest(TestCase):
     def setUp(self) -> None:
         self.client = ClientFactory()
         self.valid_client_form_data = {'client_sap_id': '765432', 'client_name': 'test_client'}
