@@ -15,8 +15,6 @@ class OrderForm(ModelForm):
     validation_hints = {'order_sap_id': "Numer partii musi się składać z 6 cyfr oraz nie może być polem pustym",
                         'product': "Kod produktu musi się składać z 6 cyfr oraz nie może być polem pustym",
                         'client': "Numer SAP klienta musi się składać z 6 cyfr oraz nie może być polem pustym",
-                        'date_of_production': "Data produkcji musi być w formacie dd.mm.rrrr oraz nie może być "
-                                              "wcześniejsa od dzisiejszej"
                         }
 
     def __init__(self, read_only=False, *args, **kwargs):
