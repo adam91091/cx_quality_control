@@ -2,11 +2,12 @@ import datetime as dt
 
 from django import forms
 from django.forms import ModelForm
+from django.forms.models import inlineformset_factory
 
 from bootstrap_datepicker_plus import DatePickerInput
 
 from apps.forms_utils import SAP_STYLE, NUM_STYLE_NO_REQ, BASIC_NO_HINTS_STYLE
-from apps.orders.models import Order
+from apps.orders.models import Order, MeasurementReport, Measurement
 
 STRFTIME_STRING = '%Y-%m-%d 00:00:00'
 
@@ -56,8 +57,58 @@ class OrderForm(ModelForm):
 
 
 class MeasurementReportForm(ModelForm):
-    pass
+    class Meta:
+        model = MeasurementReport
+        exclude = ('order', )
+        labels = {
+            'author': "Kontrolował",
+            'date_of_control': "Data",
+        }
+        widgets = {
+            'author': forms.TextInput(attrs=BASIC_NO_HINTS_STYLE),
+            'date_of_control': DatePickerInput(options={'minDate': (dt.datetime.today()).strftime(STRFTIME_STRING),
+                                                        'showClear': False, 'locale': 'pl', },
+                                               attrs=BASIC_NO_HINTS_STYLE),
+        }
 
 
 class MeasurementForm(ModelForm):
-    pass
+    class Meta:
+        model = Measurement
+        exclude = ('measurement_report', )
+        labels = {
+            'pallet_number': "Paleta nr",
+            'internal_diameter_tolerance_top': "Góra",
+            'internal_diameter_target': "Środek",
+            'internal_diameter_tolerance_bottom': "Dół",
+            'external_diameter_tolerance_top': "Góra",
+            'external_diameter_target': "Środek",
+            'external_diameter_tolerance_bottom': "Dół",
+            'length_tolerance_top': "Góra",
+            'length_target': "Środek",
+            'length_tolerance_bottom': "Dół",
+            'flat_crush_resistance_target': "Kontrola wytrzymałości",
+            'moisture_content_target': "Wilgotność",
+            'weight': "Waga",
+            'remarks': 'Uwagi, klejenie, pakowanie',
+        }
+        widgets = {
+            'pallet_number': forms.TextInput(attrs=BASIC_NO_HINTS_STYLE),
+            'internal_diameter_tolerance_top': forms.TextInput(attrs=BASIC_NO_HINTS_STYLE),
+            'internal_diameter_target': forms.TextInput(attrs=BASIC_NO_HINTS_STYLE),
+            'internal_diameter_tolerance_bottom': forms.TextInput(attrs=BASIC_NO_HINTS_STYLE),
+            'external_diameter_tolerance_top': forms.TextInput(attrs=BASIC_NO_HINTS_STYLE),
+            'external_diameter_target': forms.TextInput(attrs=BASIC_NO_HINTS_STYLE),
+            'external_diameter_tolerance_bottom': forms.TextInput(attrs=BASIC_NO_HINTS_STYLE),
+            'length_tolerance_top': forms.TextInput(attrs=BASIC_NO_HINTS_STYLE),
+            'length_target': forms.TextInput(attrs=BASIC_NO_HINTS_STYLE),
+            'length_tolerance_bottom': forms.TextInput(attrs=BASIC_NO_HINTS_STYLE),
+            'flat_crush_resistance_target': forms.TextInput(attrs=BASIC_NO_HINTS_STYLE),
+            'moisture_content_target': forms.TextInput(attrs=BASIC_NO_HINTS_STYLE),
+            'weight': forms.TextInput(attrs=BASIC_NO_HINTS_STYLE),
+            'remarks': forms.TextInput(attrs=BASIC_NO_HINTS_STYLE),
+        }
+
+
+MeasurementFormSet = inlineformset_factory(parent_model=MeasurementReport, model=Measurement,
+                                           form=MeasurementForm, extra=1)

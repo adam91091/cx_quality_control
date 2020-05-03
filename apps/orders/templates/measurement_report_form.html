@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load filters %}
+{% block content %}
+<div class="card m-2 p-2 rounded" >
+    <div class="header p-2 grey lighten-2">
+        <h3 class="m-2">
+            {% if type == 'new' %} Dodaj nowy raport pomiarowy {% elif type == 'detail' %}
+                Dane raportu pomiarowego {% else %} Zaktualizuj dane raportu pomiarowego {% endif %}
+        </h3>
+    </div>
+    <hr class="border border-default">
+    <form method="post" class="form-inline">{% csrf_token %}
+        <!-- Measurements table-->
+        <table class="table">
+            {{ measurement_formset.management_form }}
+            <thead>
+            <tr>
+                    {% for measurement_form in measurement_formset.forms %}
+                        {% if forloop.first %}
+                            <td colspan="2">{{ measurement_form.pallet_number.label }}</td>
+                        {% endif %}
+                        <td>{{ measurement_form.pallet_number }}</td>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    {% for measurement_form in measurement_formset.forms %}
+                        {% if forloop.first %}
+                            <td rowspan="3">Kontrola średnicy wewnętrznej</td>
+                            <td>{{ measurement_form.internal_diameter_tolerance_top.label }}</td>
+                        {% endif %}
+                        <td>{{ measurement_form.internal_diameter_tolerance_top }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    {% for measurement_form in measurement_formset.forms %}
+                        {% if forloop.first %}
+                            <td>{{ measurement_form.internal_diameter_target.label }}</td>
+                        {% endif %}
+                        <td>{{ measurement_form.internal_diameter_target }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    {% for measurement_form in measurement_formset.forms %}
+                        {% if forloop.first %}
+                            <td>{{ measurement_form.internal_diameter_tolerance_bottom.label }}</td>
+                        {% endif %}
+                        <td>{{ measurement_form.internal_diameter_tolerance_bottom }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    {% for measurement_form in measurement_formset.forms %}
+                        {% if forloop.first %}
+                            <td rowspan="3">Kontrola średnicy zewnętrznej</td>
+                            <td class="col-sm-1">{{ measurement_form.external_diameter_tolerance_top.label }}</td>
+                        {% endif %}
+                        <td class="col-sm-1">{{ measurement_form.external_diameter_tolerance_top }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    {% for measurement_form in measurement_formset.forms %}
+                        {% if forloop.first %}
+                            <td>{{ measurement_form.external_diameter_target.label }}</td>
+                        {% endif %}
+                        <td>{{ measurement_form.external_diameter_target }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    {% for measurement_form in measurement_formset.forms %}
+                        {% if forloop.first %}
+                            <td>{{ measurement_form.external_diameter_tolerance_bottom.label }}</td>
+                        {% endif %}
+                        <td>{{ measurement_form.external_diameter_tolerance_bottom }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    {% for measurement_form in measurement_formset.forms %}
+                        {% if forloop.first %}
+                            <td rowspan="3">Kontrola długości:</td>
+                            <td class="col-sm-1">{{ measurement_form.length_tolerance_top.label }}</td>
+                        {% endif %}
+                        <td class="col-sm-1">{{ measurement_form.length_tolerance_top }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    {% for measurement_form in measurement_formset.forms %}
+                        {% if forloop.first %}
+                            <td>{{ measurement_form.length_target.label }}</td>
+                        {% endif %}
+                        <td>{{ measurement_form.length_target }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    {% for measurement_form in measurement_formset.forms %}
+                        {% if forloop.first %}
+                            <td>{{ measurement_form.length_tolerance_bottom.label }}</td>
+                        {% endif %}
+                        <td>{{ measurement_form.length_tolerance_bottom }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    {% for measurement_form in measurement_formset.forms %}
+                        {% if forloop.first %}
+                            <td>{{ measurement_form.flat_crush_resistance_target.label }}</td>
+                            <td>N/100mm</td>
+                        {% endif %}
+                        <td>{{ measurement_form.flat_crush_resistance_target }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    {% for measurement_form in measurement_formset.forms %}
+                        {% if forloop.first %}
+                            <td>{{ measurement_form.moisture_content_target.label }}</td>
+                            <td>%</td>
+                        {% endif %}
+                        <td>{{ measurement_form.moisture_content_target }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    {% for measurement_form in measurement_formset.forms %}
+                        {% if forloop.first %}
+                            <td>{{ measurement_form.weight.label }}</td>
+                            <td>KG</td>
+                        {% endif %}
+                        <td>{{ measurement_form.weight }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    {% for measurement_form in measurement_formset.forms %}
+                        {% if forloop.first %}
+                            <td colspan="2">{{ measurement_form.remarks.label }}</td>
+                        {% endif %}
+                        <td>{{ measurement_form.remarks }}</td>
+                    {% endfor %}
+                </tr>
+
+            </tbody>
+        </table>
+        <!-- Measurement report form table-->
+        {{ measurement_report_form.media }}
+        <table>
+            <tr class="d-flex">
+                <td class="col-sm-8">
+                    <div class="form-group">
+                        <label class="control-label" for="author">{{ measurement_report_form.author.label }}:</label>
+                        <div class="ml-2 pl-2">
+                            {{ measurement_report_form.author }}
+                        </div>
+                    </div>
+                </td>
+                <td class="col-sm-8">
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="date_of_control">{{ measurement_report_form.date_of_control.label }}:</label>
+                        <div>
+                            {{ measurement_report_form.date_of_control }}
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect
 
-from .forms import OrderForm
+from .forms import OrderForm, MeasurementFormSet, MeasurementReportForm
 from .models import Order
 from ..clients.models import Client
 from ..products.models import Product
@@ -56,3 +56,14 @@ def order_delete(request, order_id):
         return redirect('orders:orders_list')
     else:
         return render(request, 'order_confirm_delete.html', {'order': order})
+
+
+def measurement_report_new(request, order_id):
+    order = Order.objects.get(id=order_id)
+    if request.method == 'POST':
+        pass
+    else:
+        measurement_report_form = MeasurementReportForm()
+        measurement_formset = MeasurementFormSet()
+        return render(request, 'measurement_report_form.html', {'measurement_formset': measurement_formset,
+                                                                'measurement_report_form': measurement_report_form})
