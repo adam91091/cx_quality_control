@@ -32,7 +32,7 @@
             </tr>
         </table>
         <!-- Measurements table-->
-        <table class="table">
+        <table class="table" id="measurements-table">
             {{ measurement_formset.management_form }}
             <thead>
             <tr>
@@ -43,7 +43,7 @@
                         {% if forloop.first %}
                             <td colspan="2">{{ measurement_form.pallet_number.label }}</td>
                         {% endif %}
-                        <td>{{ measurement_form.pallet_number }}</td>
+                        <td id="0" class="to-copy">{{ measurement_form.pallet_number }}</td>
                     {% endfor %}
                 </tr>
             </thead>
@@ -54,7 +54,11 @@
                             <td rowspan="3">Kontrola średnicy wewnętrznej</td>
                             <td>{{ measurement_form.internal_diameter_tolerance_top.label }}</td>
                         {% endif %}
-                        <td>{{ measurement_form.internal_diameter_tolerance_top }}</td>
+                        {% if forloop.last %}
+                            <td id="1" class="to-copy">{{ measurement_form.internal_diameter_tolerance_top }}</td>
+                        {% else %}
+                            <td>{{ measurement_form.internal_diameter_tolerance_top }}</td>
+                        {% endif %}
                     {% endfor %}
                 </tr>
                 <tr>
@@ -62,7 +66,11 @@
                         {% if forloop.first %}
                             <td>{{ measurement_form.internal_diameter_target.label }}</td>
                         {% endif %}
-                        <td>{{ measurement_form.internal_diameter_target }}</td>
+                        {% if forloop.last %}
+                            <td id="2" class="to-copy">{{ measurement_form.internal_diameter_target }}</td>
+                        {% else %}
+                            <td>{{ measurement_form.internal_diameter_target }}</td>
+                        {% endif %}
                     {% endfor %}
                 </tr>
                 <tr>
@@ -70,7 +78,11 @@
                         {% if forloop.first %}
                             <td>{{ measurement_form.internal_diameter_tolerance_bottom.label }}</td>
                         {% endif %}
-                        <td>{{ measurement_form.internal_diameter_tolerance_bottom }}</td>
+                        {% if forloop.last %}
+                            <td id="3" class="to-copy">{{ measurement_form.internal_diameter_tolerance_bottom }}</td>
+                        {% else %}
+                            <td>{{ measurement_form.internal_diameter_tolerance_bottom }}</td>
+                        {% endif %}
                     {% endfor %}
                 </tr>
                 <tr>
@@ -79,7 +91,11 @@
                             <td rowspan="3">Kontrola średnicy zewnętrznej</td>
                             <td class="col-sm-1">{{ measurement_form.external_diameter_tolerance_top.label }}</td>
                         {% endif %}
-                        <td class="col-sm-1">{{ measurement_form.external_diameter_tolerance_top }}</td>
+                        {% if forloop.last %}
+                            <td id="4" class="to-copy">{{ measurement_form.external_diameter_tolerance_top }}</td>
+                        {% else %}
+                            <td>{{ measurement_form.external_diameter_tolerance_top }}</td>
+                        {% endif %}
                     {% endfor %}
                 </tr>
                 <tr>
@@ -87,7 +103,11 @@
                         {% if forloop.first %}
                             <td>{{ measurement_form.external_diameter_target.label }}</td>
                         {% endif %}
-                        <td>{{ measurement_form.external_diameter_target }}</td>
+                        {% if forloop.last %}
+                            <td id="5" class="to-copy">{{ measurement_form.external_diameter_target }}</td>
+                        {% else %}
+                            <td>{{ measurement_form.external_diameter_target }}</td>
+                        {% endif %}
                     {% endfor %}
                 </tr>
                 <tr>
@@ -95,7 +115,11 @@
                         {% if forloop.first %}
                             <td>{{ measurement_form.external_diameter_tolerance_bottom.label }}</td>
                         {% endif %}
-                        <td>{{ measurement_form.external_diameter_tolerance_bottom }}</td>
+                        {% if forloop.last %}
+                            <td id="6" class="to-copy">{{ measurement_form.external_diameter_tolerance_bottom }}</td>
+                        {% else %}
+                            <td>{{ measurement_form.external_diameter_tolerance_bottom }}</td>
+                        {% endif %}
                     {% endfor %}
                 </tr>
                 <tr>
@@ -104,7 +128,11 @@
                             <td rowspan="3">Kontrola długości:</td>
                             <td class="col-sm-1">{{ measurement_form.length_tolerance_top.label }}</td>
                         {% endif %}
-                        <td class="col-sm-1">{{ measurement_form.length_tolerance_top }}</td>
+                        {% if forloop.last %}
+                            <td id="7" class="to-copy">{{ measurement_form.length_tolerance_top }}</td>
+                        {% else %}
+                            <td>{{ measurement_form.length_tolerance_top }}</td>
+                        {% endif %}
                     {% endfor %}
                 </tr>
                 <tr>
@@ -112,7 +140,11 @@
                         {% if forloop.first %}
                             <td>{{ measurement_form.length_target.label }}</td>
                         {% endif %}
-                        <td>{{ measurement_form.length_target }}</td>
+                        {% if forloop.last %}
+                            <td id="8" class="to-copy">{{ measurement_form.length_target }}</td>
+                        {% else %}
+                            <td>{{ measurement_form.length_target }}</td>
+                        {% endif %}
                     {% endfor %}
                 </tr>
                 <tr>
@@ -120,7 +152,11 @@
                         {% if forloop.first %}
                             <td>{{ measurement_form.length_tolerance_bottom.label }}</td>
                         {% endif %}
-                        <td>{{ measurement_form.length_tolerance_bottom }}</td>
+                        {% if forloop.last %}
+                            <td id="9" class="to-copy">{{ measurement_form.length_tolerance_bottom }}</td>
+                        {% else %}
+                            <td>{{ measurement_form.length_tolerance_bottom }}</td>
+                        {% endif %}
                     {% endfor %}
                 </tr>
                 <tr>
@@ -129,7 +165,11 @@
                             <td>{{ measurement_form.flat_crush_resistance_target.label }}</td>
                             <td>N/100mm</td>
                         {% endif %}
-                        <td>{{ measurement_form.flat_crush_resistance_target }}</td>
+                        {% if forloop.last %}
+                            <td id="10" class="to-copy">{{ measurement_form.flat_crush_resistance_target }}</td>
+                        {% else %}
+                            <td>{{ measurement_form.flat_crush_resistance_target }}</td>
+                        {% endif %}
                     {% endfor %}
                 </tr>
                 <tr>
@@ -138,7 +178,11 @@
                             <td>{{ measurement_form.moisture_content_target.label }}</td>
                             <td>%</td>
                         {% endif %}
-                        <td>{{ measurement_form.moisture_content_target }}</td>
+                        {% if forloop.last %}
+                            <td id="11" class="to-copy">{{ measurement_form.moisture_content_target }}</td>
+                        {% else %}
+                            <td>{{ measurement_form.moisture_content_target }}</td>
+                        {% endif %}
                     {% endfor %}
                 </tr>
                 <tr>
@@ -147,7 +191,11 @@
                             <td>{{ measurement_form.weight.label }}</td>
                             <td>KG</td>
                         {% endif %}
-                        <td>{{ measurement_form.weight }}</td>
+                        {% if forloop.last %}
+                            <td id="12" class="to-copy">{{ measurement_form.weight }}</td>
+                        {% else %}
+                            <td>{{ measurement_form.weight }}</td>
+                        {% endif %}
                     {% endfor %}
                 </tr>
                 <tr>
@@ -155,7 +203,11 @@
                         {% if forloop.first %}
                             <td colspan="2">{{ measurement_form.remarks.label }}</td>
                         {% endif %}
-                        <td>{{ measurement_form.remarks }}</td>
+                        {% if forloop.last %}
+                            <td id="13" class="to-copy">{{ measurement_form.remarks }}</td>
+                        {% else %}
+                            <td>{{ measurement_form.remarks }}</td>
+                        {% endif %}
                     {% endfor %}
                 </tr>
 
@@ -189,6 +241,7 @@
         <a href="{% url 'orders:orders_list' %}" class="ml-2 mt-3 btn btn-primary">Anuluj</a>
     </span>
     </form>
+    <button id="add-form-row">Dodaj nowy pomiar</button>
 </div>
-
+<script type="text/javascript" src="{% static "measurementReportReloading.js" %}"></script>
 {% endblock %}

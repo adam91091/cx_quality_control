@@ -1,8 +1,13 @@
-from django.contrib import messages
-from django.shortcuts import render, redirect
+import json
 
-from .forms import OrderForm, MeasurementFormSet, MeasurementReportForm
-from .models import Order
+from django.contrib import messages
+from django.forms import inlineformset_factory
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render, redirect
+from django.template import Context, loader
+
+from .forms import OrderForm, MeasurementFormSet, MeasurementReportForm, MeasurementForm
+from .models import Order, Measurement, MeasurementReport
 from ..clients.models import Client
 from ..products.models import Product
 from ..views_utils import render_form_response, VIEW_MSG, check_if_related_object_exists, add_error_messages
@@ -70,7 +75,7 @@ def measurement_report_new(request, order_id):
         measurement_formset = MeasurementFormSet()
     return _render_measurement_form_response(request=request, order_form=order_form,
                                              measurement_report_form=measurement_report_form,
-                                             measurement_formset=measurement_formset, method='new')
+                                             measurement_formset=measurement_formset, method='new', order_id=order_id)
 
 
 def measurement_report_update(request, order_id):
@@ -87,10 +92,12 @@ def measurement_report_update(request, order_id):
                                                  queryset=order.measurement_report.measurements.all())
     return _render_measurement_form_response(request=request, order_form=order_form,
                                              measurement_report_form=measurement_report_form,
-                                             measurement_formset=measurement_formset, method='update')
+                                             measurement_formset=measurement_formset, method='update',
+                                             order_id=order_id)
 
 
-def _render_measurement_form_response(request, order_form, measurement_report_form, measurement_formset, method):
+def _render_measurement_form_response(request, order_form, measurement_report_form, measurement_formset, method,
+                                      order_id):
     if order_form.is_valid() and measurement_report_form.is_valid():
         if all(measurement_form.is_valid() for measurement_form in measurement_formset):
             order = order_form.save(commit=False)
@@ -113,4 +120,5 @@ def _render_measurement_form_response(request, order_form, measurement_report_fo
 
     return render(request, 'measurement_report_form.html', {'order_form': order_form,
                                                             'measurement_report_form': measurement_report_form,
-                                                            'measurement_formset': measurement_formset})
+                                                            'measurement_formset': measurement_formset,
+                                                            'order_id': order_id})
