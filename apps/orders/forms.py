@@ -18,12 +18,17 @@ class OrderForm(ModelForm):
                         'client': "Numer SAP klienta musi się składać z 6 cyfr oraz nie może być polem pustym",
                         }
 
-    def __init__(self, read_only=False, *args, **kwargs):
+    def __init__(self, read_only=False, measurement_report=False, *args, **kwargs):
         super(OrderForm, self).__init__(*args, **kwargs)
         if read_only:
             for field in self.fields.values():
                 field.widget.attrs['readonly'] = True
                 field.widget.attrs['disabled'] = 'true'
+        elif measurement_report:
+            for field in self.fields:
+                if field in ['product', 'client']:
+                    self.fields[field].widget.attrs['readonly'] = True
+                    # self.fields[field].widget.attrs['disabled'] = 'true'
 
     class Meta:
         model = Order
@@ -75,7 +80,7 @@ class MeasurementReportForm(ModelForm):
 class MeasurementForm(ModelForm):
     class Meta:
         model = Measurement
-        exclude = ('measurement_report', )
+        exclude = ('measurement_report', 'id')
         labels = {
             'pallet_number': "Paleta nr",
             'internal_diameter_tolerance_top': "Góra",
@@ -111,4 +116,4 @@ class MeasurementForm(ModelForm):
 
 
 MeasurementFormSet = inlineformset_factory(parent_model=MeasurementReport, model=Measurement,
-                                           form=MeasurementForm, extra=1)
+                                           form=MeasurementForm, extra=0, min_num=1)

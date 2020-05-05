@@ -1,3 +1,5 @@
+import re
+
 from django.contrib import messages
 from django.shortcuts import redirect, render
 
@@ -21,6 +23,12 @@ VIEW_MSG = {'client': {'new_success': "Utworzono nowego klienta",
                       'update_error': "Nie zaktualizowano danych zlecenia produkcyjnego. "
                                       "Wystąpiły następujące błędy formularza:",
                       'delete': "Zlecenie produkcyjne zostało usunięte", },
+            'measurement_report': {'new_success': "Dodano raport pomiarowy",
+                      'new_error': "Raport pomiarowy nie został dodany. "
+                                   "Wystąpiły następujące błędy formularza:",
+                      'update_success': "Zaktualizowano raport pomiarowy",
+                      'update_error': "Nie zaktualizowano raportu pomiarowego. "
+                                      "Wystąpiły następujące błędy formularza:", },
             }
 
 
@@ -31,7 +39,9 @@ def add_error_messages(request, main_msg, form, secondary_forms=None):
     if secondary_forms is not None:
         for form in secondary_forms:
             for err_msg in form.errors:
-                messages.error(request, form.errors[err_msg])
+                cleanr = re.compile('<.*?>')
+                msg = re.sub(cleanr, '', f"{err_msg}: {form.errors[err_msg]}")
+                messages.error(request, msg)
 
 
 def render_form_response(request, method, form, model_name):

@@ -23,9 +23,13 @@
       <td class="col-sm-2">{{order.product.product_sap_id}}</td>
       <td class="col-sm-1">{{order.status}}</td>
     <td class="col-sm-3">
-        <a href="{% url "orders:order_detail" order.id %}" class="btn btn-secondary p-1 m-0">Szczegóły</a>
+        <a href="{% url "orders:order_detail" order.id %}" class="btn btn-secondary p-1 m-0">Info</a>
         <a href="{% url "orders:order_update" order.id %}" class="btn btn-secondary p-1 m-0">Edytuj</a>
-        <a href="{% url "orders:measurement_report_new" order.id %}" class="btn btn-secondary p-1 m-0">Raport</a>
+        {% if order.status == 'Started' %}
+            <a href="{% url "orders:measurement_report_new" order.id %}" class="btn btn-secondary p-1 m-0">Dodaj raport pomiarowy</a>
+        {% else %}
+            <a href="{% url "orders:measurement_report_update" order.id %}" class="btn btn-secondary p-1 m-0">Edytuj raport pomiarowy</a>
+        {% endif %}
         <div class="modal fade" tabindex="-1" role="dialog" id="modal">
           <div class="modal-dialog" role="document">
             <div class="modal-content"></div>
