@@ -24,11 +24,11 @@ VIEW_MSG = {'client': {'new_success': "Utworzono nowego klienta",
                                       "Wystąpiły następujące błędy formularza:",
                       'delete': "Zlecenie produkcyjne zostało usunięte", },
             'measurement_report': {'new_success': "Dodano raport pomiarowy",
-                      'new_error': "Raport pomiarowy nie został dodany. "
-                                   "Wystąpiły następujące błędy formularza:",
-                      'update_success': "Zaktualizowano raport pomiarowy",
-                      'update_error': "Nie zaktualizowano raportu pomiarowego. "
-                                      "Wystąpiły następujące błędy formularza:", },
+                                   'new_error': "Raport pomiarowy nie został dodany. "
+                                                "Wystąpiły następujące błędy formularza:",
+                                   'update_success': "Zaktualizowano raport pomiarowy",
+                                   'update_error': "Nie zaktualizowano raportu pomiarowego. "
+                                                   "Wystąpiły następujące błędy formularza:", },
             }
 
 

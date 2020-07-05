@@ -2,37 +2,39 @@
 {% load static %}
 {% load filters %}
 {% block content %}
-<div class="card m-2 p-2 rounded" >
-    <div class="header p-2 grey lighten-2">
-        <h3 class="m-2">
-            {% if type == 'new' %} Dodaj nowy raport pomiarowy {% elif type == 'detail' %}
-                Dane raportu pomiarowego {% else %} Zaktualizuj dane raportu pomiarowego {% endif %}
-        </h3>
-    </div>
+<div class="card rounded">
+    <h3 class="m-3">
+        {% if type == 'new' %} Dodaj nowy raport pomiarowy {% elif type == 'detail' %}
+            Dane raportu pomiarowego {% else %} Zaktualizuj dane raportu pomiarowego {% endif %}
+    </h3>
     <hr class="border border-default">
-    <form method="post" class="form-inline">{% csrf_token %}
+    <form method="post">{% csrf_token %}
     <div class="form-group card-body mb-0">
-        <!-- Order data table-->
-        <table class="table">
-            <tr class="d-flex">
-                <td>{{ order_form.client.label }}</td>
-                <td>{{ order_form.client }}</td>
-            </tr>
-            <tr class="d-flex">
-                <td>{{ order_form.product.label }}</td>
-                <td>{{ order_form.product }}</td>
-            </tr>
-            <tr class="d-flex">
-                <td>{{ order_form.order_sap_id.label }}</td>
-                <td>{{ order_form.order_sap_id }}</td>
-            </tr>
-            <tr class="d-flex">
-                <td>{{ order_form.date_of_production.label }}</td>
-                <td>{{ order_form.date_of_production }}</td>
-            </tr>
-        </table>
+    <!-- Order data-->
+    <div class="row">
+        <div class="col md-3">
+                {{ order_form.client.label_tag }}
+                {{ order_form.client }}
+        </div>
+        <div class="col md-3">
+                {{ order_form.product.label_tag }}
+                {{ order_form.product }}
+        </div>
+        <div class="col md-3">
+                {{ order_form.order_sap_id.label_tag }}
+                {{ order_form.order_sap_id }}
+        </div>
+        <div class="col md-3">
+            {{ order_form.date_of_production.label_tag }}
+            {{ order_form.date_of_production }}
+        </div>
+    </div>
+    <h3 class="m-1 mt-3 mb-2">Dane pomiarowe</h3>
         <!-- Measurements table-->
-        <table class="table" id="measurements-table">
+    <div class="table-responsive-md">
+
+    </div>
+        <table class="table table-bordered" id="measurements-table">
             {{ measurement_formset.management_form }}
             <thead>
             <tr>
@@ -210,38 +212,30 @@
                         {% endif %}
                     {% endfor %}
                 </tr>
-
             </tbody>
         </table>
-        <!-- Measurement report form table-->
+        <button id="add-form-row" class="m-2 btn btn-secondary">Dodaj nowy pomiar</button>
+        <hr class="border border-default">
+        <!-- Measurement report form data-->
         {{ measurement_report_form.media }}
-        <table>
-            <tr class="d-flex">
-                <td class="col-sm-8">
-                    <div class="form-group">
-                        <label class="control-label" for="author">{{ measurement_report_form.author.label }}:</label>
-                        <div class="ml-2 pl-2">
-                            {{ measurement_report_form.author }}
-                        </div>
-                    </div>
-                </td>
-                <td class="col-sm-8">
-                    <div class="form-group">
-                        <label class="control-label col-sm-2" for="date_of_control">{{ measurement_report_form.date_of_control.label }}:</label>
-                        <div>
-                            {{ measurement_report_form.date_of_control }}
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
+        <div class="row">
+            <div class="col md-3">
+                {{ measurement_report_form.author.label_tag }}
+                {{ measurement_report_form.author }}
+            </div>
+            <div class="col md-3">
+                {{ measurement_report_form.date_of_control.label_tag }}
+                {{ measurement_report_form.date_of_control }}
+            </div>
+            <div class="col md-3"></div>
+            <div class="col md-3"></div>
+        </div>
     <span>
         <input type="submit" value="Zatwierdź" class="mt-3 btn btn-secondary">
         <a href="{% url 'orders:orders_list' %}" class="ml-2 mt-3 btn btn-primary">Anuluj</a>
     </span>
+    </div>
     </form>
-    <button id="add-form-row">Dodaj nowy pomiar</button>
 </div>
 <script type="text/javascript" src="{% static "measurementReportReloading.js" %}"></script>
 {% endblock %}
