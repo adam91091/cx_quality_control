@@ -97,7 +97,7 @@ if os.getenv('TRAVIS', None):
 else:
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.mysql',
+            'ENGINE': 'mysql.connector.django',
             'NAME': 'cx_quality_control_db',
             'USER': 'cx_quality_control_user',
             'PASSWORD': 'password1!A',
