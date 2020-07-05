@@ -1,6 +1,6 @@
 language: python
 python:
-  - "3.6"
+  - "3.7"
 
 services:
   - mysql
@@ -24,5 +24,5 @@ cache:
   - directories:
     # Cache the virtualenv packages folder so virtualenv doesn't waste
     # time installing locally cached packages
-    - '/home/travis/virtualenv/python3.6.3/lib/python3.6/site-packages'
+    - '/home/travis/virtualenv/python3.7.5/lib/python3.7/site-packages'
 
