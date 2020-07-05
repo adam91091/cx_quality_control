@@ -1,13 +1,9 @@
-import json
-
 from django.contrib import messages
-from django.forms import inlineformset_factory
-from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
-from django.template import Context, loader
 
 from .forms import OrderForm, MeasurementFormSet, MeasurementReportForm, MeasurementForm
 from .models import Order, Measurement, MeasurementReport
+
 from ..clients.models import Client
 from ..products.models import Product
 from ..views_utils import render_form_response, VIEW_MSG, check_if_related_object_exists, add_error_messages
