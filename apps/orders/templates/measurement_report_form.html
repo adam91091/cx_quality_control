@@ -115,213 +115,107 @@
                     </tr>
                 </table>
             {% endif %}
-        </div>
-        <div class="col-md-10">
-            <div id="measurement-formset-unique"
-                 style="overflow-x: auto; white-space: nowrap;">
-                <div id="measurement-form-last" style=" display: inline-block; float: none; width: 10%;" class="m-1">
-                    {{ form.pallet_number }}
-                    {{ form.internal_diameter_tolerance_top }}
-                    {{ form.internal_diameter_target }}
-                    {{ form.internal_diameter_tolerance_bottom }}
-                    {{ form.external_diameter_tolerance_top }}
-                    {{ form.external_diameter_target }}
-                    {{ form.external_diameter_tolerance_bottom }}
-                    {{ form.length_tolerance_top }}
-                    {{ form.length_target }}
-                    {{ form.length_tolerance_bottom }}
-                    {{ form.flat_crush_resistance_target }}
-                    {{ form.moisture_content_target }}
-                    {{ form.weight }}
-                    {{ form.remarks }}
-                </div>
-            </div>
-        </div>
-    </div>
             {% endfor %}
+        </div>
+            <div id="measurement-formset-unique" class="col-md-10 m-0 p-0"
+                 style="overflow-x: auto; white-space: nowrap;">
+                {% for form in measurement_formset %}
+                    {% if forloop.last %}
+                        <div id="measurement-form-last" style=" display: inline-block; float: none; width: 10%;" class="m-1">
+                    {% else %}
+                        <div style=" display: inline-block; float: none; width: 10%;" class="m-1">
+                    {% endif %}
+                    <div class="input-group input-group-sm">
+                        {{ form.pallet_number }}
+                        <div class="input-group-append">
+                                <span class="input-group-text">-----</span>
+                        </div>
+                    </div>
+                    <div class="input-group input-group-sm">
+                        {{ form.internal_diameter_tolerance_top }}
+                        <div class="input-group-append">
+                                <span class="input-group-text">mm</span>
+                        </div>
+                    </div>
+                    <div class="input-group input-group-sm">
+                        {{ form.internal_diameter_target }}
+                        <div class="input-group-append">
+                                <span class="input-group-text">mm</span>
+                        </div>
+                    </div>
+                    <div class="input-group input-group-sm">
+                        {{ form.internal_diameter_tolerance_bottom }}
+                        <div class="input-group-append">
+                                <span class="input-group-text">mm</span>
+                        </div>
+                    </div>
+                    <div class="input-group input-group-sm">
+                        {{ form.external_diameter_tolerance_top }}
+                        <div class="input-group-append">
+                                <span class="input-group-text">mm</span>
+                        </div>
+                    </div>
+                    <div class="input-group input-group-sm">
+                    {{ form.external_diameter_target }}
+                        <div class="input-group-append">
+                                <span class="input-group-text">mm</span>
+                        </div>
+                    </div>
+                    <div class="input-group input-group-sm">
+                    {{ form.external_diameter_tolerance_bottom }}
+                        <div class="input-group-append">
+                                <span class="input-group-text">mm</span>
+                        </div>
+                    </div>
+                    <div class="input-group input-group-sm">
+                    {{ form.length_tolerance_top }}
+                        <div class="input-group-append">
+                                <span class="input-group-text">mm</span>
+                        </div>
+                    </div>
+                    <div class="input-group input-group-sm">
+                    {{ form.length_target }}
+                        <div class="input-group-append">
+                                <span class="input-group-text">mm</span>
+                        </div>
+                    </div>
+                    <div class="input-group input-group-sm">
+                    {{ form.length_tolerance_bottom }}
+                        <div class="input-group-append">
+                                <span class="input-group-text">mm</span>
+                        </div>
+                    </div>
+                    <div class="input-group input-group-sm">
+                    {{ form.flat_crush_resistance_target }}
+                        <div class="input-group-append">
+                                <span class="input-group-text">N/mm</span>
+                        </div>
+                    </div>
+                   <div class="input-group input-group-sm">
+                    {{ form.moisture_content_target }}
+                       <div class="input-group-append">
+                                <span class="input-group-text">%</span>
+                        </div>
+                    </div>
+                   <div class="input-group input-group-sm">
+                    {{ form.weight }}
+                       <div class="input-group-append">
+                                <span class="input-group-text">kg</span>
+                        </div>
+                    </div>
+                    <div class="input-group input-group-sm">
+                    {{ form.remarks }}
+                    </div>
+                    {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+    </div>
     <br>
         <button type="button" class="btn btn-secondary add-form-row">Dodaj nowy pomiar</button>
         <button type="button" class="btn btn-secondary remove-form-row">Usuń pomiar</button>
-
-{#            <thead>#}
-{#            <tr>#}
-{#                    {% for measurement_form in measurement_formset.forms %}#}
-{#                        {% for hidden in measurement_form.hidden_fields %}#}
-{#                            {{ hidden }}#}
-{#                            {% endfor %}#}
-{#                        {% if forloop.first %}#}
-{#                            <td colspan="2">{{ measurement_form.pallet_number.label }}</td>#}
-{#                        {% endif %}#}
-{#                        <td id="0" class="to-copy">{{ measurement_form.pallet_number }}</td>#}
-{#                    {% endfor %}#}
-{#                </tr>#}
-{#            </thead>#}
-{#            <tbody>#}
-{#                <tr>#}
-{#                    {% for measurement_form in measurement_formset.forms %}#}
-{#                        {% if forloop.first %}#}
-{#                            <td rowspan="3">Kontrola średnicy wewnętrznej</td>#}
-{#                            <td>{{ measurement_form.internal_diameter_tolerance_top.label }}</td>#}
-{#                        {% endif %}#}
-{#                        {% if forloop.last %}#}
-{#                            <td id="1" class="to-copy">{{ measurement_form.internal_diameter_tolerance_top }}</td>#}
-{#                        {% else %}#}
-{#                            <td>{{ measurement_form.internal_diameter_tolerance_top }}</td>#}
-{#                        {% endif %}#}
-{#                    {% endfor %}#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    {% for measurement_form in measurement_formset.forms %}#}
-{#                        {% if forloop.first %}#}
-{#                            <td>{{ measurement_form.internal_diameter_target.label }}</td>#}
-{#                        {% endif %}#}
-{#                        {% if forloop.last %}#}
-{#                            <td id="2" class="to-copy">{{ measurement_form.internal_diameter_target }}</td>#}
-{#                        {% else %}#}
-{#                            <td>{{ measurement_form.internal_diameter_target }}</td>#}
-{#                        {% endif %}#}
-{#                    {% endfor %}#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    {% for measurement_form in measurement_formset.forms %}#}
-{#                        {% if forloop.first %}#}
-{#                            <td>{{ measurement_form.internal_diameter_tolerance_bottom.label }}</td>#}
-{#                        {% endif %}#}
-{#                        {% if forloop.last %}#}
-{#                            <td id="3" class="to-copy">{{ measurement_form.internal_diameter_tolerance_bottom }}</td>#}
-{#                        {% else %}#}
-{#                            <td>{{ measurement_form.internal_diameter_tolerance_bottom }}</td>#}
-{#                        {% endif %}#}
-{#                    {% endfor %}#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    {% for measurement_form in measurement_formset.forms %}#}
-{#                        {% if forloop.first %}#}
-{#                            <td rowspan="3">Kontrola średnicy zewnętrznej</td>#}
-{#                            <td class="col-sm-1">{{ measurement_form.external_diameter_tolerance_top.label }}</td>#}
-{#                        {% endif %}#}
-{#                        {% if forloop.last %}#}
-{#                            <td id="4" class="to-copy">{{ measurement_form.external_diameter_tolerance_top }}</td>#}
-{#                        {% else %}#}
-{#                            <td>{{ measurement_form.external_diameter_tolerance_top }}</td>#}
-{#                        {% endif %}#}
-{#                    {% endfor %}#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    {% for measurement_form in measurement_formset.forms %}#}
-{#                        {% if forloop.first %}#}
-{#                            <td>{{ measurement_form.external_diameter_target.label }}</td>#}
-{#                        {% endif %}#}
-{#                        {% if forloop.last %}#}
-{#                            <td id="5" class="to-copy">{{ measurement_form.external_diameter_target }}</td>#}
-{#                        {% else %}#}
-{#                            <td>{{ measurement_form.external_diameter_target }}</td>#}
-{#                        {% endif %}#}
-{#                    {% endfor %}#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    {% for measurement_form in measurement_formset.forms %}#}
-{#                        {% if forloop.first %}#}
-{#                            <td>{{ measurement_form.external_diameter_tolerance_bottom.label }}</td>#}
-{#                        {% endif %}#}
-{#                        {% if forloop.last %}#}
-{#                            <td id="6" class="to-copy">{{ measurement_form.external_diameter_tolerance_bottom }}</td>#}
-{#                        {% else %}#}
-{#                            <td>{{ measurement_form.external_diameter_tolerance_bottom }}</td>#}
-{#                        {% endif %}#}
-{#                    {% endfor %}#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    {% for measurement_form in measurement_formset.forms %}#}
-{#                        {% if forloop.first %}#}
-{#                            <td rowspan="3">Kontrola długości:</td>#}
-{#                            <td class="col-sm-1">{{ measurement_form.length_tolerance_top.label }}</td>#}
-{#                        {% endif %}#}
-{#                        {% if forloop.last %}#}
-{#                            <td id="7" class="to-copy">{{ measurement_form.length_tolerance_top }}</td>#}
-{#                        {% else %}#}
-{#                            <td>{{ measurement_form.length_tolerance_top }}</td>#}
-{#                        {% endif %}#}
-{#                    {% endfor %}#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    {% for measurement_form in measurement_formset.forms %}#}
-{#                        {% if forloop.first %}#}
-{#                            <td>{{ measurement_form.length_target.label }}</td>#}
-{#                        {% endif %}#}
-{#                        {% if forloop.last %}#}
-{#                            <td id="8" class="to-copy">{{ measurement_form.length_target }}</td>#}
-{#                        {% else %}#}
-{#                            <td>{{ measurement_form.length_target }}</td>#}
-{#                        {% endif %}#}
-{#                    {% endfor %}#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    {% for measurement_form in measurement_formset.forms %}#}
-{#                        {% if forloop.first %}#}
-{#                            <td>{{ measurement_form.length_tolerance_bottom.label }}</td>#}
-{#                        {% endif %}#}
-{#                        {% if forloop.last %}#}
-{#                            <td id="9" class="to-copy">{{ measurement_form.length_tolerance_bottom }}</td>#}
-{#                        {% else %}#}
-{#                            <td>{{ measurement_form.length_tolerance_bottom }}</td>#}
-{#                        {% endif %}#}
-{#                    {% endfor %}#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    {% for measurement_form in measurement_formset.forms %}#}
-{#                        {% if forloop.first %}#}
-{#                            <td>{{ measurement_form.flat_crush_resistance_target.label }}</td>#}
-{#                            <td>N/100mm</td>#}
-{#                        {% endif %}#}
-{#                        {% if forloop.last %}#}
-{#                            <td id="10" class="to-copy">{{ measurement_form.flat_crush_resistance_target }}</td>#}
-{#                        {% else %}#}
-{#                            <td>{{ measurement_form.flat_crush_resistance_target }}</td>#}
-{#                        {% endif %}#}
-{#                    {% endfor %}#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    {% for measurement_form in measurement_formset.forms %}#}
-{#                        {% if forloop.first %}#}
-{#                            <td>{{ measurement_form.moisture_content_target.label }}</td>#}
-{#                            <td>%</td>#}
-{#                        {% endif %}#}
-{#                        {% if forloop.last %}#}
-{#                            <td id="11" class="to-copy">{{ measurement_form.moisture_content_target }}</td>#}
-{#                        {% else %}#}
-{#                            <td>{{ measurement_form.moisture_content_target }}</td>#}
-{#                        {% endif %}#}
-{#                    {% endfor %}#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    {% for measurement_form in measurement_formset.forms %}#}
-{#                        {% if forloop.first %}#}
-{#                            <td>{{ measurement_form.weight.label }}</td>#}
-{#                            <td>KG</td>#}
-{#                        {% endif %}#}
-{#                        {% if forloop.last %}#}
-{#                            <td id="12" class="to-copy">{{ measurement_form.weight }}</td>#}
-{#                        {% else %}#}
-{#                            <td>{{ measurement_form.weight }}</td>#}
-{#                        {% endif %}#}
-{#                    {% endfor %}#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    {% for measurement_form in measurement_formset.forms %}#}
-{#                        {% if forloop.first %}#}
-{#                            <td colspan="2">{{ measurement_form.remarks.label }}</td>#}
-{#                        {% endif %}#}
-{#                        {% if forloop.last %}#}
-{#                            <td id="13" class="to-copy">{{ measurement_form.remarks }}</td>#}
-{#                        {% else %}#}
-{#                            <td>{{ measurement_form.remarks }}</td>#}
-{#                        {% endif %}#}
-{#                    {% endfor %}#}
-{#                </tr>#}
-{#            </tbody>#}
-{#        </table>#}
-{#        <button id="add-form-row" class="m-2 btn btn-secondary">Dodaj nowy pomiar</button>#}
         <hr class="border border-default">
         <!-- Measurement report form data-->
         {{ measurement_report_form.media }}

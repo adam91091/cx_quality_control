@@ -78,9 +78,12 @@ def measurement_report_update(request, order_id):
     order = Order.objects.get(id=order_id)
     if request.method == 'POST':
         order_form = OrderForm(data=request.POST, instance=order)
+        measurement_ids = [request.POST[key] for key in request.POST.keys() if 'measurements-' in key and '-id' in key]
         measurement_report_form = MeasurementReportForm(data=request.POST, instance=order.measurement_report)
+        queryset = order.measurement_report.measurements.filter(id__in=measurement_ids)
+        print(queryset)
         measurement_formset = MeasurementFormSet(data=request.POST, instance=order.measurement_report,
-                                                 queryset=order.measurement_report.measurements.all())
+                                                 queryset=queryset)
     else:
         order_form = OrderForm(instance=order, measurement_report=True)
         measurement_report_form = MeasurementReportForm(instance=order.measurement_report)
@@ -101,10 +104,16 @@ def _render_measurement_form_response(request, order_form, measurement_report_fo
             measurement_report = measurement_report_form.save(commit=False)
             measurement_report.order = order
             measurement_report.save()
+            measurements = []
             for measurement_form in measurement_formset:
                 measurement = measurement_form.save(commit=False)
+                measurements.append(measurement)
                 measurement.measurement_report = measurement_report
                 measurement.save()
+            if method == 'update':
+                for measurement in measurement_report.measurements.all():
+                    if measurement not in measurements:
+                        measurement.delete()
             if method == 'new':
                 order.status = 'Open'
                 order.save()

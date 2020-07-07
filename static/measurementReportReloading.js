@@ -1,5 +1,4 @@
-
-function copyForm(e) {
+function copyMeasurementForm(e) {
     let formset = document.getElementById('measurement-formset-unique')
     let form = document.getElementById('measurement-form-last');
     let newForm = form.cloneNode(true);
@@ -8,39 +7,49 @@ function copyForm(e) {
     let children = newForm.childNodes;
     let array = [ ...children];
     for (let i=0; i<array.length; i++) {
-        if(array[i].tagName === 'INPUT') {
-            let name = array[i].name.split('-')[2]
-            let newId = Number(array[i].name.split('-')[1]) + 1
+        if(array[i].tagName === 'DIV') {
+            let name = array[i].children[0].name.split('-')[2]
+            let newId = Number(array[i].children[0].name.split('-')[1]) + 1
             let stringResult = `measurements-${newId}-${name}`;
-            array[i]['id'] = `id_${stringResult}`;
-            array[i]['name'] = stringResult;
+            array[i].children[0]['id'] = `id_${stringResult}`;
+            array[i].children[0]['name'] = stringResult;
         }
     }
     // add newForm to DOM
     formset.appendChild(newForm);
+    // update management formset django
+    updateManagementForm('add');
+
 }
 
-function removeLastForm(e) {
+function removeLastMeasurementForm(e) {
     // remove last form from formset
-    let formset = document.getElementById('measurement-formset-unique')
+    let formset = document.getElementById('measurement-formset-unique');
     let form = document.getElementById('measurement-form-last');
     if (form.previousElementSibling != null) {
-        form.previousElementSibling.id = 'measurement-form-last'
+        form.previousElementSibling.id = 'measurement-form-last';
         formset.removeChild(form);
+        updateManagementForm('remove');
     }
 }
-//Tworzymy handlery:
-// dla wybranego zdarzenia (arg 1)
-// elementow html o pasujacych selektorach (2 arg),
-// implementacja obslugi wywolania handlera (3 arg)
+
+function updateManagementForm(action) {
+    let management_form = document.getElementById('id_measurements-TOTAL_FORMS')
+    if (action === 'add') {
+        management_form.value = parseInt(management_form.value) + 1
+    }
+    else if (action === 'remove') {
+        management_form.value = parseInt(management_form.value) - 1
+    }
+}
+
 $(document).on('click', '.add-form-row', function(e){
-    // zabezpieczamy się przed wykonaniem domyślnych akcji dla zdarzenia e - chcemy tylko wykonac nasze
     e.preventDefault();
-    copyForm(e);
+    copyMeasurementForm(e);
     return false;
 });
 $(document).on('click', '.remove-form-row', function(e){
     e.preventDefault();
-    removeLastForm(e);
+    removeLastMeasurementForm(e);
     return false;
 });

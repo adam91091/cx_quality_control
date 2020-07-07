@@ -32,7 +32,7 @@ class OrderForm(ModelForm):
 
     class Meta:
         model = Order
-        exclude = ('status', )
+        exclude = ('status',)
         labels = {
             'order_sap_id': "Nr partii",
             'date_of_production': "Data produkcji",
@@ -64,7 +64,7 @@ class OrderForm(ModelForm):
 class MeasurementReportForm(ModelForm):
     class Meta:
         model = MeasurementReport
-        exclude = ('order', )
+        exclude = ('order',)
         labels = {
             'author': "Kontrolował",
             'date_of_control': "Data",
@@ -101,31 +101,31 @@ class MeasurementForm(ModelForm):
             'pallet_number': forms.TextInput(attrs={'class': 'form-control no-hints',
                                                     'style': 'height: 51px; border-radius: 0;'}),
             'internal_diameter_tolerance_top': forms.TextInput(attrs={'class': 'form-control no-hints',
-                                                    'style': 'height: 51px; border-radius: 0;'}),
+                                                                      'style': 'height: 51px; border-radius: 0;'}),
             'internal_diameter_target': forms.TextInput(attrs={'class': 'form-control no-hints',
-                                                    'style': 'height: 51px; border-radius: 0;'}),
+                                                               'style': 'height: 51px; border-radius: 0;'}),
             'internal_diameter_tolerance_bottom': forms.TextInput(attrs={'class': 'form-control no-hints',
-                                                    'style': 'height: 51px; border-radius: 0;'}),
+                                                                         'style': 'height: 51px; border-radius: 0;'}),
             'external_diameter_tolerance_top': forms.TextInput(attrs={'class': 'form-control no-hints',
-                                                    'style': 'height: 51px; border-radius: 0;'}),
+                                                                      'style': 'height: 51px; border-radius: 0;'}),
             'external_diameter_target': forms.TextInput(attrs={'class': 'form-control no-hints',
-                                                    'style': 'height: 51px; border-radius: 0;'}),
+                                                               'style': 'height: 51px; border-radius: 0;'}),
             'external_diameter_tolerance_bottom': forms.TextInput(attrs={'class': 'form-control no-hints',
-                                                    'style': 'height: 51px; border-radius: 0;'}),
+                                                                         'style': 'height: 51px; border-radius: 0;'}),
             'length_tolerance_top': forms.TextInput(attrs={'class': 'form-control no-hints',
-                                                    'style': 'height: 51px; border-radius: 0;'}),
+                                                           'style': 'height: 51px; border-radius: 0;'}),
             'length_target': forms.TextInput(attrs={'class': 'form-control no-hints',
                                                     'style': 'height: 51px; border-radius: 0;'}),
             'length_tolerance_bottom': forms.TextInput(attrs={'class': 'form-control no-hints',
-                                                    'style': 'height: 51px; border-radius: 0;'}),
+                                                              'style': 'height: 51px; border-radius: 0;'}),
             'flat_crush_resistance_target': forms.TextInput(attrs={'class': 'form-control no-hints',
-                                                    'style': 'height: 69px; border-radius: 0;'}),
+                                                                   'style': 'height: 69px; border-radius: 0;'}),
             'moisture_content_target': forms.TextInput(attrs={'class': 'form-control no-hints',
-                                                    'style': 'height: 51px; border-radius: 0;'}),
+                                                              'style': 'height: 51px; border-radius: 0;'}),
             'weight': forms.TextInput(attrs={'class': 'form-control no-hints',
-                                                    'style': 'height: 51px; border-radius: 0;'}),
+                                             'style': 'height: 51px; border-radius: 0;'}),
             'remarks': forms.TextInput(attrs={'class': 'form-control no-hints',
-                                                    'style': 'height: 70px; border-radius: 0;'}),
+                                              'style': 'height: 70px; border-radius: 0;'}),
         }
 
 
