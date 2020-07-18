@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'bootstrap4',
     'bootstrap_modal_forms',
     'bootstrap_datepicker_plus',
-    'dynamic_formsets',
     # apps
     'apps.users',
     'apps.clients',
