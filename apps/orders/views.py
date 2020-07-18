@@ -81,7 +81,6 @@ def measurement_report_update(request, order_id):
         measurement_ids = [request.POST[key] for key in request.POST.keys() if 'measurements-' in key and '-id' in key]
         measurement_report_form = MeasurementReportForm(data=request.POST, instance=order.measurement_report)
         queryset = order.measurement_report.measurements.filter(id__in=measurement_ids)
-        print(queryset)
         measurement_formset = MeasurementFormSet(data=request.POST, instance=order.measurement_report,
                                                  queryset=queryset)
     else:

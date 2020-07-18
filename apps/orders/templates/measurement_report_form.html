@@ -35,95 +35,95 @@
         {{ measurement_formset.management_form }}
         {% for form in measurement_formset %}
             {% if forloop.first %}
-                <div class="col-md-2">
-                <table class="table table-bordered m-1">
-                    <tr style="height: 51px;">
+                <div class="col-md-3">
+                <table class="table table-bordered" style="height: 740px;">
+                    <tr style="height: 50px;">
                         <td colspan="2">
-                            {{ form.pallet_number.label_tag }}
+                            Paleta nr:
                         </td>
                     </tr>
-                    <tr style="height: 51px;">
+                    <tr style="height: 50px;">
                         <td rowspan="3">
-                            Kontrola średnicy wewn.
+                            Kontrola średnicy wewnętrznej:
                         </td>
                         <td>
                             Góra
                         </td>
-                    <tr style="height: 51px;">
+                    <tr style="height: 50px;">
                         <td>
                             Środek
                         </td>
                     </tr>
-                    <tr style="height: 51px;">
+                    <tr style="height: 50px;">
                         <td>
                             Dół
                         </td>
                     </tr>
-                    <tr style="height: 51px;">
+                    <tr style="height: 50px;">
                         <td rowspan="3">
-                            Kontrola średnicy zewn.
+                            Kontrola średnicy zewnętrznej:
                         </td>
                         <td>
                             Góra
                         </td>
-                    <tr style="height: 51px;">
+                    <tr style="height: 50px;">
                         <td>
                             Środek
                         </td>
                     </tr>
-                    <tr style="height: 51px;">
+                    <tr style="height: 50px;">
                         <td>
                             Dół
                         </td>
                     </tr>
-                    <tr style="height: 51px;">
+                    <tr style="height: 50px;">
                         <td rowspan="3">
                             Kontrola długości
                         </td>
                         <td>
                             Góra
                         </td>
-                    <tr style="height: 51px;">
+                    <tr style="height: 50px;">
                         <td>
                             Środek
                         </td>
                     </tr>
-                    <tr style="height: 51px;">
+                    <tr style="height: 50px;">
                         <td>
                             Dół
                         </td>
                     </tr>
-                    <tr style="height: 69px;">
+                    <tr style="height: 70px;">
                         <td colspan="2">
-                            {{ form.flat_crush_resistance_target.label_tag }}
+                            Kontrola wytrzymałości:
                         </td>
                     </tr>
-                    <tr style="height: 51px;">
+                    <tr style="height: 50px;">
                         <td colspan="2">
-                            {{ form.moisture_content_target.label_tag }}
+                            Wilgotność:
                         </td>
                     </tr>
-                    <tr style="height: 51px;">
+                    <tr style="height: 50px;">
                         <td colspan="2">
-                            {{ form.weight.label_tag }}
+                            Waga:
                         </td>
                     </tr>
-                    <tr style="height: 69px;">
+                    <tr style="height: 70px;">
                         <td colspan="2">
-                            {{ form.remarks.label_tag }}
+                            Uwagi, klejenie, pakowanie:
                         </td>
                     </tr>
                 </table>
             {% endif %}
             {% endfor %}
         </div>
-            <div id="measurement-formset-unique" class="col-md-10 m-0 p-0"
+            <div id="measurement-formset-unique" class="col-md-9 p-0"
                  style="overflow-x: auto; white-space: nowrap;">
                 {% for form in measurement_formset %}
                     {% if forloop.last %}
-                        <div id="measurement-form-last" style=" display: inline-block; float: none; width: 10%;" class="m-1">
+                        <div id="measurement-form-last" style="display: inline-block; width: 12%;" class="pl-1 pr-1">
                     {% else %}
-                        <div style=" display: inline-block; float: none; width: 10%;" class="m-1">
+                        <div style="display: inline-block; width: 12%;" class="pl-1 pr-1">
                     {% endif %}
                     <div class="input-group input-group-sm">
                         {{ form.pallet_number }}
