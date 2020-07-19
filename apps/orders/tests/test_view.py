@@ -1,9 +1,10 @@
 from django.test import TestCase, Client as ViewClient
 
 from apps.clients.tests.factories import ClientFactory
-from apps.orders.forms import OrderForm
-from apps.orders.models import Order
-from apps.orders.tests.factories import OrderFactory
+from apps.factories_utils import MeasurementReportPostDictProvider, MeasurementsPostDictProvider, OrderPostDictProvider
+from apps.orders.forms import OrderForm, MeasurementReportForm, MeasurementFormSet
+from apps.orders.models import Order, MeasurementReport, Measurement
+from apps.orders.tests.factories import OrderFactory, MeasurementFactory, MeasurementReportFactory
 from apps.products.tests.factories import ProductFactory
 from apps.unittest_utils import assert_response_post, assert_response_get
 
@@ -11,6 +12,7 @@ from apps.unittest_utils import assert_response_post, assert_response_get
 class OrdersViewTest(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
+        # Orders
         cls.view_client = ViewClient()
         cls.clients = ClientFactory.create_batch(size=6)
         cls.products = ProductFactory.create_batch(size=6)
@@ -63,3 +65,73 @@ class OrdersViewTest(TestCase):
         assert_response_post(test_case=self, url_name='orders:order_update', exp_status_code=302,
                              data=self.form_data, id=self.order_to_be_updated.id)
         self.assertEqual(Order.objects.get(id=self.order_to_be_updated.id).order_sap_id, updated_order_sap_id)
+
+
+class MeasurementReportsViewTest(TestCase):
+    @classmethod
+    def setUpTestData(cls) -> None:
+        # test variables
+        cls.measurement_report_count = 6
+        # new
+        cls.view_client = ViewClient()
+        cls.client = ClientFactory.create()
+        cls.product = ProductFactory.create()
+        cls.order_new = OrderFactory.create(client=cls.client, product=cls.product)
+
+        # update
+        cls.order_update = OrderFactory.create(client=cls.client, product=cls.product)
+        cls.measurement_report = MeasurementReportFactory.create(order=cls.order_update)
+        for i in range(cls.measurement_report_count):
+            MeasurementFactory.create(measurement_report=cls.measurement_report)
+
+        # post data
+        cls.order_data = OrderPostDictProvider().get_post_data_as_dict()
+        cls.meas_report_data = MeasurementReportPostDictProvider().get_post_data_as_dict()
+        cls.meas_data = MeasurementsPostDictProvider(measurements_count=cls.measurement_report_count
+                                                     ).get_post_data_as_dict()
+
+        cls.form_data = {**cls.meas_data, **cls.meas_report_data, **{'client': cls.client.client_sap_id,
+                                                                     'product': cls.product.product_sap_id,
+                                                                     'date_of_production': '5896-12-12'}}
+
+    def test_new_get(self):
+        response = assert_response_get(test_case=self, url_name='orders:measurement_report_new', id=self.order_new.id,
+                                       exp_status_code=200, exp_template='measurement_report_form.html')
+        self.assertEqual(response.context['order_form'].instance, self.order_new)
+        self.assertEqual(response.context['order_id'], self.order_new.id)
+
+        self.assertTrue(isinstance(response.context['measurement_report_form'], MeasurementReportForm))
+        self.assertTrue(isinstance(response.context['measurement_formset'], MeasurementFormSet))
+
+    def test_new_post(self):
+        assert_response_post(test_case=self, url_name='orders:measurement_report_new', id=self.order_new.id,
+                             exp_status_code=302, data=self.form_data)
+        order_sap_id = self.form_data['order_sap_id']
+        order = Order.objects.get(order_sap_id=order_sap_id)
+        self.assertEqual(order.measurement_report.measurements.count(), self.measurement_report_count)
+
+    def test_update_get(self):
+        response = assert_response_get(test_case=self, url_name='orders:measurement_report_update',
+                                       id=self.order_update.id,
+                                       exp_status_code=200, exp_template='measurement_report_form.html')
+        self.assertEqual(response.context['order_form'].instance, self.order_update)
+        self.assertEqual(response.context['order_id'], self.order_update.id)
+        self.assertEqual(response.context['measurement_report_form'].instance, self.order_update.measurement_report)
+        self.assertEqual(len(response.context['measurement_formset']), self.measurement_report_count)
+
+    def test_update_post(self):
+        updated_order_sap_id = 888888
+        updated_measurements_count = 10
+        add_meas_data = MeasurementsPostDictProvider(measurements_count=10, initial_forms=6,
+                                                     start_from=6).get_post_data_as_dict()
+
+        self.form_data['order_sap_id'] = updated_order_sap_id
+        for i in range(self.measurement_report_count):
+            self.form_data[f'measurements-{i}-id'] = self.order_update.measurement_report.measurements.all()[i].id
+            self.form_data[f'measurements-{i}-measurement_report'] = self.order_update.measurement_report.id
+        self.form_data.update(add_meas_data)
+        assert_response_post(test_case=self, url_name='orders:measurement_report_update', exp_status_code=302,
+                             data=self.form_data, id=self.order_update.id)
+        self.assertEqual(Order.objects.get(id=self.order_update.id).order_sap_id, updated_order_sap_id)
+        self.assertEqual(Order.objects.get(id=self.order_update.id).measurement_report.measurements.count(),
+                         updated_measurements_count)
