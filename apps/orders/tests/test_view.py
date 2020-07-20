@@ -132,6 +132,8 @@ class MeasurementReportsViewTest(TestCase):
         self.form_data.update(add_meas_data)
         assert_response_post(test_case=self, url_name='orders:measurement_report_update', exp_status_code=302,
                              data=self.form_data, id=self.order_update.id)
-        self.assertEqual(Order.objects.get(id=self.order_update.id).order_sap_id, updated_order_sap_id)
-        self.assertEqual(Order.objects.get(id=self.order_update.id).measurement_report.measurements.count(),
+        updated_order = Order.objects.get(id=self.order_update.id)
+        self.assertEqual(updated_order.order_sap_id, updated_order_sap_id)
+        self.assertEqual(updated_order.measurement_report, self.order_update.measurement_report)
+        self.assertEqual(updated_order.measurement_report.measurements.count(),
                          updated_measurements_count)
