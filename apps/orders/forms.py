@@ -6,7 +6,8 @@ from django.forms.models import inlineformset_factory
 
 from bootstrap_datepicker_plus import DatePickerInput
 
-from apps.forms_utils import SAP_STYLE, NUM_STYLE_NO_REQ, BASIC_NO_HINTS_STYLE
+from apps.forms_utils import SAP_STYLE, NUM_STYLE_NO_REQ, BASIC_NO_HINTS_STYLE, INPUT_MEASUREMENT_FORM_STYLE_50px, \
+    INPUT_MEASUREMENT_FORM_STYLE_70px, INPUT_MEASUREMENT_FORM_STYLE_71px
 from apps.orders.models import Order, MeasurementReport, Measurement
 
 STRFTIME_STRING = '%Y-%m-%d 00:00:00'
@@ -98,34 +99,32 @@ class MeasurementForm(ModelForm):
             'remarks': 'Uwagi, klejenie, pakowanie',
         }
         widgets = {
-            'pallet_number': forms.TextInput(attrs={'class': 'form-control no-hints',
-                                                    'style': 'height: 50px; border-radius: 0;'}),
-            'internal_diameter_tolerance_top': forms.TextInput(attrs={'class': 'form-control no-hints',
-                                                                      'style': 'height: 50px; border-radius: 0;'}),
-            'internal_diameter_target': forms.TextInput(attrs={'class': 'form-control no-hints',
-                                                               'style': 'height: 50px; border-radius: 0;'}),
-            'internal_diameter_tolerance_bottom': forms.TextInput(attrs={'class': 'form-control no-hints',
-                                                                         'style': 'height: 50px; border-radius: 0;'}),
-            'external_diameter_tolerance_top': forms.TextInput(attrs={'class': 'form-control no-hints',
-                                                                      'style': 'height: 50px; border-radius: 0;'}),
-            'external_diameter_target': forms.TextInput(attrs={'class': 'form-control no-hints',
-                                                               'style': 'height: 50px; border-radius: 0;'}),
-            'external_diameter_tolerance_bottom': forms.TextInput(attrs={'class': 'form-control no-hints',
-                                                                         'style': 'height: 50px; border-radius: 0;'}),
-            'length_tolerance_top': forms.TextInput(attrs={'class': 'form-control no-hints',
-                                                           'style': 'height: 50px; border-radius: 0;'}),
-            'length_target': forms.TextInput(attrs={'class': 'form-control no-hints',
-                                                    'style': 'height: 50px; border-radius: 0;'}),
-            'length_tolerance_bottom': forms.TextInput(attrs={'class': 'form-control no-hints',
-                                                              'style': 'height: 50px; border-radius: 0;'}),
-            'flat_crush_resistance_target': forms.TextInput(attrs={'class': 'form-control no-hints',
-                                                                   'style': 'height: 70px; border-radius: 0;'}),
-            'moisture_content_target': forms.TextInput(attrs={'class': 'form-control no-hints',
-                                                              'style': 'height: 50px; border-radius: 0;'}),
-            'weight': forms.TextInput(attrs={'class': 'form-control no-hints',
-                                             'style': 'height: 50px; border-radius: 0;'}),
-            'remarks': forms.TextInput(attrs={'class': 'form-control no-hints',
-                                              'style': 'height: 71px; border-radius: 0;'}),
+            'pallet_number': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px,
+                                                    **BASIC_NO_HINTS_STYLE}),
+            'internal_diameter_tolerance_top': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px,
+                                                                      **BASIC_NO_HINTS_STYLE}),
+            'internal_diameter_target': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px,
+                                                               **BASIC_NO_HINTS_STYLE}),
+            'internal_diameter_tolerance_bottom': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px,
+                                                                         **BASIC_NO_HINTS_STYLE}),
+            'external_diameter_tolerance_top': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px,
+                                                                      **BASIC_NO_HINTS_STYLE}),
+            'external_diameter_target': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px,
+                                                               **BASIC_NO_HINTS_STYLE}),
+            'external_diameter_tolerance_bottom': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px,
+                                                                         **BASIC_NO_HINTS_STYLE}),
+            'length_tolerance_top': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px,
+                                                    **BASIC_NO_HINTS_STYLE}),
+            'length_target': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px,
+                                                    **BASIC_NO_HINTS_STYLE}),
+            'length_tolerance_bottom': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px,
+                                                              **BASIC_NO_HINTS_STYLE}),
+            'flat_crush_resistance_target': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_70px,
+                                                                   **BASIC_NO_HINTS_STYLE}),
+            'moisture_content_target': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px,
+                                                              **BASIC_NO_HINTS_STYLE}),
+            'weight': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px, **BASIC_NO_HINTS_STYLE}),
+            'remarks': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_71px, **BASIC_NO_HINTS_STYLE}),
         }
 
 

@@ -39,7 +39,7 @@
                 <table class="table table-bordered" style="height: 740px;">
                     <tr style="height: 50px;">
                         <td colspan="2">
-                            Paleta nr:
+                            {{ form.pallet_number.label }}:
                         </td>
                     </tr>
                     <tr style="height: 50px;">
@@ -47,16 +47,16 @@
                             Kontrola średnicy wewnętrznej:
                         </td>
                         <td>
-                            Góra
+                            {{ form.internal_diameter_tolerance_top.label }}
                         </td>
                     <tr style="height: 50px;">
                         <td>
-                            Środek
+                            {{ form.internal_diameter_target.label }}
                         </td>
                     </tr>
                     <tr style="height: 50px;">
                         <td>
-                            Dół
+                            {{ form.internal_diameter_tolerance_bottom.label }}
                         </td>
                     </tr>
                     <tr style="height: 50px;">
@@ -64,53 +64,53 @@
                             Kontrola średnicy zewnętrznej:
                         </td>
                         <td>
-                            Góra
+                            {{ form.external_diameter_tolerance_top.label }}
                         </td>
                     <tr style="height: 50px;">
                         <td>
-                            Środek
+                            {{ form.external_diameter_target.label }}
                         </td>
                     </tr>
                     <tr style="height: 50px;">
                         <td>
-                            Dół
+                            {{ form.external_diameter_tolerance_bottom.label }}
                         </td>
                     </tr>
                     <tr style="height: 50px;">
                         <td rowspan="3">
-                            Kontrola długości
+                            Kontrola długości:
                         </td>
                         <td>
-                            Góra
+                            {{ form.length_tolerance_top.label }}
                         </td>
                     <tr style="height: 50px;">
                         <td>
-                            Środek
+                            {{ form.length_target.label }}
                         </td>
                     </tr>
                     <tr style="height: 50px;">
                         <td>
-                            Dół
+                            {{ form.length_tolerance_bottom.label }}
                         </td>
                     </tr>
                     <tr style="height: 70px;">
                         <td colspan="2">
-                            Kontrola wytrzymałości:
+                            {{ form.flat_crush_resistance_target.label }}:
                         </td>
                     </tr>
                     <tr style="height: 50px;">
                         <td colspan="2">
-                            Wilgotność:
+                            {{ form.moisture_content_target.label }}:
                         </td>
                     </tr>
                     <tr style="height: 50px;">
                         <td colspan="2">
-                            Waga:
+                            {{ form.weight.label }}:
                         </td>
                     </tr>
                     <tr style="height: 70px;">
                         <td colspan="2">
-                            Uwagi, klejenie, pakowanie:
+                            {{ form.remarks.label }}:
                         </td>
                     </tr>
                 </table>
