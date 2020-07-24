@@ -24,3 +24,7 @@ SAP_STYLE = {'class': 'form-control',
              'pattern': REGEXPS['common']['sap_id'], }
 
 DATE_STYLE = {'class': 'form-control', }
+
+INPUT_MEASUREMENT_FORM_STYLE_50px = {'style': 'height: 50px; border-radius: 0;'}
+INPUT_MEASUREMENT_FORM_STYLE_70px = {'style': 'height: 70px; border-radius: 0;'}
+INPUT_MEASUREMENT_FORM_STYLE_71px = {'style': 'height: 71px; border-radius: 0;'}

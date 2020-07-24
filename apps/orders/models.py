@@ -11,7 +11,7 @@ class Order(models.Model):
                       ('Ready', 'Gotowy do pomiarów'),
                       ('Open', 'W trakcie'),
                       ('Done', 'Zakończony')]
-    order_sap_id = models.IntegerField(unique=True, validators=[validate_sap_id(), ])
+    order_sap_id = models.IntegerField(unique=True, validators=[validate_sap_id(), ], null=True, blank=True)
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='orders', to_field='client_sap_id')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='orders', to_field='product_sap_id')
     date_of_production = models.DateField(default=datetime.date.today)

@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load filters %}
+{% block content %}
+<div class="card rounded">
+    <h3 class="m-3">
+        {% if type == 'new' %} Dodaj nowy raport pomiarowy {% elif type == 'detail' %}
+            Dane raportu pomiarowego {% else %} Zaktualizuj dane raportu pomiarowego {% endif %}
+    </h3>
+    <hr class="border border-default">
+    <form method="post">{% csrf_token %}
+    <div class="form-group card-body mb-0">
+    <!-- Order data-->
+    <div class="row">
+        <div class="col md-3">
+                {{ order_form.client.label_tag }}
+                {{ order_form.client }}
+        </div>
+        <div class="col md-3">
+                {{ order_form.product.label_tag }}
+                {{ order_form.product }}
+        </div>
+        <div class="col md-3">
+                {{ order_form.order_sap_id.label_tag }}
+                {{ order_form.order_sap_id }}
+        </div>
+        <div class="col md-3">
+            {{ order_form.date_of_production.label_tag }}
+            {{ order_form.date_of_production }}
+        </div>
+    </div>
+    <h3 class="m-1 mt-3 mb-2">Dane pomiarowe</h3>
+        <!-- Measurements table -->
+    <div class="row">
+        {{ measurement_formset.management_form }}
+        {% for form in measurement_formset %}
+            {% if forloop.first %}
+                <div class="col-md-3">
+                <table class="table table-bordered" style="height: 740px;">
+                    <tr style="height: 50px;">
+                        <td colspan="2">
+                            {{ form.pallet_number.label }}:
+                        </td>
+                    </tr>
+                    <tr style="height: 50px;">
+                        <td rowspan="3">
+                            Kontrola średnicy wewnętrznej:
+                        </td>
+                        <td>
+                            {{ form.internal_diameter_tolerance_top.label }}
+                        </td>
+                    <tr style="height: 50px;">
+                        <td>
+                            {{ form.internal_diameter_target.label }}
+                        </td>
+                    </tr>
+                    <tr style="height: 50px;">
+                        <td>
+                            {{ form.internal_diameter_tolerance_bottom.label }}
+                        </td>
+                    </tr>
+                    <tr style="height: 50px;">
+                        <td rowspan="3">
+                            Kontrola średnicy zewnętrznej:
+                        </td>
+                        <td>
+                            {{ form.external_diameter_tolerance_top.label }}
+                        </td>
+                    <tr style="height: 50px;">
+                        <td>
+                            {{ form.external_diameter_target.label }}
+                        </td>
+                    </tr>
+                    <tr style="height: 50px;">
+                        <td>
+                            {{ form.external_diameter_tolerance_bottom.label }}
+                        </td>
+                    </tr>
+                    <tr style="height: 50px;">
+                        <td rowspan="3">
+                            Kontrola długości:
+                        </td>
+                        <td>
+                            {{ form.length_tolerance_top.label }}
+                        </td>
+                    <tr style="height: 50px;">
+                        <td>
+                            {{ form.length_target.label }}
+                        </td>
+                    </tr>
+                    <tr style="height: 50px;">
+                        <td>
+                            {{ form.length_tolerance_bottom.label }}
+                        </td>
+                    </tr>
+                    <tr style="height: 70px;">
+                        <td colspan="2">
+                            {{ form.flat_crush_resistance_target.label }}:
+                        </td>
+                    </tr>
+                    <tr style="height: 50px;">
+                        <td colspan="2">
+                            {{ form.moisture_content_target.label }}:
+                        </td>
+                    </tr>
+                    <tr style="height: 50px;">
+                        <td colspan="2">
+                            {{ form.weight.label }}:
+                        </td>
+                    </tr>
+                    <tr style="height: 70px;">
+                        <td colspan="2">
+                            {{ form.remarks.label }}:
+                        </td>
+                    </tr>
+                </table>
+            {% endif %}
+            {% endfor %}
+        </div>
+            <div id="measurement-formset-unique" class="col-md-9 p-0"
+                 style="overflow-x: auto; white-space: nowrap;">
+                {% for form in measurement_formset %}
+                    {% if forloop.last %}
+                        <div id="measurement-form-last" style="display: inline-block; width: 12%;" class="pl-1 pr-1">
+                    {% else %}
+                        <div style="display: inline-block; width: 12%;" class="pl-1 pr-1">
+                    {% endif %}
+                    <div class="input-group input-group-sm">
+                        {{ form.pallet_number }}
+                        <div class="input-group-append">
+                                <span class="input-group-text">-----</span>
+                        </div>
+                    </div>
+                    <div class="input-group input-group-sm">
+                        {{ form.internal_diameter_tolerance_top }}
+                        <div class="input-group-append">
+                                <span class="input-group-text">mm</span>
+                        </div>
+                    </div>
+                    <div class="input-group input-group-sm">
+                        {{ form.internal_diameter_target }}
+                        <div class="input-group-append">
+                                <span class="input-group-text">mm</span>
+                        </div>
+                    </div>
+                    <div class="input-group input-group-sm">
+                        {{ form.internal_diameter_tolerance_bottom }}
+                        <div class="input-group-append">
+                                <span class="input-group-text">mm</span>
+                        </div>
+                    </div>
+                    <div class="input-group input-group-sm">
+                        {{ form.external_diameter_tolerance_top }}
+                        <div class="input-group-append">
+                                <span class="input-group-text">mm</span>
+                        </div>
+                    </div>
+                    <div class="input-group input-group-sm">
+                    {{ form.external_diameter_target }}
+                        <div class="input-group-append">
+                                <span class="input-group-text">mm</span>
+                        </div>
+                    </div>
+                    <div class="input-group input-group-sm">
+                    {{ form.external_diameter_tolerance_bottom }}
+                        <div class="input-group-append">
+                                <span class="input-group-text">mm</span>
+                        </div>
+                    </div>
+                    <div class="input-group input-group-sm">
+                    {{ form.length_tolerance_top }}
+                        <div class="input-group-append">
+                                <span class="input-group-text">mm</span>
+                        </div>
+                    </div>
+                    <div class="input-group input-group-sm">
+                    {{ form.length_target }}
+                        <div class="input-group-append">
+                                <span class="input-group-text">mm</span>
+                        </div>
+                    </div>
+                    <div class="input-group input-group-sm">
+                    {{ form.length_tolerance_bottom }}
+                        <div class="input-group-append">
+                                <span class="input-group-text">mm</span>
+                        </div>
+                    </div>
+                    <div class="input-group input-group-sm">
+                    {{ form.flat_crush_resistance_target }}
+                        <div class="input-group-append">
+                                <span class="input-group-text">N/mm</span>
+                        </div>
+                    </div>
+                   <div class="input-group input-group-sm">
+                    {{ form.moisture_content_target }}
+                       <div class="input-group-append">
+                                <span class="input-group-text">%</span>
+                        </div>
+                    </div>
+                   <div class="input-group input-group-sm">
+                    {{ form.weight }}
+                       <div class="input-group-append">
+                                <span class="input-group-text">kg</span>
+                        </div>
+                    </div>
+                    <div class="input-group input-group-sm">
+                    {{ form.remarks }}
+                    </div>
+                    {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+    </div>
+    <br>
+        <button type="button" class="btn btn-secondary add-form-row">Dodaj nowy pomiar</button>
+        <button type="button" class="btn btn-secondary remove-form-row">Usuń pomiar</button>
+        <hr class="border border-default">
+        <!-- Measurement report form data-->
+        {{ measurement_report_form.media }}
+        <div class="row">
+            <div class="col-md-3">
+                {{ measurement_report_form.author.label_tag }}
+                {{ measurement_report_form.author }}
+            </div>
+            <div class="col-md-3">
+                {{ measurement_report_form.date_of_control.label_tag }}
+                {{ measurement_report_form.date_of_control }}
+            </div>
+        </div>
+    <span>
+        <input type="submit" value="Zatwierdź" class="mt-3 btn btn-secondary">
+        <a href="{% url 'orders:orders_list' %}" class="ml-2 mt-3 btn btn-primary">Anuluj</a>
+    </span>
+    </div>
+    </form>
+</div>
+<script type="text/javascript" src="{% static "measurementReportReloading.js" %}"></script>
+{% endblock %}
