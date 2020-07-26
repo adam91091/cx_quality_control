@@ -4,16 +4,20 @@ from django.core.paginator import Paginator
 
 from apps.clients.forms import ClientForm
 from apps.clients.models import Client
-from apps.views_utils import VIEW_MSG, render_form_response, get_pagination_range, PAGINATION_OBJ_COUNT_PER_PAGE
+from apps.views_utils import VIEW_MSG, render_form_response, get_pagination_range, PAGINATION_OBJ_COUNT_PER_PAGE, \
+    ListViewProvider
 
 
 def clients_list(request):
-    clients = Client.objects.all().order_by('id')
+    client_provider = ListViewProvider(request=request, model=Client)
+    clients = client_provider.get_queryset()
+    order_by = client_provider.get_order_by()
     paginator = Paginator(clients, PAGINATION_OBJ_COUNT_PER_PAGE)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     pages_range = get_pagination_range(page_num=page_number, pages_count=paginator.num_pages)
-    return render(request, 'clients_list.html', {'page_obj': page_obj, 'pages_range': pages_range})
+    return render(request, 'clients_list.html', {'page_obj': page_obj, 'pages_range': pages_range,
+                                                 'order_by': order_by})
 
 
 def client_delete(request, client_id):

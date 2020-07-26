@@ -4,17 +4,28 @@
     <table class="table table-bordered">
   <thead>
     <tr class="d-flex">
-        <th class="col-1">Numer SAP</th>
-        <th class="col-8">Klient</th>
-        <th class="col-3">Akcje</th>
+        <th class="col-3">
+            <a class="link m-2" href="{% url 'clients:clients_list' %}?sort_by=client_sap_id&order_by={{ order_by }}" style="width: 40%;">
+                Numer SAP:</a>
+            <input class="form-control" type="search" placeholder="" aria-label="Search" style="width: 60%; display: inline;">
+        </th>
+        <th class="col-7">
+            <a class="link m-2" href="{% url 'clients:clients_list' %}?sort_by=client_name&order_by={{ order_by }}" style="width: 40%;">
+                Klienci:</a>
+                <input class="form-control" type="search" placeholder="" aria-label="Search" style="width: 60%; display: inline;">
+        </th>
+        <th class="col-2">
+                <button class="btn btn-outline-primary" type="submit">Wyszukaj</button>
+                <button class="btn btn-outline-primary" type="submit">Wyczyść</button>
+        </th>
     </tr>
   </thead>
   <tbody>
     {% for client in page_obj %}
     <tr class="d-flex">
-      <td class="col-sm-1">{{client.client_sap_id}}</td>
-      <td class="col-sm-8">{{client.client_name}}</td>
-    <td class="col-sm-3">
+      <td class="col-sm-3">{{client.client_sap_id}}</td>
+      <td class="col-sm-7">{{client.client_name}}</td>
+    <td class="col-sm-2">
         <a href="{% url "clients:client_update" client.id %}" class="btn btn-secondary p-0 m-0">Edytuj</a>
         <div class="modal fade" tabindex="-1" role="dialog" id="modal">
           <div class="modal-dialog" role="document">
