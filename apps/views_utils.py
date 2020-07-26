@@ -31,6 +31,9 @@ VIEW_MSG = {'client': {'new_success': "Utworzono nowego klienta",
                                                    "Wystąpiły następujące błędy formularza:", },
             }
 
+PAGINATION_LINKS_MAX_COUNT = 20
+PAGINATION_OBJ_COUNT_PER_PAGE = 10
+
 
 def add_error_messages(request, main_msg, form, secondary_forms=None):
     messages.error(request, main_msg)
@@ -81,3 +84,25 @@ def check_if_related_object_exists(request, model, sap_id_name, sap_id_value, mo
                                 f"{model_name} o numerze SAP: {sap_id_value}  nie istnieje w bazie danych")
         return None
     return obj
+
+
+def get_pagination_range(page_num, pages_count):
+    if page_num is None:
+        return range(1, pages_count + 1)
+    try:
+        page_num = int(page_num)
+    except ValueError:
+        pages_range = range(1, pages_count + 1)
+        return pages_range
+
+    if pages_count < PAGINATION_LINKS_MAX_COUNT:
+        pages_range = range(1, pages_count + 1)
+    else:
+        if page_num <= 5:
+            pages_range = range(1, PAGINATION_LINKS_MAX_COUNT + 1)
+        elif page_num >= pages_count - (PAGINATION_LINKS_MAX_COUNT // 2):
+            pages_range = range(pages_count - (PAGINATION_LINKS_MAX_COUNT - 1), pages_count + 1)
+        else:
+            pages_range = range(page_num - (PAGINATION_LINKS_MAX_COUNT // 2),
+                                page_num + (PAGINATION_LINKS_MAX_COUNT // 2 + 1))
+    return pages_range

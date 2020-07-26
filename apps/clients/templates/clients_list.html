@@ -10,18 +10,18 @@
     </tr>
   </thead>
   <tbody>
-    {% for client in clients %}
+    {% for client in page_obj %}
     <tr class="d-flex">
       <td class="col-sm-1">{{client.client_sap_id}}</td>
       <td class="col-sm-8">{{client.client_name}}</td>
     <td class="col-sm-3">
-        <a href="{% url "clients:client_update" client.id %}" class="btn btn-secondary p-1 m-0">Edytuj</a>
+        <a href="{% url "clients:client_update" client.id %}" class="btn btn-secondary p-0 m-0">Edytuj</a>
         <div class="modal fade" tabindex="-1" role="dialog" id="modal">
           <div class="modal-dialog" role="document">
             <div class="modal-content"></div>
             </div>
         </div>
-        <button id="{{ client.id }}"  class="btn btn-secondary p-1 m-0" type="button" name="button">Usuń </button>
+        <button id="{{ client.id }}"  class="btn btn-secondary p-0 m-0" type="button" name="button">Usuń </button>
         <script type="text/javascript">
           $(function () {
             $("#{{client.id}}").modalForm({formURL: "{% url 'clients:client_delete' client.id %}"});
@@ -32,4 +32,7 @@
     {% endfor %}
   </tbody>
 </table>
+    {% if page_obj.paginator.num_pages > 1 %}
+        {% include '_pagination.html' %}
+    {% endif %}
 {% endblock %}
