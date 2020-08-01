@@ -5,7 +5,7 @@
           <a class="nav-link" href="{% url 'products:products_list' %}">Produkty</a>
       </li>
       <li>
-          <a class="nav-link" href="{% url 'clients:clients_list' %}">Klienci</a>
+          <a class="nav-link" href="{% url 'clients:clients_list' %}?clear_filters=true">Klienci</a>
       </li>
       <li>
           <a class="nav-link" href="{% url 'orders:orders_list' %}">Zlecenia produkcyjne</a>
@@ -15,7 +15,7 @@
     <ul class="navbar-nav ml-auto" >
         <li class="nav-item">
 {#            <a class="nav-link" href="#">Wyloguj się</a>#}
-            <a class="nav-link" href="#"> Zaloguj się</a>
+{#            <a class="nav-link" href="#"> Zaloguj się</a>#}
         </li>
     </ul>
 </nav>

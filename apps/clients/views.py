@@ -1,23 +1,18 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.core.paginator import Paginator
 
 from apps.clients.forms import ClientForm
 from apps.clients.models import Client
-from apps.views_utils import VIEW_MSG, render_form_response, get_pagination_range, PAGINATION_OBJ_COUNT_PER_PAGE, \
-    ListViewProvider
+from apps.views_utils import VIEW_MSG, render_form_response
+from apps.providers import ListViewFilterProvider
 
 
 def clients_list(request):
-    client_provider = ListViewProvider(request=request, model=Client)
-    clients = client_provider.get_queryset()
-    order_by = client_provider.get_order_by()
-    paginator = Paginator(clients, PAGINATION_OBJ_COUNT_PER_PAGE)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    pages_range = get_pagination_range(page_num=page_number, pages_count=paginator.num_pages)
-    return render(request, 'clients_list.html', {'page_obj': page_obj, 'pages_range': pages_range,
-                                                 'order_by': order_by})
+    client_provider = ListViewFilterProvider(request=request, model=Client)
+    request = client_provider.run()
+    return render(request, 'clients_list.html', {'page_obj': client_provider.page_obj,
+                                                 'pages_range': client_provider.pages_range,
+                                                 'order_by': client_provider.get_order_by_switch()})
 
 
 def client_delete(request, client_id):
