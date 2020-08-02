@@ -36,6 +36,7 @@ class ListViewFilterProvider:
         self._order_by_asc = ''
         self._order_by_desc = '-'
         self._sort_by = 'id'  # implement method of get default sort key in model class
+        self.fields = ['client_name', 'client_sap_id']
         self._queryset = self._filter_queryset()
         self._page_obj = None
         self._pages_range = None
@@ -49,12 +50,14 @@ class ListViewFilterProvider:
             self.request.session['order_by'] = self._order_by_desc
             return self._order_by_desc
         else:
-            return self.request.session['order_by']
+            return self.request.session.get('order_by', '')
 
     @property
     def sort_by(self):
-        self._sort_by = self.request.GET.get('sort_by') if self.request.GET.get('sort_by') \
-                                                        else self.request.session.get('sort_by')
+        if self.request.GET.get('sort_by'):
+            self._sort_by = self.request.GET.get('sort_by', 'id')
+        else:
+            self._sort_by = self.request.session.get('sort_by', 'id')
         self.request.session['sort_by'] = self._sort_by
         return self._sort_by
 
@@ -69,6 +72,7 @@ class ListViewFilterProvider:
     def run(self):
         if self.request.GET.get('clear_filters') is None:
             self.sort_records()
+            pass
         self.paginate()
         return self.request
 
@@ -83,19 +87,20 @@ class ListViewFilterProvider:
 
     def _filter_queryset(self):
         if self.request.GET.get('clear_filters') is not None:
-            for field in self.model._meta.get_fields():
-                self.request.session[field.name] = ""
-            return self.model.objects.all()
-        for field in self.model._meta.get_fields():
-            if self.request.GET.get(f'search-{field.name}') is not None:
-                field_value = self.request.GET.get(f'search-{field.name}')
-                self.request.session[field.name] = field_value
+            for field_name in self.fields:
+                self.request.session[field_name] = ""
+            return self.model.objects.all().order_by('id')
+        for field_name in self.fields:
+            if self.request.GET.get(f'search-{field_name}') is not None:
+                field_value = self.request.GET.get(f'search-{field_name}')
+                self.request.session[field_name] = field_value
         return self._get_filter_query()
 
     def _get_filter_query(self):
         if self.model == Client:
-            return self.model.objects.filter(Q(client_sap_id__char__icontains=self.request.session['client_sap_id']) &
-                                             Q(client_name__icontains=self.request.session['client_name']))
+            sap_id = self.request.session.get('client_sap_id', '')
+            name = self.request.session.get('client_name', '')
+            return self.model.objects.filter(Q(client_sap_id__char__icontains=sap_id) & Q(client_name__icontains=name))
 
     def paginate(self):
         paginator = Paginator(self._queryset, PAGINATION_OBJ_COUNT_PER_PAGE)

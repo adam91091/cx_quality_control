@@ -7,7 +7,7 @@ from .factories import ClientFactory
 from apps.clients.forms import ClientForm
 from apps.clients.models import Client
 from apps.unittest_utils import assert_response_get, assert_response_post
-from ...views_utils import PAGINATION_OBJ_COUNT_PER_PAGE
+from apps.providers import PAGINATION_OBJ_COUNT_PER_PAGE
 
 
 class ClientsViewTest(TestCase):
@@ -21,8 +21,8 @@ class ClientsViewTest(TestCase):
     def test_list(self):
         response = assert_response_get(test_case=self, url_name='clients:clients_list', exp_status_code=200,
                                        exp_template='clients_list.html')
-        self.assertEqual(response.context['page_obj'].paginator.num_pages, ceil(len(self.clients) /
-                         PAGINATION_OBJ_COUNT_PER_PAGE))
+        self.assertEqual(response.context['page_obj'].paginator.num_pages,
+                         ceil(len(self.clients) / PAGINATION_OBJ_COUNT_PER_PAGE))
 
     def test_new_get(self):
         response = assert_response_get(test_case=self, url_name='clients:client_new', exp_status_code=200,
