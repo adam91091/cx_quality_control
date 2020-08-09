@@ -3,12 +3,19 @@ from django.shortcuts import render, redirect
 
 from apps.products.forms import ProductForm, SpecificationForm
 from apps.products.models import Product
+from apps.providers import ListViewFilterProvider
 from apps.views_utils import VIEW_MSG, render_one_to_one_form_response
 
 
 def products_list(request):
-    products = Product.objects.all()
-    return render(request, 'products_list.html', {'products': products})
+    # products = Product.objects.all()
+    # return render(request, 'products_list.html', {'products': products})
+    product_provider = ListViewFilterProvider(request=request, model=Product, fields=('product_sap_id', 'index',
+                                                                                      'description'))
+    request = product_provider.run()
+    return render(request, 'products_list.html', {'page_obj': product_provider.page_obj,
+                                                  'pages_range': product_provider.pages_range,
+                                                  'order_by': product_provider.get_order_by_switch()})
 
 
 def product_detail(request, product_id):

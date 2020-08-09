@@ -1,30 +1,46 @@
 {% extends 'base.html' %}
 {% block content %}
     <a href="{% url "products:product_new" %}" class="btn btn-secondary mb-2">Dodaj nowy produkt</a>
-    <table class="table table-bordered">
-  <thead>
+    <a href="{% url "products:products_list" %}?clear_filters=true" class="btn btn-secondary mb-2">Wyczyść filtry</a>
+    <form name="search-form" method="GET" action="{% url 'products:products_list'%}" class="m-0">
+    <table class="table table-bordered mb-0">
     <tr class="d-flex">
-        <th class="col-1">Numer SAP</th>
-        <th class="col-2">Indeks</th>
-        <th class="col-6">Opis</th>
-        <th class="col-3">Akcje</th>
+        <th class="col-3">
+            <a class="link m-2" href="{% url 'products:products_list' %}?sort_by=product_sap_id&order_by={{ order_by }}" style="width: 40%;">
+                Numer SAP:</a>
+            <input class="form-control" name="search-product_sap_id" type="text" value="{{ request.session.product_sap_id }}" aria-label="Search" style="width: 60%; display: inline;">
+        </th>
+        <th class="col-3">
+            <a class="link m-2" href="{% url 'products:products_list' %}?sort_by=index&order_by={{ order_by }}" style="width: 40%;">
+                Indeks:</a>
+                <input class="form-control" name="search-index" type="text" value="{{ request.session.index }}" aria-label="Search" style="width: 60%; display: inline;">
+        </th>
+        <th class="col-4">
+            <a class="link m-2" href="{% url 'products:products_list' %}?sort_by=description&order_by={{ order_by }}" style="width: 40%;">
+                Opis:</a>
+                <input class="form-control" name="search-description" type="text" value="{{ request.session.description }}" aria-label="Search" style="width: 60%; display: inline;">
+        </th>
+        <th class="col-2">
+                <button class="btn btn-outline-primary search-bar" type="submit">Wyszukaj</button>
+        </th>
     </tr>
-  </thead>
-  <tbody>
-    {% for product in products %}
+    </table>
+    </form>
+    <table class="table table-bordered">
+    {% for product in page_obj %}
     <tr class="d-flex">
-      <td class="col-sm-1">{{product.product_sap_id}}</td>
-      <td class="col-sm-2">{{product.index|default_if_none:""}}</td>
-      <td class="col-sm-6">{{product.description}}</td>
-    <td class="col-sm-3">
-        <a href="{% url 'products:product_detail' product.id %}" class="btn btn-secondary p-1 m-0">Pokaż specyfikację</a>
-        <a href="{% url "products:product_update" product.id %}" class="btn btn-secondary p-1 m-0">Edytuj</a>
+      <td class="col-sm-3">{{product.product_sap_id}}</td>
+      <td class="col-sm-3">{{product.index|default_if_none:""}}</td>
+      <td class="col-sm-4">{{product.description}}</td>
+    <td class="col-sm-2">
+        <a href="{% url 'products:product_detail' product.id %}" class="btn btn-secondary p-0 m-0">Specyfikacja</a>
+        <a href="{% url "products:product_update" product.id %}" class="btn btn-secondary p-0 m-0">Edytuj</a>
         <div class="modal fade" tabindex="-1" role="dialog" id="modal">
           <div class="modal-dialog" role="document">
             <div class="modal-content"></div>
             </div>
         </div>
-        <button id="{{ product.id }}" class="btn btn-secondary p-1 m-0" type="button" name="button">Usuń </button>
+        <button id="{{ product.id }}" class="btn btn-secondary p-0 m-0" type="button" name="button">Usuń </button>
         <script type="text/javascript">
           $(function () {
             $("#{{ product.id }}").modalForm({formURL: "{% url 'products:product_delete' product.id %}"});
@@ -33,6 +49,8 @@
     </td>
     </tr>
     {% endfor %}
-  </tbody>
 </table>
+{% if page_obj.paginator.num_pages > 1 %}
+    {% include '_pagination.html' %}
+{% endif %}
 {% endblock %}
