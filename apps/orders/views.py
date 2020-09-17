@@ -1,17 +1,28 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect
 
-from .forms import OrderForm, MeasurementFormSet, MeasurementReportForm, MeasurementForm
-from .models import Order, Measurement, MeasurementReport
+from .forms import OrderForm, MeasurementFormSet, MeasurementReportForm
+from .models import Order
 
 from ..clients.models import Client
 from ..products.models import Product
+from ..providers import FilterProvider, SortingProvider, PaginationProvider
 from ..views_utils import render_form_response, VIEW_MSG, check_if_related_object_exists, add_error_messages
 
 
 def orders_list(request):
-    orders = Order.objects.all()
-    return render(request, 'orders_list.html', {'orders': orders})
+    order_filter_provider = FilterProvider(model=Order, session=request.session, params=request.GET)
+    orders = order_filter_provider.get_queryset()
+    order_sorting_provider = SortingProvider(model=Order, session=request.session, params=request.GET)
+    orders = order_sorting_provider.sort_queryset(queryset=orders)
+    order_by = order_sorting_provider.get_next_order_by()
+
+    order_pagination_provider = PaginationProvider(queryset=orders, page=request.GET.get('page', 1))
+    page_obj, pages_range = order_pagination_provider.paginate()
+
+    return render(request, 'orders_list.html', {'page_obj': page_obj,
+                                                'pages_range': pages_range,
+                                                'order_by': order_by})
 
 
 def order_detail(request, order_id):

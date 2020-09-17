@@ -3,6 +3,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 
 from apps.clients.models import Client
+from apps.orders.models import Order
 from apps.products.models import Product
 
 PAGINATION_LINKS_MAX_COUNT = 20
@@ -26,6 +27,13 @@ class FilterProvider:
             return self.model.objects.filter(Q(product_sap_id__char__icontains=self.session.get('product_sap_id', '')) &
                                              Q(index__icontains=self.session.get('index', '')) &
                                              Q(description__icontains=self.session.get('description', '')))
+        elif self.model == Order:
+            return self.model.objects.filter(Q(client__client_name__icontains=self.session.get('client_name', '')) &
+                                             Q(order_sap_id__char__icontains=self.session.get('order_sap_id', '')) &
+                                             Q(product__product_sap_id__char__icontains=self.session.get('product_sap_id', '')) &
+                                             Q(status__icontains=self.session.get('status', ''))
+                                             )
+            # return self.model.objects.all()
 
     def _get_filters(self):
         """Get model filters from previous session state"""
@@ -37,6 +45,13 @@ class FilterProvider:
         elif self.model == Client:
             filters = {'client_sap_id': self.session.get('client_sap_id', ''),
                        'client_name': self.session.get('client_name', '')}
+        elif self.model == Order:
+            filters = {'order_sap_id': self.session.get('order_sap_id', ''),
+                       'client_name': self.session.get('client_name', ''),
+                       'product_sap_id': self.session.get('product_sap_id', ''),
+                       'date_of_production': self.session.get('date_of_production', ''),
+                       'status': self.session.get('status', '')}
+
         return filters
 
     def _update_session(self):
@@ -94,8 +109,12 @@ class SortingProvider:
         self.sort_by = self._get_sort_by_name()
 
     def sort_queryset(self, queryset):
+        order_related_keywords = {'client_name': 'client', 'product_sap_id': 'product'}
         order_by = '-' if self.order_by == 'desc' else ''
-        return queryset.order_by(f'{order_by}{self.sort_by}')
+        if self.model == Order and self.sort_by in order_related_keywords:
+            return queryset.order_by(f'{order_by}{order_related_keywords[self.sort_by]}__{self.sort_by}')
+        else:
+            return queryset.order_by(f'{order_by}{self.sort_by}')
 
     def get_next_order_by(self):
         next_order_by_dict = {'asc': 'desc', 'desc': 'asc'}
@@ -105,7 +124,9 @@ class SortingProvider:
     def _get_sort_by_name(self):
         """Update session if sort_by params """
         model_sort_names = {'Client': ('client_sap_id', 'client_name'),
-                            'Product': ('product_sap_id', 'description', 'index')}
+                            'Product': ('product_sap_id', 'description', 'index'),
+                            'Order': ('order_sap_id', 'client_name', 'product_sap_id', 'date_of_production', 'status')}
+
         # Update session for incoming params if are valid
         if 'sort_by' in self.params:
             if self.params['sort_by'] in model_sort_names.get(self.model.__name__, ()):
