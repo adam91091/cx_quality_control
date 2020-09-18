@@ -29,7 +29,7 @@ class OrderForm(ModelForm):
             for field in self.fields:
                 if field in ['product', 'client']:
                     self.fields[field].widget.attrs['readonly'] = True
-                    # self.fields[field].widget.attrs['disabled'] = 'true'
+
 
     class Meta:
         model = Order

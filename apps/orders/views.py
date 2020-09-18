@@ -113,6 +113,17 @@ def measurement_report_update(request, order_id):
                                              order_id=order_id)
 
 
+def measurement_report_close(request, order_id):
+    order = Order.objects.get(id=order_id)
+    if request.method == 'POST':
+        order.status = 'Done'
+        order.save()
+        messages.success(request, VIEW_MSG['measurement_report']['close_success'])
+        return redirect('orders:orders_list')
+    else:
+        return render(request, 'measurement_confirm_close.html', {'order': order})
+
+
 def _render_measurement_form_post(request, order_form, measurement_report_form, measurement_formset, method,
                                   order_id):
 

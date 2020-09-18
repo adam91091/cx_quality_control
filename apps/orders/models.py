@@ -19,8 +19,7 @@ class CharValue(Transform):
 
 
 class Order(models.Model):
-    STATUS_CHOICES = [('Started', 'Rozpoczęty'),
-                      ('Ready', 'Gotowy do pomiarów'),
+    STATUS_CHOICES = [('Started', 'Otwarty'),
                       ('Open', 'W trakcie'),
                       ('Done', 'Zakończony')]
     order_sap_id = models.IntegerField(unique=True, validators=[validate_sap_id(), ], null=True, blank=True)
