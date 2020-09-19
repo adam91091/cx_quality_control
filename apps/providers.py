@@ -1,3 +1,4 @@
+import datetime
 from django.contrib.sessions.backends.base import SessionBase
 from django.core.paginator import Paginator
 from django.db.models import Q
@@ -8,6 +9,9 @@ from apps.products.models import Product
 
 PAGINATION_LINKS_MAX_COUNT = 20
 PAGINATION_OBJ_COUNT_PER_PAGE = 10
+
+MIN_DATE = '0001-01-01'
+MAX_DATE = '9999-12-31'
 
 
 class FilterProvider:
@@ -31,9 +35,11 @@ class FilterProvider:
             return self.model.objects.filter(Q(client__client_name__icontains=self.session.get('client_name', '')) &
                                              Q(order_sap_id__char__icontains=self.session.get('order_sap_id', '')) &
                                              Q(product__product_sap_id__char__icontains=self.session.get('product_sap_id', '')) &
-                                             Q(status__icontains=self.session.get('status', ''))
+                                             Q(status__icontains=self.session.get('status', '')) &
+                                             Q(product__description__icontains=self.session.get('description', '')) &
+                                             Q(date_of_production__range=(self.session.get('start_date', MIN_DATE),
+                                                                          self.session.get('end_date', MAX_DATE)))
                                              )
-            # return self.model.objects.all()
 
     def _get_filters(self):
         """Get model filters from previous session state"""
@@ -49,8 +55,10 @@ class FilterProvider:
             filters = {'order_sap_id': self.session.get('order_sap_id', ''),
                        'client_name': self.session.get('client_name', ''),
                        'product_sap_id': self.session.get('product_sap_id', ''),
-                       'date_of_production': self.session.get('date_of_production', ''),
-                       'status': self.session.get('status', '')}
+                       'start_date': self.session.get('start_date', MIN_DATE),
+                       'end_date': self.session.get('end_date', MAX_DATE),
+                       'status': self.session.get('status', ''),
+                       'description': self.session.get('description', '')}
 
         return filters
 
@@ -62,6 +70,13 @@ class FilterProvider:
             else:
                 if f'search-{filter_name}' in self.params:
                     self.session[filter_name] = self.params[f'search-{filter_name}']
+                elif f'search_{filter_name}' in self.params:
+                    self.session[filter_name] = self.params[f'search_{filter_name}']
+        # set dates if are empty in params
+        if 'start_date' in self.session and self.session['start_date'] == '':
+            self.session['start_date'] = MIN_DATE
+        if 'end_date' in self.session and self.session['end_date'] == '':
+            self.session['end_date'] = MAX_DATE
 
 
 class PaginationProvider:
@@ -109,7 +124,7 @@ class SortingProvider:
         self.sort_by = self._get_sort_by_name()
 
     def sort_queryset(self, queryset):
-        order_related_keywords = {'client_name': 'client', 'product_sap_id': 'product'}
+        order_related_keywords = {'client_name': 'client', 'product_sap_id': 'product', 'description': 'product'}
         order_by = '-' if self.order_by == 'desc' else ''
         if self.model == Order and self.sort_by in order_related_keywords:
             return queryset.order_by(f'{order_by}{order_related_keywords[self.sort_by]}__{self.sort_by}')
@@ -125,7 +140,8 @@ class SortingProvider:
         """Update session if sort_by params """
         model_sort_names = {'Client': ('client_sap_id', 'client_name'),
                             'Product': ('product_sap_id', 'description', 'index'),
-                            'Order': ('order_sap_id', 'client_name', 'product_sap_id', 'date_of_production', 'status')}
+                            'Order': ('order_sap_id', 'client_name', 'product_sap_id', 'date_of_production', 'status',
+                                      'description')}
 
         # Update session for incoming params if are valid
         if 'sort_by' in self.params:
