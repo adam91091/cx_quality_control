@@ -22,12 +22,8 @@ def orders_list(request):
     order_pagination_provider = PaginationProvider(queryset=orders, page=request.GET.get('page', 1))
     page_obj, pages_range = order_pagination_provider.paginate()
 
-    start_from = request.session.get('start_date', '')
-    end_to = request.session.get('end_date', '')
-    if start_from == MIN_DATE:
-        start_from = ''
-    if end_to == MAX_DATE:
-        end_to = ''
+    start_from = request.session.get('start_date', MIN_DATE)
+    end_to = request.session.get('end_date', MAX_DATE)
     date_filtering_form = DateFilteringForm(initial={'search_start_date': start_from, 'search_end_date': end_to})
 
     return render(request, 'orders_list.html', {'page_obj': page_obj,
