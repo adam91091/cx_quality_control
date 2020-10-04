@@ -28,7 +28,9 @@ VIEW_MSG = {'client': {'new_success': "Utworzono nowego klienta",
                                                 "Wystąpiły następujące błędy formularza:",
                                    'update_success': "Zaktualizowano raport pomiarowy",
                                    'update_error': "Nie zaktualizowano raportu pomiarowego. "
-                                                   "Wystąpiły następujące błędy formularza:", },
+                                                   "Wystąpiły następujące błędy formularza:",
+                                   'close_success': "Pomiary zostały zakończone",
+                                   },
             }
 
 

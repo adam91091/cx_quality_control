@@ -1,41 +1,89 @@
 {% extends 'base.html' %}
 {% block content %}
     <a href="{% url "orders:order_new" %}" class="btn btn-secondary mb-2">Dodaj nowe zlecenie produkcyjne</a>
-    <table class="table table-bordered">
-  <thead>
+    <a href="{% url "orders:orders_list" %}?clear_filters=true" class="btn btn-secondary mb-2">Wyczyść filtry</a>
+    <form name="search-form" method="GET" action="{% url 'orders:orders_list'%}" class="m-0">
+    <table class="table table-bordered mb-0">
     <tr class="d-flex">
-        <th class="col-2">Klient</th>
-        <th class="col-1">Nr partii</th>
-        <th class="col-1">Kod produktu</th>
-        <th class="col-2">Data produkcji</th>
-        <th class="col-2">Wymiary nominalne</th>
-        <th class="col-1">Status</th>
-        <th class="col-3">Akcje</th>
+        <th class="col-2">
+            <a class="link mt-2 mb-2" href="{% url 'orders:orders_list' %}?sort_by=client_name&order_by={{ order_by }}" style="width: 40%;">
+                Klient:</a>
+            <input class="form-control mt-2 mb-2" name="search-client_name" type="text" value="{{ request.session.client_name }}" aria-label="Search" style="width: 100%; display: block;">
+        </th>
+        <th class="col-1">
+            <a class="link mt-2 mb-2" href="{% url 'orders:orders_list' %}?sort_by=order_sap_id&order_by={{ order_by }}" style="width: 40%;">
+                Nr partii:</a>
+            <input class="form-control mt-2 mb-2" name="search-order_sap_id" type="text" value="{{ request.session.order_sap_id }}" aria-label="Search" style="width: 100%; display: block;">
+        </th>
+        <th class="col-1">
+            <a class="link mt-2 mb-2" href="{% url 'orders:orders_list' %}?sort_by=product_sap_id&order_by={{ order_by }}" style="width: 40%;">
+                Kod prod:</a>
+            <input class="form-control mt-2 mb-2" name="search-product_sap_id" type="text" value="{{ request.session.product_sap_id }}" aria-label="Search" style="width: 100%; display: block;">
+        </th>
+        <th class="col-2">
+            <a class="link mt-2 mb-2" href="{% url 'orders:orders_list' %}?sort_by=date_of_production&order_by={{ order_by }}" style="width: 40%;">
+                Data produkcji:</a>
+                {{ date_filtering_form.media }}
+            <div class="form-group form-inline mt-2 mb-1">
+                {{ date_filtering_form.search_start_date.label_tag }}
+                <div style="width: 80%;" class="ml-1">{{ date_filtering_form.search_start_date }}</div>
+            </div>
+            <div class="form-group form-inline mt-2 mb-1">
+                {{ date_filtering_form.search_end_date.label_tag }}
+                <div style="width: 80%;" class="ml-1">{{ date_filtering_form.search_end_date }}</div>
+            </div>
+        </th>
+        <th class="col-2">
+            <a class="link mt-2 mb-2" href="{% url 'orders:orders_list' %}?sort_by=description&order_by={{ order_by }}" style="width: 40%;">
+                Opis produktu:</a>
+            <input class="form-control mt-2 mb-2" name="search-description" type="text" value="{{ request.session.description }}" aria-label="Search" style="width: 100%; display: block;">
+        </th>
+        <th class="col-2">
+            <a class="link mt-2 mb-2" href="{% url 'orders:orders_list' %}?sort_by=status&order_by={{ order_by }}" style="width: 40%;">
+                Status:</a>
+            <select class="form-control mt-2" aria-label="Search" style="width: 100%;" name="search-status">
+                <option value="" {% if request.session.status == '' %} selected {% endif %}>Wszystkie</option>
+                <option value="Started" {% if request.session.status == 'Started' %} selected {% endif %}>Otwarte</option>
+                <option value="Open" {% if request.session.status == 'Open' %} selected {% endif %}>W trakcie</option>
+                <option value="Done" {% if request.session.status == 'Done' %} selected {% endif %}>Zakończone</option>
+            </select>
+        </th>
+        <th class="col-2">
+            <br>
+            <button class="btn btn-outline-primary search-bar mt-2 mb-2" type="submit">Wyszukaj</button>
+        </th>
     </tr>
-  </thead>
-  <tbody>
-    {% for order in orders %}
-    <tr class="d-flex">
+    </table>
+    </form>
+    <table class="table table-bordered">
+    {% for order in page_obj %}
+    <tr class="d-flex"
+        style="background-color: {% if order.status == 'Started' %} #66e861
+        {% elif order.status == 'Open' %} #e7752e
+        {% else %} #898585
+        {% endif %};">
       <td class="col-sm-2">{{order.client.client_name}}</td>
       <td class="col-sm-1">{{order.order_sap_id}}</td>
       <td class="col-sm-1">{{order.product.product_sap_id}}</td>
       <td class="col-sm-2">{{order.date_of_production}}</td>
-      <td class="col-sm-2">{{order.product.product_sap_id}}</td>
-      <td class="col-sm-1">{{order.status}}</td>
-    <td class="col-sm-3">
-        <a href="{% url "orders:order_detail" order.id %}" class="btn btn-secondary p-1 m-0">Info</a>
-        <a href="{% url "orders:order_update" order.id %}" class="btn btn-secondary p-1 m-0">Edytuj</a>
+      <td class="col-sm-2">{{order.product.description}}</td>
+      <td class="col-sm-2">{{order.get_status_display}}</td>
+    <td class="col-sm-2">
+        <a href="{% url "orders:order_detail" order.id %}" class="btn btn-secondary p-0 m-0">Info</a>
+        <a href="{% url "orders:order_update" order.id %}" class="btn btn-secondary p-0 m-0">Edytuj</a>
         {% if order.status == 'Started' %}
-            <a href="{% url "orders:measurement_report_new" order.id %}" class="btn btn-secondary p-1 m-0">Dodaj raport pomiarowy</a>
+            <a href="{% url "orders:measurement_report_new" order.id %}" class="btn btn-secondary p-0 m-0">Dodaj pomiary</a>
+        {% elif order.status == 'Done' %}
+{#            <a href="{% url "orders:measurement_report_detail" order.id %}" class="btn btn-secondary p-0 m-0">Wyświetl raport pomiarowy</a>#}
         {% else %}
-            <a href="{% url "orders:measurement_report_update" order.id %}" class="btn btn-secondary p-1 m-0">Edytuj raport pomiarowy</a>
+            <a href="{% url "orders:measurement_report_update" order.id %}" class="btn btn-secondary p-0 m-0">Edytuj pomiary</a>
         {% endif %}
         <div class="modal fade" tabindex="-1" role="dialog" id="modal">
           <div class="modal-dialog" role="document">
             <div class="modal-content"></div>
             </div>
         </div>
-        <button id="{{ order.id }}" class="btn btn-secondary p-1 m-0" type="button" name="button">Usuń </button>
+        <button id="{{ order.id }}" class="btn btn-secondary p-0 m-0" type="button" name="button">Usuń </button>
         <script type="text/javascript">
           $(function () {
             $("#{{ order.id }}").modalForm({formURL: "{% url 'orders:order_delete' order.id %}"});
@@ -44,6 +92,8 @@
     </td>
     </tr>
     {% endfor %}
-  </tbody>
 </table>
+{% if page_obj.paginator.num_pages > 1 %}
+    {% include '_pagination.html' %}
+{% endif %}
 {% endblock %}

@@ -1,27 +1,39 @@
 {% extends 'base.html' %}
 {% block content %}
     <a href="{% url "clients:client_new" %}" class="btn btn-secondary mb-2">Dodaj nowego klienta</a>
-    <table class="table table-bordered">
-  <thead>
+    <a href="{% url "clients:clients_list" %}?clear_filters=true" class="btn btn-secondary mb-2">Wyczyść filtry</a>
+    <form name="search-form" method="GET" action="{% url 'clients:clients_list'%}" class="m-0">
+    <table class="table table-bordered mb-0">
     <tr class="d-flex">
-        <th class="col-1">Numer SAP</th>
-        <th class="col-8">Klient</th>
-        <th class="col-3">Akcje</th>
+        <th class="col-3">
+            <a class="link m-2" href="{% url 'clients:clients_list' %}?sort_by=client_sap_id&order_by={{ order_by }}" style="width: 40%;">
+                Numer SAP:</a>
+            <input class="form-control" name="search-client_sap_id" type="text" value="{{ request.session.client_sap_id }}" aria-label="Search" style="width: 60%; display: inline;">
+        </th>
+        <th class="col-7">
+            <a class="link m-2" href="{% url 'clients:clients_list' %}?sort_by=client_name&order_by={{ order_by }}" style="width: 40%;">
+                Klient:</a>
+                <input class="form-control" name="search-client_name" type="text" value="{{ request.session.client_name }}" aria-label="Search" style="width: 60%; display: inline;">
+        </th>
+        <th class="col-2">
+                <button class="btn btn-outline-primary search-bar" type="submit">Wyszukaj</button>
+        </th>
     </tr>
-  </thead>
-  <tbody>
-    {% for client in clients %}
+    </table>
+    </form>
+  <table class="table table-bordered">
+    {% for client in page_obj %}
     <tr class="d-flex">
-      <td class="col-sm-1">{{client.client_sap_id}}</td>
-      <td class="col-sm-8">{{client.client_name}}</td>
-    <td class="col-sm-3">
-        <a href="{% url "clients:client_update" client.id %}" class="btn btn-secondary p-1 m-0">Edytuj</a>
+      <td class="col-sm-3">{{client.client_sap_id}}</td>
+      <td class="col-sm-7">{{client.client_name}}</td>
+    <td class="col-sm-2">
+        <a href="{% url "clients:client_update" client.id %}" class="btn btn-secondary p-0 m-0">Edytuj</a>
         <div class="modal fade" tabindex="-1" role="dialog" id="modal">
           <div class="modal-dialog" role="document">
             <div class="modal-content"></div>
             </div>
         </div>
-        <button id="{{ client.id }}"  class="btn btn-secondary p-1 m-0" type="button" name="button">Usuń </button>
+        <button id="{{ client.id }}"  class="btn btn-secondary p-0 m-0" type="button" name="button">Usuń </button>
         <script type="text/javascript">
           $(function () {
             $("#{{client.id}}").modalForm({formURL: "{% url 'clients:client_delete' client.id %}"});
@@ -30,6 +42,8 @@
     </td>
     </tr>
     {% endfor %}
-  </tbody>
 </table>
+    {% if page_obj.paginator.num_pages > 1 %}
+        {% include '_pagination.html' %}
+    {% endif %}
 {% endblock %}

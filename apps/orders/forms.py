@@ -1,5 +1,3 @@
-import datetime as dt
-
 from django import forms
 from django.forms import ModelForm
 from django.forms.models import inlineformset_factory
@@ -29,7 +27,6 @@ class OrderForm(ModelForm):
             for field in self.fields:
                 if field in ['product', 'client']:
                     self.fields[field].widget.attrs['readonly'] = True
-                    # self.fields[field].widget.attrs['disabled'] = 'true'
 
     class Meta:
         model = Order
@@ -46,8 +43,7 @@ class OrderForm(ModelForm):
         }
         widgets = {
             'order_sap_id': forms.TextInput(attrs=SAP_STYLE),
-            'date_of_production': DatePickerInput(options={'minDate': (dt.datetime.today()).strftime(STRFTIME_STRING),
-                                                           'showClear': False, 'locale': 'pl', },
+            'date_of_production': DatePickerInput(options={'showClear': False, 'locale': 'pl', },
                                                   attrs=BASIC_NO_HINTS_STYLE),
             'product': forms.TextInput(attrs=SAP_STYLE),
             'client': forms.TextInput(attrs=SAP_STYLE),
@@ -72,8 +68,7 @@ class MeasurementReportForm(ModelForm):
         }
         widgets = {
             'author': forms.TextInput(attrs=BASIC_NO_HINTS_STYLE),
-            'date_of_control': DatePickerInput(options={'minDate': (dt.datetime.today()).strftime(STRFTIME_STRING),
-                                                        'showClear': False, 'locale': 'pl', },
+            'date_of_control': DatePickerInput(options={'showClear': False, 'locale': 'pl', },
                                                attrs=BASIC_NO_HINTS_STYLE),
         }
 
@@ -130,3 +125,12 @@ class MeasurementForm(ModelForm):
 
 MeasurementFormSet = inlineformset_factory(parent_model=MeasurementReport, model=Measurement,
                                            form=MeasurementForm, extra=0, min_num=1)
+
+
+class DateFilteringForm(forms.Form):
+    search_start_date = forms.DateField(
+        widget=DatePickerInput(options={'showClear': False, 'locale': 'pl', },
+                               attrs=BASIC_NO_HINTS_STYLE, format='%Y-%m-%d'), label='Od')
+    search_end_date = forms.DateField(
+        widget=DatePickerInput(options={'showClear': False, 'locale': 'pl', },
+                               attrs=BASIC_NO_HINTS_STYLE, format='%Y-%m-%d'), label='Do')
