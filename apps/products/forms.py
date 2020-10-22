@@ -12,9 +12,8 @@ class ProductForm(ModelForm):
     def __init__(self, read_only=False, update=False, *args, **kwargs):
         super(ProductForm, self).__init__(*args, **kwargs)
         if read_only:
-            for field in self.fields.values():
-                field.widget.attrs['readonly'] = True
-                field.widget.attrs['disabled'] = 'true'
+            for field_name in self.fields:
+                self.fields[field_name].disabled = True
         if update:
             self.fields['product_sap_id'].disabled = True
 

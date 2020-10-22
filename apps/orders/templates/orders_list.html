@@ -2,6 +2,7 @@
 {% block content %}
     <a href="{% url "orders:order_new" %}" class="btn btn-secondary mb-2">Dodaj nowe zlecenie produkcyjne</a>
     <a href="{% url "orders:orders_list" %}?clear_filters=true" class="btn btn-secondary mb-2">Wyczyść filtry</a>
+    <button onclick="window.location.reload();" class="btn btn-secondary mb-2">Odśwież</button>
     <form name="search-form" method="GET" action="{% url 'orders:orders_list'%}" class="m-0">
     <table class="table table-bordered mb-0">
     <tr class="d-flex">

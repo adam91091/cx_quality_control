@@ -23,6 +23,12 @@ def clients_list(request):
                                                  'order_by': order_by})
 
 
+def client_detail(request, client_id):
+    client = Client.objects.get(id=client_id)
+    client_form = ClientForm(instance=client, read_only=True)
+    return render(request, 'client_form.html', {'client_form': client_form, 'type': 'detail'})
+
+
 def client_delete(request, client_id):
     client = Client.objects.get(id=client_id)
     if request.method == 'POST':
