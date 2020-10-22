@@ -6,7 +6,7 @@ from ..forms_utils import SAP_STYLE, BASIC_REQ_STYLE
 
 class ClientForm(forms.ModelForm):
 
-    validation_hints = {'client_sap_id': "Numer SAP musi się składać z 6 cyfr oraz nie może być polem pustym",
+    validation_hints = {'client_sap_id': "Numer SAP musi się składać z 7 cyfr oraz nie może być polem pustym",
                         'client_name': "Pole z nazwą klienta nie może być puste"}
 
     def __init__(self, read_only=False, update=False, *args, **kwargs):

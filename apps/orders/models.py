@@ -4,7 +4,7 @@ from django.db.models import Field, Transform
 
 from apps.clients.models import Client
 from apps.products.models import Product
-from apps.validators import validate_num_field, validate_int_field, validate_sap_id
+from apps.validators import validate_num_field, validate_int_field, validate_sap_id, validate_order_sap_id
 
 
 @Field.register_lookup
@@ -22,7 +22,7 @@ class Order(models.Model):
     STATUS_CHOICES = [('Started', 'Otwarty'),
                       ('Open', 'W trakcie'),
                       ('Done', 'Zakończony')]
-    order_sap_id = models.IntegerField(unique=True, validators=[validate_sap_id(), ], null=True, blank=True)
+    order_sap_id = models.IntegerField(unique=True, validators=[validate_order_sap_id(), ], null=True, blank=True)
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='orders', to_field='client_sap_id')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='orders', to_field='product_sap_id')
     date_of_production = models.DateField(default=datetime.date.today)

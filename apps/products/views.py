@@ -10,7 +10,6 @@ from apps.views_utils import VIEW_MSG, render_one_to_one_form_response
 def products_list(request):
     product_filter_provider = FilterProvider(model=Product, session=request.session, params=request.GET)
     products = product_filter_provider.get_queryset()
-
     product_sorting_provider = SortingProvider(model=Product, session=request.session, params=request.GET)
     products = product_sorting_provider.sort_queryset(queryset=products)
     order_by = product_sorting_provider.get_next_order_by()

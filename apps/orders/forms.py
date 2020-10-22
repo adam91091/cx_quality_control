@@ -5,16 +5,16 @@ from django.forms.models import inlineformset_factory
 from bootstrap_datepicker_plus import DatePickerInput
 
 from apps.forms_utils import SAP_STYLE, NUM_STYLE_NO_REQ, BASIC_NO_HINTS_STYLE, INPUT_MEASUREMENT_FORM_STYLE_50px, \
-    INPUT_MEASUREMENT_FORM_STYLE_70px, INPUT_MEASUREMENT_FORM_STYLE_71px
+    INPUT_MEASUREMENT_FORM_STYLE_70px, INPUT_MEASUREMENT_FORM_STYLE_71px, ORDER_SAP_STYLE
 from apps.orders.models import Order, MeasurementReport, Measurement
 
 STRFTIME_STRING = '%Y-%m-%d 00:00:00'
 
 
 class OrderForm(ModelForm):
-    validation_hints = {'order_sap_id': "Numer partii musi się składać z 6 cyfr oraz nie może być polem pustym",
-                        'product': "Kod produktu musi się składać z 6 cyfr oraz nie może być polem pustym",
-                        'client': "Numer SAP klienta musi się składać z 6 cyfr oraz nie może być polem pustym",
+    validation_hints = {'order_sap_id': "Numer partii musi się składać z 8 cyfr oraz nie może być polem pustym",
+                        'product': "Kod produktu musi się składać z 7 cyfr oraz nie może być polem pustym",
+                        'client': "Numer SAP klienta musi się składać z 7 cyfr oraz nie może być polem pustym",
                         }
 
     def __init__(self, read_only=False, measurement_report=False, *args, **kwargs):
@@ -41,7 +41,7 @@ class OrderForm(ModelForm):
             'quantity': "Ilość",
         }
         widgets = {
-            'order_sap_id': forms.TextInput(attrs=SAP_STYLE),
+            'order_sap_id': forms.TextInput(attrs=ORDER_SAP_STYLE),
             'date_of_production': DatePickerInput(options={'showClear': False, 'locale': 'pl', },
                                                   attrs=BASIC_NO_HINTS_STYLE),
             'product': forms.TextInput(attrs=SAP_STYLE),
