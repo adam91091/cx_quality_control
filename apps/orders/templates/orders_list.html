@@ -75,7 +75,7 @@
         {% if order.status == 'Started' %}
             <a href="{% url "orders:measurement_report_new" order.id %}" class="btn btn-secondary p-0 m-0">Dodaj pomiary</a>
         {% elif order.status == 'Done' %}
-{#            <a href="{% url "orders:measurement_report_detail" order.id %}" class="btn btn-secondary p-0 m-0">Wyświetl raport pomiarowy</a>#}
+            <a href="{% url "orders:measurement_report_detail" order.id %}" class="btn btn-secondary p-0 m-0">Wyświetl pomiary</a>
         {% else %}
             <a href="{% url "orders:measurement_report_update" order.id %}" class="btn btn-secondary p-0 m-0">Edytuj pomiary</a>
         {% endif %}

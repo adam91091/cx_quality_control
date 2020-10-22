@@ -3,7 +3,7 @@ from apps.providers import MAX_DATE, MIN_DATE
 from django.contrib import messages
 from django.shortcuts import render, redirect
 
-from .forms import OrderForm, MeasurementFormSet, MeasurementReportForm, DateFilteringForm
+from .forms import OrderForm, MeasurementFormSet, MeasurementReportForm, DateFilteringForm, MeasurementForm
 from .models import Order
 
 from ..clients.models import Client
@@ -94,6 +94,20 @@ def measurement_report_new(request, order_id):
         return _render_measurement_form_post(request=request, order_form=order_form,
                                              measurement_report_form=measurement_report_form,
                                              measurement_formset=measurement_formset, method='new', order_id=order_id)
+
+
+def measurement_report_detail(request, order_id):
+    order = Order.objects.get(id=order_id)
+    order_form = OrderForm(instance=order, read_only=True)
+    measurement_report_form = MeasurementReportForm(instance=order.measurement_report, read_only=True)
+    measurement_formset = MeasurementFormSet(instance=order.measurement_report,
+                                             queryset=order.measurement_report.measurements.all())
+    for form in measurement_formset.forms:
+        MeasurementForm.make_form_readonly(form)
+    return render(request, 'measurement_report_form.html', {'order_form': order_form,
+                                                            'measurement_report_form': measurement_report_form,
+                                                            'measurement_formset': measurement_formset,
+                                                            'order_id': order_id, 'type': 'detail'})
 
 
 def measurement_report_update(request, order_id):

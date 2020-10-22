@@ -25,8 +25,7 @@ class OrderForm(ModelForm):
                 field.widget.attrs['disabled'] = 'true'
         elif measurement_report:
             for field in self.fields:
-                if field in ['product', 'client']:
-                    self.fields[field].widget.attrs['readonly'] = True
+                self.fields[field].widget.attrs['readonly'] = True
 
     class Meta:
         model = Order
@@ -59,6 +58,12 @@ class OrderForm(ModelForm):
 
 
 class MeasurementReportForm(ModelForm):
+    def __init__(self, read_only=False, *args, **kwargs):
+        super(MeasurementReportForm, self).__init__(*args, **kwargs)
+        if read_only:
+            for field_name in self.fields:
+                self.fields[field_name].disabled = True
+
     class Meta:
         model = MeasurementReport
         exclude = ('order',)
@@ -121,6 +126,11 @@ class MeasurementForm(ModelForm):
             'weight': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px, **BASIC_NO_HINTS_STYLE}),
             'remarks': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_71px, **BASIC_NO_HINTS_STYLE}),
         }
+
+    @staticmethod
+    def make_form_readonly(form):
+        for field_name in form.fields:
+            form.fields[field_name].disabled = True
 
 
 MeasurementFormSet = inlineformset_factory(parent_model=MeasurementReport, model=Measurement,
