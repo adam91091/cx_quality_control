@@ -35,7 +35,7 @@ def client_delete(request, client_id):
 
 def client_new(request):
     if request.method == 'POST':
-        client_form = ClientForm(request.POST)
+        client_form = ClientForm(data=request.POST)
     else:
         client_form = ClientForm()
     return render_form_response(request=request, method='new', form=client_form, model_name='client')
@@ -44,7 +44,7 @@ def client_new(request):
 def client_update(request, client_id):
     client = Client.objects.get(id=client_id)
     if request.method == 'POST':
-        client_form = ClientForm(request.POST, instance=client)
+        client_form = ClientForm(data=request.POST, instance=client, update=True)
     else:
-        client_form = ClientForm(instance=client)
+        client_form = ClientForm(instance=client, update=True)
     return render_form_response(request=request, method='update', form=client_form, model_name='client')

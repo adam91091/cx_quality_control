@@ -56,10 +56,10 @@ def product_new(request):
 def product_update(request, product_id):
     product = Product.objects.get(id=product_id)
     if request.method == 'POST':
-        product_form = ProductForm(data=request.POST, instance=product)
+        product_form = ProductForm(data=request.POST, instance=product, update=True)
         spec_form = SpecificationForm(data=request.POST, instance=product.specification)
     else:
-        product_form = ProductForm(instance=product)
+        product_form = ProductForm(instance=product, update=True)
         spec_form = SpecificationForm(instance=product.specification)
     return render_one_to_one_form_response(request=request, method='update', parent_form=product_form,
                                            child_form=spec_form, parent_name='product', child_name='spec')

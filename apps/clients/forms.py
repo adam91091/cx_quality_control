@@ -9,6 +9,15 @@ class ClientForm(forms.ModelForm):
     validation_hints = {'client_sap_id': "Numer SAP musi się składać z 6 cyfr oraz nie może być polem pustym",
                         'client_name': "Pole z nazwą klienta nie może być puste"}
 
+    def __init__(self, read_only=False, update=False, *args, **kwargs):
+        super(ClientForm, self).__init__(*args, **kwargs)
+        if read_only:
+            for field in self.fields.values():
+                field.widget.attrs['readonly'] = True
+                field.widget.attrs['disabled'] = 'true'
+        if update:
+            self.fields['client_sap_id'].disabled = True
+
     class Meta:
         model = Client
         exclude = ()
