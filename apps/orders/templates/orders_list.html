@@ -71,7 +71,9 @@
       <td class="col-sm-2">{{order.get_status_display}}</td>
     <td class="col-sm-2">
         <a href="{% url "orders:order_detail" order.id %}" class="btn btn-secondary p-0 m-0">Info</a>
-        <a href="{% url "orders:order_update" order.id %}" class="btn btn-secondary p-0 m-0">Edytuj</a>
+        {% if order.status != 'Done' %}
+            <a href="{% url "orders:order_update" order.id %}" class="btn btn-secondary p-0 m-0">Edytuj</a>
+        {% endif %}
         {% if order.status == 'Started' %}
             <a href="{% url "orders:measurement_report_new" order.id %}" class="btn btn-secondary p-0 m-0">Dodaj pomiary</a>
         {% elif order.status == 'Done' %}

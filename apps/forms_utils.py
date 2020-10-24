@@ -19,6 +19,11 @@ INT_STYLE = {'class': 'form-control',
              'required': 'true',
              'pattern': REGEXPS['common']['int_field'], }
 
+PALLET_NUMBER_STYLE = {'class': 'form-control measurements-pallet_number',
+                       'required': 'true',
+                       'pattern': REGEXPS['common']['int_field'], }
+
+
 SAP_STYLE = {'class': 'form-control',
              'required': 'true',
              'pattern': REGEXPS['common']['sap_id'], }

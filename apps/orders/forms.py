@@ -6,7 +6,7 @@ from bootstrap_datepicker_plus import DatePickerInput
 
 from apps.forms_utils import SAP_STYLE, NUM_STYLE_NO_REQ, BASIC_NO_HINTS_STYLE, INPUT_MEASUREMENT_FORM_STYLE_50px, \
     INPUT_MEASUREMENT_FORM_STYLE_70px, INPUT_MEASUREMENT_FORM_STYLE_71px, ORDER_SAP_STYLE, NUM_STYLE, BASIC_REQ_STYLE, \
-    INT_STYLE
+    INT_STYLE, PALLET_NUMBER_STYLE
 from apps.orders.models import Order, MeasurementReport, Measurement
 
 STRFTIME_STRING = '%Y-%m-%d 00:00:00'
@@ -103,7 +103,7 @@ class MeasurementForm(ModelForm):
         }
         widgets = {
             'pallet_number': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px,
-                                                    **INT_STYLE}),
+                                                    **PALLET_NUMBER_STYLE}),
             'internal_diameter_tolerance_top': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px,
                                                                       **NUM_STYLE}),
             'internal_diameter_target': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px,
