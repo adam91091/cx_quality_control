@@ -56,14 +56,14 @@ class SpecificationForm(ModelForm):
         model = Specification
         exclude = ('product',)
         labels = {
-            'internal_diameter_target': "Średnica wewnętrzna",
-            'external_diameter_target': "Średnica zewnętrzna",
-            'wall_thickness_target': "Grubość ścianki",
-            'length_target': "Długość",
+            'internal_diameter_target': "Średnica wewnętrzna (mm)",
+            'external_diameter_target': "Średnica zewnętrzna (mm)",
+            'wall_thickness_target': "Grubość ścianki (mm)",
+            'length_target': "Długość (mm)",
             'flat_crush_resistance_target': "Wytrzymałość na ściskanie (100 MM)",
-            'moisture_content_target': "Wilgotność",
+            'moisture_content_target': "Wilgotność (%)",
             'colour': "Kolor",
-            'finish': "Powierzchnia zew.",
+            'finish': "Powierzchnia zewnętrzna",
             'maximum_height_of_pallet': "Maksymalna wysokość palety",
             'pallet_wrapped_with_stretch_film': "Paleta zabezpieczona folią stretch?",
             'pallet_protected_with_paper_edges': "Paleta zabezpieczona kątownikami papierowymi?",

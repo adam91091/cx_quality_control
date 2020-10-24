@@ -72,7 +72,7 @@ class MeasurementReportForm(ModelForm):
         exclude = ('order',)
         labels = {
             'author': "Kontrolował",
-            'date_of_control': "Data",
+            'date_of_control': "Data kontroli",
         }
         widgets = {
             'author': forms.TextInput(attrs=BASIC_REQ_STYLE),
