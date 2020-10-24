@@ -9,7 +9,8 @@
         {% else %} Zaktualizuj dane raportu pomiarowego {% endif %}
     </h3>
     <hr class="border border-default">
-    <form method="post">{% csrf_token %}
+    <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
     <div class="form-group card-body mb-0">
     <!-- Order data-->
     <div class="row">
@@ -260,14 +261,17 @@
                 <div class="modal-content"></div>
                 </div>
             </div>
-            <button id="{{ order_form.instance.id }}" class=" mt-3 ml-1 btn btn-danger" type="button" name="button">Zakończ pomiary </button>
-            <script type="text/javascript">
-              $(function () {
-                $("#{{ order_form.instance.id }}").modalForm({formURL: "{% url 'orders:measurement_report_close' order_form.instance.id %}"});
-              });
-            </script>
+            {% if type != 'new' %}
+                <button id="{{ order_form.instance.id }}" class=" mt-3 ml-1 btn btn-danger" type="button" name="button">Zakończ pomiary </button>
+                <script type="text/javascript">
+                  $(function () {
+                    $("#{{ order_form.instance.id }}").modalForm({formURL: "{% url 'orders:measurement_report_close' order_form.instance.id %}"});
+                  });
+                </script>
+            {% endif %}
         {% endif %}
 
 </div>
 <script type="text/javascript" src="{% static "measurementReportReloading.js" %}"></script>
+<script type="text/javascript" src="{% static 'clientSideValidation.js' %}"></script>
 {% endblock %}

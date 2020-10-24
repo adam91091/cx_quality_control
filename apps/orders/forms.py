@@ -5,7 +5,8 @@ from django.forms.models import inlineformset_factory
 from bootstrap_datepicker_plus import DatePickerInput
 
 from apps.forms_utils import SAP_STYLE, NUM_STYLE_NO_REQ, BASIC_NO_HINTS_STYLE, INPUT_MEASUREMENT_FORM_STYLE_50px, \
-    INPUT_MEASUREMENT_FORM_STYLE_70px, INPUT_MEASUREMENT_FORM_STYLE_71px, ORDER_SAP_STYLE
+    INPUT_MEASUREMENT_FORM_STYLE_70px, INPUT_MEASUREMENT_FORM_STYLE_71px, ORDER_SAP_STYLE, NUM_STYLE, BASIC_REQ_STYLE, \
+    INT_STYLE
 from apps.orders.models import Order, MeasurementReport, Measurement
 
 STRFTIME_STRING = '%Y-%m-%d 00:00:00'
@@ -15,6 +16,8 @@ class OrderForm(ModelForm):
     validation_hints = {'order_sap_id': "Numer partii musi się składać z 8 cyfr oraz nie może być polem pustym",
                         'product': "Kod produktu musi się składać z 7 cyfr oraz nie może być polem pustym",
                         'client': "Numer SAP klienta musi się składać z 7 cyfr oraz nie może być polem pustym",
+                        'date_of_production': 'Pole z datą produkcji nie może być puste',
+                        'quantity': 'Podaj całkowitą liczbę tulei w sztukach',
                         }
 
     def __init__(self, read_only=False, measurement_report=False, *args, **kwargs):
@@ -43,13 +46,13 @@ class OrderForm(ModelForm):
         widgets = {
             'order_sap_id': forms.TextInput(attrs=ORDER_SAP_STYLE),
             'date_of_production': DatePickerInput(options={'showClear': False, 'locale': 'pl', },
-                                                  attrs=BASIC_NO_HINTS_STYLE),
+                                                  attrs=BASIC_REQ_STYLE),
             'product': forms.TextInput(attrs=SAP_STYLE),
             'client': forms.TextInput(attrs=SAP_STYLE),
             'internal_diameter_reference': forms.TextInput(attrs=NUM_STYLE_NO_REQ),
             'external_diameter_reference': forms.TextInput(attrs=NUM_STYLE_NO_REQ),
             'length': forms.TextInput(attrs=NUM_STYLE_NO_REQ),
-            'quantity': forms.TextInput(attrs=NUM_STYLE_NO_REQ),
+            'quantity': forms.TextInput(attrs=INT_STYLE),
         }
 
         error_messages = {
@@ -72,9 +75,9 @@ class MeasurementReportForm(ModelForm):
             'date_of_control': "Data",
         }
         widgets = {
-            'author': forms.TextInput(attrs=BASIC_NO_HINTS_STYLE),
+            'author': forms.TextInput(attrs=BASIC_REQ_STYLE),
             'date_of_control': DatePickerInput(options={'showClear': False, 'locale': 'pl', },
-                                               attrs=BASIC_NO_HINTS_STYLE),
+                                               attrs=BASIC_REQ_STYLE),
         }
 
 
@@ -100,25 +103,25 @@ class MeasurementForm(ModelForm):
         }
         widgets = {
             'pallet_number': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px,
-                                                    **BASIC_NO_HINTS_STYLE}),
+                                                    **INT_STYLE}),
             'internal_diameter_tolerance_top': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px,
-                                                                      **BASIC_NO_HINTS_STYLE}),
+                                                                      **NUM_STYLE}),
             'internal_diameter_target': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px,
-                                                               **BASIC_NO_HINTS_STYLE}),
+                                                               **NUM_STYLE}),
             'internal_diameter_tolerance_bottom': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px,
-                                                                         **BASIC_NO_HINTS_STYLE}),
+                                                                         **NUM_STYLE}),
             'external_diameter_tolerance_top': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px,
-                                                                      **BASIC_NO_HINTS_STYLE}),
+                                                                      **NUM_STYLE}),
             'external_diameter_target': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px,
-                                                               **BASIC_NO_HINTS_STYLE}),
+                                                               **NUM_STYLE}),
             'external_diameter_tolerance_bottom': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px,
-                                                                         **BASIC_NO_HINTS_STYLE}),
+                                                                         **NUM_STYLE}),
             'length_tolerance_top': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px,
-                                                    **BASIC_NO_HINTS_STYLE}),
+                                                    **NUM_STYLE}),
             'length_target': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px,
-                                                    **BASIC_NO_HINTS_STYLE}),
+                                                    **NUM_STYLE}),
             'length_tolerance_bottom': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px,
-                                                              **BASIC_NO_HINTS_STYLE}),
+                                                              **NUM_STYLE}),
             'flat_crush_resistance_target': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_70px,
                                                                    **BASIC_NO_HINTS_STYLE}),
             'moisture_content_target': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px,

@@ -36,7 +36,14 @@ class ProductForm(ModelForm):
 
 
 class SpecificationForm(ModelForm):
-    validation_hints = {'remarks': "Pole z uwagami nie może być puste"}
+    validation_hints = {'remarks': "Pole z uwagami nie może być puste",
+                        'float_field': "Podaj liczbę, np. 1 lub 1.0",
+                        'integer_field': "Podaj liczbę całkowitą, np. 1",
+                        'colour': "Pole z kolorem nie może być puste",
+                        'finish': "Pole z powierzchnią zew. nie może być puste",
+                        'maximum_height_of_pallet': "Podaj liczbę, np. 1 lub 1.0",
+                        'quantity_on_the_pallet': "Podaj całkowitą liczbę sztuk tulei na palecie",
+                        }
 
     def __init__(self, read_only=False, *args, **kwargs):
         super(SpecificationForm, self).__init__(*args, **kwargs)
