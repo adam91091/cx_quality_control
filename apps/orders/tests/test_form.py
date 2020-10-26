@@ -16,13 +16,13 @@ class OrderFormTest(TestCase):
         self.product = ProductFactory.create()
         self.order = OrderFactory.create(product=self.product, client=self.client)
 
-        self.form_data = {'order_sap_id': 999999, 'client': self.client.client_sap_id,
+        self.form_data = {'order_sap_id': 99989999, 'client': self.client.client_sap_id,
                           'product': self.product.product_sap_id, 'date_of_production': '5896-12-12',
                           'status': 'Ready', 'quantity': 10, 'internal_diameter_reference': 1.7,
                           'external_diameter_reference': 1.2, 'length': 42.3}
 
     def test_form_sap_id_validation_positive(self):
-        self.form_data['order_sap_id'] = '765432'
+        self.form_data['order_sap_id'] = '76655432'
         order_form = OrderForm(data=self.form_data, instance=self.order)
         self.assertTrue(order_form.is_valid())
 
@@ -38,6 +38,7 @@ class OrderFormTest(TestCase):
         for value in data:
             self.form_data['internal_diameter_reference'] = value
             order_form = OrderForm(data=self.form_data, instance=self.order)
+            print(order_form.errors)
             self.assertTrue(order_form.is_valid(), msg=f"Value: {value}")
 
     def test_form_numeric_field_validation_negative(self):

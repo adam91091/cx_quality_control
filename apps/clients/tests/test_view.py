@@ -30,7 +30,7 @@ class ClientsViewTest(TestCase):
         self.assertTrue(isinstance(response.context['client_form'], ClientForm))
 
     def test_new_post(self):
-        client_sap_id = 123456
+        client_sap_id = 1234565
         assert_response_post(test_case=self, url_name='clients:client_new', exp_status_code=302,
                              data={'client_sap_id': client_sap_id, 'client_name': 'New with Post'})
         self.assertTrue(Client.objects.get(client_sap_id=client_sap_id))

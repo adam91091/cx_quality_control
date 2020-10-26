@@ -3,7 +3,7 @@ from apps.providers import MAX_DATE, MIN_DATE
 from django.contrib import messages
 from django.shortcuts import render, redirect
 
-from .forms import OrderForm, MeasurementFormSet, MeasurementReportForm, DateFilteringForm
+from .forms import OrderForm, MeasurementFormSet, MeasurementReportForm, DateFilteringForm, MeasurementForm
 from .models import Order
 
 from ..clients.models import Client
@@ -91,9 +91,29 @@ def measurement_report_new(request, order_id):
         order_form = OrderForm(data=request.POST, instance=order)
         measurement_report_form = MeasurementReportForm(data=request.POST)
         measurement_formset = MeasurementFormSet(data=request.POST)
+        if not check_report_data(data=request.POST):
+            messages.error(request, 'Numery zmierzonych palet nie mogą się powtarzać!')
+            return render(request, 'measurement_report_form.html', {'order_form': order_form,
+                                                                    'measurement_report_form': measurement_report_form,
+                                                                    'measurement_formset': measurement_formset,
+                                                                    'order_id': order_id, 'type': 'new'})
         return _render_measurement_form_post(request=request, order_form=order_form,
                                              measurement_report_form=measurement_report_form,
                                              measurement_formset=measurement_formset, method='new', order_id=order_id)
+
+
+def measurement_report_detail(request, order_id):
+    order = Order.objects.get(id=order_id)
+    order_form = OrderForm(instance=order, read_only=True)
+    measurement_report_form = MeasurementReportForm(instance=order.measurement_report, read_only=True)
+    measurement_formset = MeasurementFormSet(instance=order.measurement_report,
+                                             queryset=order.measurement_report.measurements.all())
+    for form in measurement_formset.forms:
+        MeasurementForm.make_form_readonly(form)
+    return render(request, 'measurement_report_form.html', {'order_form': order_form,
+                                                            'measurement_report_form': measurement_report_form,
+                                                            'measurement_formset': measurement_formset,
+                                                            'order_id': order_id, 'type': 'detail'})
 
 
 def measurement_report_update(request, order_id):
@@ -114,6 +134,12 @@ def measurement_report_update(request, order_id):
         queryset = order.measurement_report.measurements.filter(id__in=measurement_ids)
         measurement_formset = MeasurementFormSet(data=request.POST, instance=order.measurement_report,
                                                  queryset=queryset)
+        if not check_report_data(data=request.POST):
+            messages.error(request, 'Numery zmierzonych palet nie mogą się powtarzać!')
+            return render(request, 'measurement_report_form.html', {'order_form': order_form,
+                                                                    'measurement_report_form': measurement_report_form,
+                                                                    'measurement_formset': measurement_formset,
+                                                                    'order_id': order_id, 'type': 'new'})
         return _render_measurement_form_post(request=request, order_form=order_form,
                                              measurement_report_form=measurement_report_form,
                                              measurement_formset=measurement_formset, method='update',
@@ -163,3 +189,12 @@ def _render_measurement_form_post(request, order_form, measurement_report_form, 
                                                             'measurement_report_form': measurement_report_form,
                                                             'measurement_formset': measurement_formset,
                                                             'order_id': order_id, 'type': method})
+
+
+def check_report_data(data) -> bool:
+    """Check pallet numbers uniqueness"""
+    pallet_nums = []
+    for key in data:
+        if 'pallet_number' in key:
+            pallet_nums.append(data[key])
+    return len(set(pallet_nums)) == len(pallet_nums)

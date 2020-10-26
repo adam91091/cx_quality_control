@@ -13,6 +13,7 @@ function copyMeasurementForm(e) {
             let stringResult = `measurements-${newId}-${name}`;
             array[i].children[0]['id'] = `id_${stringResult}`;
             array[i].children[0]['name'] = stringResult;
+            array[i].children[0]['value'] = '';
         }
     }
     // add newForm to DOM

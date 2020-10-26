@@ -5,7 +5,10 @@
 <div class="card m-2 p-2 rounded" >
     <div class="header p-2 grey lighten-2">
         <h3 class="m-2">
-            {% if type == 'new' %} Dodaj nowego klienta {% else %} Zaktualizuj dane klienta {% endif %}
+            {% if type == 'new' %} Dodaj nowego klienta
+            {% elif type == 'detail' %} Dane klienta
+            {% else %} Zaktualizuj dane klienta
+            {% endif %}
         </h3>
     </div>
     <hr class="border border-default">

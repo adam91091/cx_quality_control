@@ -4,11 +4,13 @@
 {% block content %}
 <div class="card rounded">
     <h3 class="m-3">
-        {% if type == 'new' %} Dodaj nowy raport pomiarowy {% elif type == 'detail' %}
-            Dane raportu pomiarowego {% else %} Zaktualizuj dane raportu pomiarowego {% endif %}
+        {% if type == 'new' %} Dodaj nowy raport pomiarowy
+        {% elif type == 'detail' %} Dane raportu pomiarowego
+        {% else %} Zaktualizuj dane raportu pomiarowego {% endif %}
     </h3>
     <hr class="border border-default">
-    <form method="post">{% csrf_token %}
+    <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
     <div class="form-group card-body mb-0">
     <!-- Order data-->
     <div class="row">
@@ -214,8 +216,24 @@
             </div>
     </div>
     <br>
+    {% if type != 'detail' %}
         <button type="button" class="btn btn-secondary add-form-row">Dodaj nowy pomiar</button>
-        <button type="button" class="btn btn-secondary ml-1 remove-form-row">Usuń pomiar</button>
+        <button type="button" class="btn btn-secondary ml-1" data-toggle="modal"
+                data-target="#confirmDeleteMeasurement">Usuń ostatni pomiar</button>
+        <div class="modal fade" id="confirmDeleteMeasurement">
+          <div class="modal-dialog">
+              <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Czy na pewno chcesz usunąć ostatni pomiar?</h5>
+                  </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-primary" data-dismiss="modal">Nie</button>
+                  <button type="button" class="btn btn-secondary remove-form-row" data-dismiss="modal">Tak</button>
+                </div>
+              </div>
+          </div>
+        </div>
+    {% endif %}
         <hr class="border border-default">
         <!-- Measurement report form data-->
         {{ measurement_report_form.media }}
@@ -230,22 +248,29 @@
             </div>
         </div>
     <span>
-        <input type="submit" value="Zapisz" class="mt-3 btn btn-secondary">
-        <a href="{% url 'orders:orders_list' %}" class="ml-1 mt-3 btn btn-primary">Anuluj</a>
-    </span>
-    </div>
-    </form>
-        <div class="modal fade" tabindex="-1" role="dialog" id="modal">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content"></div>
+        {% if type == 'detail' %}
+            <a href="{% url 'orders:orders_list' %}" class="ml-1 mt-3 btn btn-primary">Wstecz</a>
+        {% else %}
+            <input type="submit" value="Zapisz" class="mt-3 btn btn-secondary">
+            <a href="{% url 'orders:orders_list' %}" class="ml-1 mt-3 btn btn-primary">Anuluj</a>
+            </span>
             </div>
-        </div>
-        <button id="{{ order_form.instance.id }}" class=" mt-3 ml-1 btn btn-danger" type="button" name="button">Zakończ pomiary </button>
-        <script type="text/javascript">
-          $(function () {
-            $("#{{ order_form.instance.id }}").modalForm({formURL: "{% url 'orders:measurement_report_close' order_form.instance.id %}"});
-          });
-    </script>
+            </form>
+            <div class="modal fade" tabindex="-1" role="dialog" id="modal">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content"></div>
+                </div>
+            </div>
+            {% if type != 'new' %}
+                <button id="{{ order_form.instance.id }}" class=" mt-3 ml-1 btn btn-danger" type="button" name="button">Zakończ pomiary </button>
+                <script type="text/javascript">
+                  $(function () {
+                    $("#{{ order_form.instance.id }}").modalForm({formURL: "{% url 'orders:measurement_report_close' order_form.instance.id %}"});
+                  });
+                </script>
+            {% endif %}
+        {% endif %}
 </div>
 <script type="text/javascript" src="{% static "measurementReportReloading.js" %}"></script>
+<script type="text/javascript" src="{% static 'clientSideValidation.js' %}"></script>
 {% endblock %}

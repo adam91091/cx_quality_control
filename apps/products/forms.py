@@ -6,15 +6,16 @@ from apps.products.models import Product, Specification
 
 
 class ProductForm(ModelForm):
-    validation_hints = {'product_sap_id': "Numer SAP musi się składać z 6 cyfr oraz nie może być polem pustym",
+    validation_hints = {'product_sap_id': "Numer SAP musi się składać z 7 cyfr oraz nie może być polem pustym",
                         'description': "Pole z opisem nie może być puste", }
 
-    def __init__(self, read_only=False, *args, **kwargs):
+    def __init__(self, read_only=False, update=False, *args, **kwargs):
         super(ProductForm, self).__init__(*args, **kwargs)
         if read_only:
-            for field in self.fields.values():
-                field.widget.attrs['readonly'] = True
-                field.widget.attrs['disabled'] = 'true'
+            for field_name in self.fields:
+                self.fields[field_name].disabled = True
+        if update:
+            self.fields['product_sap_id'].disabled = True
 
     class Meta:
         model = Product
@@ -35,7 +36,14 @@ class ProductForm(ModelForm):
 
 
 class SpecificationForm(ModelForm):
-    validation_hints = {'remarks': "Pole z uwagami nie może być puste"}
+    validation_hints = {'remarks': "Pole z uwagami nie może być puste",
+                        'float_field': "Podaj liczbę, np. 1 lub 1.0",
+                        'integer_field': "Podaj liczbę całkowitą, np. 1",
+                        'colour': "Pole z kolorem nie może być puste",
+                        'finish': "Pole z powierzchnią zew. nie może być puste",
+                        'maximum_height_of_pallet': "Podaj liczbę, np. 1 lub 1.0",
+                        'quantity_on_the_pallet': "Podaj całkowitą liczbę sztuk tulei na palecie",
+                        }
 
     def __init__(self, read_only=False, *args, **kwargs):
         super(SpecificationForm, self).__init__(*args, **kwargs)
@@ -48,14 +56,14 @@ class SpecificationForm(ModelForm):
         model = Specification
         exclude = ('product',)
         labels = {
-            'internal_diameter_target': "Średnica wewnętrzna",
-            'external_diameter_target': "Średnica zewnętrzna",
-            'wall_thickness_target': "Grubość ścianki",
-            'length_target': "Długość",
+            'internal_diameter_target': "Średnica wewnętrzna (mm)",
+            'external_diameter_target': "Średnica zewnętrzna (mm)",
+            'wall_thickness_target': "Grubość ścianki (mm)",
+            'length_target': "Długość (mm)",
             'flat_crush_resistance_target': "Wytrzymałość na ściskanie (100 MM)",
-            'moisture_content_target': "Wilgotność",
+            'moisture_content_target': "Wilgotność (%)",
             'colour': "Kolor",
-            'finish': "Powierzchnia zew.",
+            'finish': "Powierzchnia zewnętrzna",
             'maximum_height_of_pallet': "Maksymalna wysokość palety",
             'pallet_wrapped_with_stretch_film': "Paleta zabezpieczona folią stretch?",
             'pallet_protected_with_paper_edges': "Paleta zabezpieczona kątownikami papierowymi?",

@@ -26,7 +26,7 @@ class OrdersViewTest(TestCase):
 
         cls.client_sap_id_form_data = cls.clients[-1].client_sap_id
         cls.product_sap_id_form_data = cls.products[-1].product_sap_id
-        cls.form_data = {'order_sap_id': 999999, 'client': cls.client_sap_id_form_data,
+        cls.form_data = {'order_sap_id': 99996599, 'client': cls.client_sap_id_form_data,
                          'product': cls.product_sap_id_form_data, 'date_of_production': '5896-12-12',
                          'status': 'Ready', 'quantity': 10, 'internal_diameter_reference': 1.7,
                          'external_diameter_reference': 1.2, 'length': 42.3}
@@ -64,11 +64,10 @@ class OrdersViewTest(TestCase):
         self.assertEqual(response.context['order_form'].instance.id, self.order_to_be_updated.id)
 
     def test_update_post(self):
-        updated_order_sap_id = 888888
-        self.form_data['order_sap_id'] = updated_order_sap_id
+        updated_length = self.form_data['length']
         assert_response_post(test_case=self, url_name='orders:order_update', exp_status_code=302,
                              data=self.form_data, id=self.order_to_be_updated.id)
-        self.assertEqual(Order.objects.get(id=self.order_to_be_updated.id).order_sap_id, updated_order_sap_id)
+        self.assertEqual(Order.objects.get(id=self.order_to_be_updated.id).length, updated_length)
 
 
 class MeasurementReportsViewTest(TestCase):
@@ -124,12 +123,10 @@ class MeasurementReportsViewTest(TestCase):
         self.assertEqual(len(response.context['measurement_formset']), self.measurement_report_count)
 
     def test_update_post(self):
-        updated_order_sap_id = 888888
         updated_measurements_count = 10
         add_meas_data = MeasurementsPostDictProvider(measurements_count=10, initial_forms=6,
                                                      start_from=6).get_post_data_as_dict()
 
-        self.form_data['order_sap_id'] = updated_order_sap_id
         for i in range(self.measurement_report_count):
             self.form_data[f'measurements-{i}-id'] = self.order_update.measurement_report.measurements.all()[i].id
             self.form_data[f'measurements-{i}-measurement_report'] = self.order_update.measurement_report.id
@@ -137,7 +134,6 @@ class MeasurementReportsViewTest(TestCase):
         assert_response_post(test_case=self, url_name='orders:measurement_report_update', exp_status_code=302,
                              data=self.form_data, id=self.order_update.id)
         updated_order = Order.objects.get(id=self.order_update.id)
-        self.assertEqual(updated_order.order_sap_id, updated_order_sap_id)
         self.assertEqual(updated_order.measurement_report, self.order_update.measurement_report)
         self.assertEqual(updated_order.measurement_report.measurements.count(),
                          updated_measurements_count)

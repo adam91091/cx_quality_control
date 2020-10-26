@@ -18,7 +18,7 @@ class ProductsViewTest(TestCase):
         cls.product_to_be_deleted = cls.products[0]
         cls.product_to_be_updated = cls.products[1]
 
-        cls.form_data = {'product_sap_id': 999999, 'description': "product_form_data", 'index': ""}
+        cls.form_data = {'product_sap_id': 9993999, 'description': "product_form_data", 'index': ""}
         for field in Specification._meta.get_fields():
             if field.name != 'product':
                 cls.form_data[field.name] = '999'

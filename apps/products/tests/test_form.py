@@ -10,7 +10,7 @@ class ProductFormTest(TestCase):
         self.product = ProductFactory.create()
         self.spec = SpecificationFactory.create(product=self.product)
 
-        self.product_form = {'product_sap_id': '123456', 'description': "Product new", 'index': ""}
+        self.product_form = {'product_sap_id': '1234563', 'description': "Product new", 'index': ""}
         self.spec_form = {}
         for field in Specification._meta.get_fields():
             if field.name != 'product':
@@ -20,7 +20,7 @@ class ProductFormTest(TestCase):
         self.spec_form['pallet_wrapped_with_stretch_film'] = 'Y'
 
     def test_form_sap_id_validation_positive(self):
-        self.product_form['product_sap_id'] = '765432'
+        self.product_form['product_sap_id'] = '7654332'
         product_form = ProductForm(data=self.product_form, instance=self.product)
         self.assertTrue(product_form.is_valid())
 
