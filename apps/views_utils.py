@@ -31,6 +31,11 @@ VIEW_MSG = {'client': {'new_success': "Utworzono nowego klienta",
                                                    "Wystąpiły następujące błędy formularza:",
                                    'close_success': "Pomiary zostały zakończone",
                                    },
+            'user': {'login_success': 'Logowanie zakończyło się sukcesem',
+                     'logout_success': 'Wylogowano z systemu',
+                     'login_fail': 'Logowanie nieudane: niepoprawny login lub hasło',
+                     'inactive': "Użytkownik jest nieaktywny i został zablokowany w systemie",
+                     }
             }
 
 
