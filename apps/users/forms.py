@@ -2,7 +2,7 @@ from django import forms
 
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import CxUser
-from ..forms_utils import BASIC_REQ_STYLE
+from ..forms_utils import BASIC_REQ_STYLE, USERNAME_STYLE, PASSWORD_STYLE
 
 
 class CxUserCreationForm(UserCreationForm):
@@ -20,8 +20,9 @@ class CxUserChangeForm(UserChangeForm):
 
 
 class CxUserLoginForm(forms.ModelForm):
-    validation_hints = {'username': "Nazwa użytkownika powinna składać się z 5 literowego skrótu imienia i nazwiska",
-                        'password': "Hasło powinno składać się z przynajmniej 8 znaków"}
+    validation_hints = {'username': "Login z pięciu pierwszych liter imienia i "
+                                    "nazwiska (np. Jan Kowalski - jkowa).",
+                        'password': "Przynajmniej 8 znakowe hasło z 1 cyfrą lub więcej."}
 
     class Meta:
         model = CxUser
@@ -33,6 +34,6 @@ class CxUserLoginForm(forms.ModelForm):
         }
 
         widgets = {
-            'username': forms.TextInput(attrs={**BASIC_REQ_STYLE, **{'style': 'width: 30%'}}),
-            'password': forms.PasswordInput(attrs={**BASIC_REQ_STYLE, **{'style': 'width: 30%'}}),
+            'username': forms.TextInput(attrs={**USERNAME_STYLE, **{'style': 'width: 30%'}}),
+            'password': forms.PasswordInput(attrs={**PASSWORD_STYLE, **{'style': 'width: 30%'}}),
         }
