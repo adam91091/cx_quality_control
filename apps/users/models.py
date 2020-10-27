@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.password_validation import validate_password
 
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
@@ -24,3 +25,4 @@ class CxUser(AbstractUser):
             'unique': _("A user with that username already exists."),
         },
     )
+    password = models.CharField(_('password'), max_length=128, validators=[validate_password])

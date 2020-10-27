@@ -14,15 +14,15 @@
     <form id="login-form" method="post" class="mb-0 needs-validation" novalidate>
         {% csrf_token %}
             <div class="form-group card-body mb-0">
-                {{ login_form.username.label_tag }}
-                {{ login_form.username }}
+                {{ form.username.label_tag }}
+                {{ form.username }}
                 <div class="invalid-feedback">
-                    {{ login_form.validation_hints|get_item:'username' }}
+                    {{ form.validation_hints|get_item:'username' }}
                 </div>
-                {{ login_form.password.label_tag }}
-                {{ login_form.password }}
+                {{ form.password.label_tag }}
+                {{ form.password }}
                 <div class="invalid-feedback">
-                    {{ login_form.validation_hints|get_item:'password' }}
+                    {{ form.validation_hints|get_item:'password' }}
                 </div>
                 <div class="mt-2">
                 <a href="{% url 'users:password_reset' %}">Nie pamiętam hasła</a>

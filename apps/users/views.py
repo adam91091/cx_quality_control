@@ -31,7 +31,7 @@ def user_login(request):
             messages.error(request, message=VIEW_MSG['user']['login_fail'])
 
     login_form = CxUserLoginForm()
-    return render(request, 'login_form.html', {'login_form': login_form})
+    return render(request, 'login_form.html', {'form': login_form})
 
 
 def user_logout(request):
@@ -78,8 +78,8 @@ def user_password_reset_done(request, user_id):
     try:
         user = CxUser.objects.get(id=user_id)
         domain = user.email.split('@')[1]
-    except CxUser.DoesNotExist:
-        domain = ''
+    except (CxUser.DoesNotExist, IndexError):
+        domain = 'nieprawidłowy format adresu email'
     return render(request, 'password_reset_done.html', {'domain': domain})
 
 
