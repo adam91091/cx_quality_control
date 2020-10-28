@@ -9,5 +9,8 @@ class CxUserFactory(factory.DjangoModelFactory):
         model = CxUser
 
     username = 'utest'
+    first_name = 'user'
+    last_name = 'user'
     email = 'utest@test.com'
     password = factory.PostGenerationMethodCall('set_password', PASSWORD)
+    is_superuser = False

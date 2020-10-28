@@ -7,6 +7,10 @@ app_name = 'users'
 urlpatterns = [
     path('login/', views.user_login, name='user_login'),
     path('logout/', views.user_logout, name='user_logout'),
+    path('profile/', views.user_profile, name='user_profile'),
+    path('email_change/', views.user_email_change, name='email_change'),
+    path('password_change/', views.CxUserPasswordChangeView.as_view(
+        template_name='password_change_form.html'), name='password_change'),
     path('password_reset/', views.user_reset_password, name='password_reset'),
     path('password_reset_done/<int:user_id>/', views.user_password_reset_done, name='password_reset_done'),
     path('password_reset_confirm/<uidb64>/<token>/', views.CxUserPasswordResetConfirmView.as_view(

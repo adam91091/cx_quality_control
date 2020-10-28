@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth.views import PasswordResetConfirmView
+from django.contrib.auth.views import PasswordResetConfirmView, PasswordChangeView
 from django.core.mail import send_mail, BadHeaderError
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -9,8 +9,9 @@ from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+from django.contrib.auth.decorators import login_required
 
-from apps.users.forms import CxUserLoginForm, CxUserPasswordResetForm
+from apps.users.forms import CxUserLoginForm, CxUserPasswordResetForm, CxUserEmailChangeForm, CxUserPasswordChangeForm
 from apps.users.models import CxUser
 from apps.views_utils import VIEW_MSG, add_error_messages
 
@@ -39,6 +40,27 @@ def user_logout(request):
         logout(request=request)
         messages.success(request, message=VIEW_MSG['user']['logout_success'])
     return redirect(to='users:user_login')
+
+
+@login_required
+def user_profile(request):
+    return render(request, 'profile_form.html')
+
+
+@login_required
+def user_email_change(request):
+    if request.method == 'POST':
+        form = CxUserEmailChangeForm(instance=request.user, data=request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.save()
+            messages.success(request, VIEW_MSG['user']['email_change_success'])
+            return redirect(to='users:user_profile')
+        else:
+            add_error_messages(request, main_msg=VIEW_MSG['user']['email_change_error'],
+                               form=form)
+    form = CxUserEmailChangeForm(instance=request.user)
+    return render(request, 'email_change_form.html', {'form': form})
 
 
 def user_reset_password(request):
@@ -83,6 +105,20 @@ def user_password_reset_done(request, user_id):
     return render(request, 'password_reset_done.html', {'domain': domain})
 
 
+class CxUserPasswordChangeView(PasswordChangeView):
+    form_class = CxUserPasswordChangeForm
+    success_url = reverse_lazy('users:user_profile')
+
+    def post(self, request, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            messages.success(request=request, message=VIEW_MSG['user']['password_change_success'])
+            return self.form_valid(form)
+        else:
+            add_error_messages(request=request, main_msg=VIEW_MSG['user']['password_change_fail'], form=form)
+            return self.form_invalid(form)
+
+
 class CxUserPasswordResetConfirmView(PasswordResetConfirmView):
     form_class = CxUserPasswordResetForm
     success_url = reverse_lazy('users:password_reset_complete')
@@ -94,6 +130,7 @@ class CxUserPasswordResetConfirmView(PasswordResetConfirmView):
     def post(self, request, **kwargs):
         form = self.get_form()
         if form.is_valid():
+            messages.success(request=request, message=VIEW_MSG['user']['password_change_success'])
             return self.form_valid(form)
         else:
             add_error_messages(request=request, main_msg=VIEW_MSG['user']['password_change_fail'], form=form)

@@ -40,6 +40,22 @@ class CxUserLoginForm(forms.ModelForm):
         }
 
 
+class CxUserEmailChangeForm(forms.ModelForm):
+    validation_hints = {'email': "Adres email w poprawnym formacie, np. user@domain.com"}
+
+    class Meta:
+        model = CxUser
+        fields = ('email', )
+
+        labels = {
+            'email': "Adres email",
+        }
+
+        widgets = {
+            'email': forms.EmailInput(attrs={**BASIC_REQ_STYLE, **{'style': 'width: 30%'}}),
+        }
+
+
 class CxUserPasswordResetForm(SetPasswordForm):
     validation_hints = {'password': "Przynajmniej 8 znakowe hasło z 1 cyfrą lub więcej.", }
 

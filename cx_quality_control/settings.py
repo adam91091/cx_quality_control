@@ -103,6 +103,7 @@ else:
             'PASSWORD': 'password1!A',
             'HOST': 'localhost',
             'PORT': '3306',
+            'OPTIONS': {'use_pure': True, },
             'TEST': {
                 'NAME': 'test_cx_quality_control_db',
             }
