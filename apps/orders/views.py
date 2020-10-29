@@ -1,17 +1,19 @@
-from apps.providers import MAX_DATE, MIN_DATE
-
 from django.contrib import messages
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import permission_required, login_required
+
+from apps.providers import MAX_DATE, MIN_DATE
 
 from .forms import OrderForm, MeasurementFormSet, MeasurementReportForm, DateFilteringForm, MeasurementForm
 from .models import Order
-
 from ..clients.models import Client
 from ..products.models import Product
 from ..providers import FilterProvider, SortingProvider, PaginationProvider
 from ..views_utils import render_form_response, VIEW_MSG, check_if_related_object_exists, add_error_messages
 
 
+@login_required
+@permission_required("orders.view_order")
 def orders_list(request):
     order_filter_provider = FilterProvider(model=Order, session=request.session, params=request.GET)
     orders = order_filter_provider.get_queryset()
@@ -32,12 +34,16 @@ def orders_list(request):
                                                 'date_filtering_form': date_filtering_form})
 
 
+@login_required
+@permission_required("orders.view_order")
 def order_detail(request, order_id):
     order = Order.objects.get(id=order_id)
     order_form = OrderForm(instance=order, read_only=True)
     return render(request, 'order_form.html', {'order_form': order_form, 'type': 'detail'})
 
 
+@login_required
+@permission_required("orders.add_order")
 def order_new(request):
     if request.method == 'POST':
         product = check_if_related_object_exists(request=request, model=Product, sap_id_name='product_sap_id',
@@ -52,6 +58,8 @@ def order_new(request):
     return render_form_response(request=request, method='new', form=order_form, model_name='order')
 
 
+@login_required
+@permission_required("orders.change_order")
 def order_update(request, order_id):
     order = Order.objects.get(id=order_id)
     if request.method == 'POST':
@@ -67,6 +75,8 @@ def order_update(request, order_id):
     return render_form_response(request=request, method='update', form=order_form, model_name='order')
 
 
+@login_required
+@permission_required("orders.delete_order")
 def order_delete(request, order_id):
     order = Order.objects.get(id=order_id)
     if request.method == 'POST':
@@ -77,6 +87,8 @@ def order_delete(request, order_id):
         return render(request, 'order_confirm_delete.html', {'order': order})
 
 
+@login_required
+@permission_required("orders.add_measurementreport")
 def measurement_report_new(request, order_id):
     order = Order.objects.get(id=order_id)
     if request.method == 'GET':
@@ -102,6 +114,8 @@ def measurement_report_new(request, order_id):
                                              measurement_formset=measurement_formset, method='new', order_id=order_id)
 
 
+@login_required
+@permission_required("orders.view_measurementreport")
 def measurement_report_detail(request, order_id):
     order = Order.objects.get(id=order_id)
     order_form = OrderForm(instance=order, read_only=True)
@@ -116,6 +130,8 @@ def measurement_report_detail(request, order_id):
                                                             'order_id': order_id, 'type': 'detail'})
 
 
+@login_required
+@permission_required("orders.change_measurementreport")
 def measurement_report_update(request, order_id):
     order = Order.objects.get(id=order_id)
     if request.method == 'GET':
@@ -146,6 +162,8 @@ def measurement_report_update(request, order_id):
                                              order_id=order_id)
 
 
+@login_required
+@permission_required("orders.delete_measurementreport")
 def measurement_report_close(request, order_id):
     order = Order.objects.get(id=order_id)
     if request.method == 'POST':

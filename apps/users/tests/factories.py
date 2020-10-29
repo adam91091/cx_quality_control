@@ -13,4 +13,4 @@ class CxUserFactory(factory.DjangoModelFactory):
     last_name = 'user'
     email = 'utest@test.com'
     password = factory.PostGenerationMethodCall('set_password', PASSWORD)
-    is_superuser = False
+    is_superuser = True
