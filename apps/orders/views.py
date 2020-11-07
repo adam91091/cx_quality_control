@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import permission_required, login_required
 from apps.providers import MAX_DATE, MIN_DATE
 
 from .forms import OrderForm, MeasurementFormSet, MeasurementReportForm, DateFilteringForm, MeasurementForm
-from .models import Order
+from .models import Order, MeasurementReport
 from ..clients.models import Client
 from ..products.models import Product
 from ..providers import FilterProvider, SortingProvider, PaginationProvider
@@ -134,6 +134,9 @@ def measurement_report_detail(request, order_id):
 @permission_required("orders.change_measurementreport")
 def measurement_report_update(request, order_id):
     order = Order.objects.get(id=order_id)
+    if order.status == 'Done':
+        messages.error(request, message="Zamknięte raporty pomiarowe nie podlegają edycji")
+        return redirect('orders:orders_list')
     if request.method == 'GET':
         order_form = OrderForm(instance=order, measurement_report=True)
         measurement_report_form = MeasurementReportForm(instance=order.measurement_report)
@@ -166,6 +169,14 @@ def measurement_report_update(request, order_id):
 @permission_required("orders.delete_measurementreport")
 def measurement_report_close(request, order_id):
     order = Order.objects.get(id=order_id)
+    try:
+        order.measurement_report
+    except MeasurementReport.DoesNotExist:
+        messages.error(request, message="Nie można zamknąć raportu pomiarowego, który nie został zapisany.")
+        return redirect('orders:orders_list')
+    if order.status == 'Done':
+        messages.error(request, message="Raport pomiarowy już został zamknięty.")
+        return redirect('orders:orders_list')
     if request.method == 'POST':
         order.status = 'Done'
         order.save()
