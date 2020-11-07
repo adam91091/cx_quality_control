@@ -1,0 +1,5 @@
+Django==2.2.10
+mysql-connector-python
+django-bootstrap4
+django-bootstrap-modal-forms
+django-bootstrap-datepicker-plus

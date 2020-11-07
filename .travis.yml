@@ -6,7 +6,7 @@ services:
   - mysql
 
 install:
-  - pip install -r pkg_install_requirements.txt
+  - pip install -r requirements_test.txt
 
 # Run scripts specified in Jobs rather than one global script.
 script: skip
