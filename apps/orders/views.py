@@ -188,11 +188,9 @@ def measurement_report_close(request, order_id):
 
 def _render_measurement_form_post(request, order_form, measurement_report_form, measurement_formset, method,
                                   order_id):
-
     if order_form.is_valid() and measurement_report_form.is_valid():
         if all(measurement_form.is_valid() for measurement_form in measurement_formset):
             order = order_form.save(commit=False)
-            order.save()
             measurement_report = measurement_report_form.save(commit=False)
             measurement_report.order = order
             measurement_report.save()
