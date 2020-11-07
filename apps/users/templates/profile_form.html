@@ -35,6 +35,18 @@
                     <a href="{% url 'users:password_change' %}">Zmień hasło</a>
                 </td>
             </tr>
+            <tr>
+                <th>Poziom uprawnień</th>
+                <td>
+                {% for group in request.user.groups.all %}
+                    <p>{{ group }}</p>
+                {% endfor %}
+                {% if request.user.is_staff %}
+                    <p>Administrator</p>
+                    <a href="{% url 'admin:login' %}">Przejdź do panelu administratora</a>
+                {% endif %}
+                </td>
+            </tr>
         </table>
     </div>
 </div>

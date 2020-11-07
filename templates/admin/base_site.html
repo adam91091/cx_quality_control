@@ -1,0 +1,15 @@
+{% extends "admin/base.html" %}
+{% block title %}
+    Zarządzanie użytkownikami
+{% endblock %}
+
+{% block branding %}
+    <div>
+        <h1 id="site-name" style="float: left;"><a href="{% url 'admin:index' %}">Zarządzaj użytkownikami</a></h1>
+    </div>
+{% endblock %}
+
+{% block content_title %}
+    {% if title %}<h1>Panel administratora</h1>{% endif %}
+        <h1 id="site-name" style="float: left;"><a href="{% url 'users:user_profile' %}">Powrót do głównej aplikacji</a></h1>
+{% endblock %}
