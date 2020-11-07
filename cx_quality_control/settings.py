@@ -25,7 +25,7 @@ SECRET_KEY = ')t1^zg6sqtfxn1jhetg#j2#*s%j34#5_rltn1iicw+&uqsn31u'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
@@ -103,20 +103,19 @@ else:
             'PASSWORD': 'password1!A',
             'HOST': 'localhost',
             'PORT': '3306',
+            'OPTIONS': {'use_pure': True, },
             'TEST': {
                 'NAME': 'test_cx_quality_control_db',
             }
         }
     }
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
     },

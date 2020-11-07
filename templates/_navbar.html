@@ -1,4 +1,3 @@
-
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
   <ul class="nav navbar-nav mr-auto">
       <li>
@@ -10,13 +9,15 @@
       <li>
           <a class="nav-link" href="{% url 'orders:orders_list' %}?clear_filters=true">Zlecenia produkcyjne</a>
       </li>
-
   </ul>
     <ul class="navbar-nav ml-auto" >
-        <li class="nav-item">
-{#            <a class="nav-link" href="#">Wyloguj się</a>#}
-{#            <a class="nav-link" href="#"> Zaloguj się</a>#}
-        </li>
+        {% if user.is_authenticated %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'users:user_profile' %}">Moje konto</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'users:user_logout' %}">Wyloguj się</a>
+            </li>
+        {% endif %}
     </ul>
 </nav>
-

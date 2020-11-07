@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
-    <a href="{% url "orders:order_new" %}" class="btn btn-secondary mb-2">Dodaj nowe zlecenie produkcyjne</a>
+    {% if perms.orders.view_order %}
+        <a href="{% url "orders:order_new" %}" class="btn btn-secondary mb-2">Dodaj nowe zlecenie produkcyjne</a>
+    {% endif %}
     <a href="{% url "orders:orders_list" %}?clear_filters=true" class="btn btn-secondary mb-2">Wyczyść filtry</a>
     <button onclick="window.location.reload();" class="btn btn-secondary mb-2">Odśwież</button>
     <form name="search-form" method="GET" action="{% url 'orders:orders_list'%}" class="m-0">
@@ -70,28 +72,34 @@
       <td class="col-sm-2">{{order.product.description}}</td>
       <td class="col-sm-2">{{order.get_status_display}}</td>
     <td class="col-sm-2">
-        <a href="{% url "orders:order_detail" order.id %}" class="btn btn-secondary p-0 m-0">Info</a>
-        {% if order.status != 'Done' %}
+        {% if perms.orders.view_order %}
+            <a href="{% url "orders:order_detail" order.id %}" class="btn btn-secondary p-0 m-0">Info</a>
+        {% endif %}
+        {% if perms.orders.change_order %}
             <a href="{% url "orders:order_update" order.id %}" class="btn btn-secondary p-0 m-0">Edytuj</a>
         {% endif %}
-        {% if order.status == 'Started' %}
-            <a href="{% url "orders:measurement_report_new" order.id %}" class="btn btn-secondary p-0 m-0">Dodaj pomiary</a>
-        {% elif order.status == 'Done' %}
+        {% if perms.orders.delete_order %}
+            <div class="modal fade" tabindex="-1" role="dialog" id="modal">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content"></div>
+                </div>
+            </div>
+            <button id="{{ order.id }}" class="btn btn-secondary p-0 m-0" type="button" name="button">Usuń </button>
+            <script type="text/javascript">
+              $(function () {
+                $("#{{ order.id }}").modalForm({formURL: "{% url 'orders:order_delete' order.id %}"});
+              });
+            </script>
+        {% endif %}
+        <!-- Measurement reports -->
+        {% if perms.orders.view_measurementreport and order.status != 'Started'%}
             <a href="{% url "orders:measurement_report_detail" order.id %}" class="btn btn-secondary p-0 m-0">Wyświetl pomiary</a>
-        {% else %}
+        {% endif %}
+        {% if order.status == 'Started' and perms.orders.add_measurementreport%}
+            <a href="{% url "orders:measurement_report_new" order.id %}" class="btn btn-secondary p-0 m-0">Dodaj pomiary</a>
+        {% elif order.status == 'Open' and perms.orders.change_measurementreport %}
             <a href="{% url "orders:measurement_report_update" order.id %}" class="btn btn-secondary p-0 m-0">Edytuj pomiary</a>
         {% endif %}
-        <div class="modal fade" tabindex="-1" role="dialog" id="modal">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content"></div>
-            </div>
-        </div>
-        <button id="{{ order.id }}" class="btn btn-secondary p-0 m-0" type="button" name="button">Usuń </button>
-        <script type="text/javascript">
-          $(function () {
-            $("#{{ order.id }}").modalForm({formURL: "{% url 'orders:order_delete' order.id %}"});
-          });
-    </script>
     </td>
     </tr>
     {% endfor %}

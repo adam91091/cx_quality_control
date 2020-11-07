@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth.decorators import permission_required, login_required
 
 from apps.clients.forms import ClientForm
 from apps.clients.models import Client
@@ -7,6 +8,8 @@ from apps.views_utils import VIEW_MSG, render_form_response
 from apps.providers import FilterProvider, PaginationProvider, SortingProvider
 
 
+@login_required
+@permission_required("clients.view_client")
 def clients_list(request):
     client_filter_provider = FilterProvider(model=Client, session=request.session, params=request.GET)
     clients = client_filter_provider.get_queryset()
@@ -23,12 +26,16 @@ def clients_list(request):
                                                  'order_by': order_by})
 
 
+@login_required
+@permission_required("clients.view_client")
 def client_detail(request, client_id):
     client = Client.objects.get(id=client_id)
     client_form = ClientForm(instance=client, read_only=True)
     return render(request, 'client_form.html', {'client_form': client_form, 'type': 'detail'})
 
 
+@login_required
+@permission_required("clients.delete_client")
 def client_delete(request, client_id):
     client = Client.objects.get(id=client_id)
     if request.method == 'POST':
@@ -39,6 +46,8 @@ def client_delete(request, client_id):
         return render(request, 'client_confirm_delete.html', {'client': client})
 
 
+@login_required
+@permission_required("clients.add_client")
 def client_new(request):
     if request.method == 'POST':
         client_form = ClientForm(data=request.POST)
@@ -47,6 +56,8 @@ def client_new(request):
     return render_form_response(request=request, method='new', form=client_form, model_name='client')
 
 
+@login_required
+@permission_required("clients.change_client")
 def client_update(request, client_id):
     client = Client.objects.get(id=client_id)
     if request.method == 'POST':

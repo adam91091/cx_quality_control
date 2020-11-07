@@ -31,6 +31,15 @@ VIEW_MSG = {'client': {'new_success': "Utworzono nowego klienta",
                                                    "Wystąpiły następujące błędy formularza:",
                                    'close_success': "Pomiary zostały zakończone",
                                    },
+            'user': {'login_success': 'Logowanie zakończyło się sukcesem',
+                     'logout_success': 'Wylogowano z systemu',
+                     'login_fail': 'Logowanie nieudane: niepoprawny login lub hasło',
+                     'inactive': "Użytkownik jest nieaktywny i został zablokowany w systemie",
+                     'password_change_success': 'Hasło zostało zmienione',
+                     'password_change_fail': "Hasło nie zostało zmienione. Wystąpiły następujące błędy formularza:",
+                     'email_change_success': "Adres email został zmieniony",
+                     'email_change_error': "Adres email nie został zmieniony. Wystąpiły następujące błędy formularza:",
+                     }
             }
 
 

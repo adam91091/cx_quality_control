@@ -1,17 +1,19 @@
-from apps.providers import MAX_DATE, MIN_DATE
-
 from django.contrib import messages
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import permission_required, login_required
+
+from apps.providers import MAX_DATE, MIN_DATE
 
 from .forms import OrderForm, MeasurementFormSet, MeasurementReportForm, DateFilteringForm, MeasurementForm
-from .models import Order
-
+from .models import Order, MeasurementReport
 from ..clients.models import Client
 from ..products.models import Product
 from ..providers import FilterProvider, SortingProvider, PaginationProvider
 from ..views_utils import render_form_response, VIEW_MSG, check_if_related_object_exists, add_error_messages
 
 
+@login_required
+@permission_required("orders.view_order")
 def orders_list(request):
     order_filter_provider = FilterProvider(model=Order, session=request.session, params=request.GET)
     orders = order_filter_provider.get_queryset()
@@ -32,12 +34,16 @@ def orders_list(request):
                                                 'date_filtering_form': date_filtering_form})
 
 
+@login_required
+@permission_required("orders.view_order")
 def order_detail(request, order_id):
     order = Order.objects.get(id=order_id)
     order_form = OrderForm(instance=order, read_only=True)
     return render(request, 'order_form.html', {'order_form': order_form, 'type': 'detail'})
 
 
+@login_required
+@permission_required("orders.add_order")
 def order_new(request):
     if request.method == 'POST':
         product = check_if_related_object_exists(request=request, model=Product, sap_id_name='product_sap_id',
@@ -52,6 +58,8 @@ def order_new(request):
     return render_form_response(request=request, method='new', form=order_form, model_name='order')
 
 
+@login_required
+@permission_required("orders.change_order")
 def order_update(request, order_id):
     order = Order.objects.get(id=order_id)
     if request.method == 'POST':
@@ -67,6 +75,8 @@ def order_update(request, order_id):
     return render_form_response(request=request, method='update', form=order_form, model_name='order')
 
 
+@login_required
+@permission_required("orders.delete_order")
 def order_delete(request, order_id):
     order = Order.objects.get(id=order_id)
     if request.method == 'POST':
@@ -77,6 +87,8 @@ def order_delete(request, order_id):
         return render(request, 'order_confirm_delete.html', {'order': order})
 
 
+@login_required
+@permission_required("orders.add_measurementreport")
 def measurement_report_new(request, order_id):
     order = Order.objects.get(id=order_id)
     if request.method == 'GET':
@@ -102,6 +114,8 @@ def measurement_report_new(request, order_id):
                                              measurement_formset=measurement_formset, method='new', order_id=order_id)
 
 
+@login_required
+@permission_required("orders.view_measurementreport")
 def measurement_report_detail(request, order_id):
     order = Order.objects.get(id=order_id)
     order_form = OrderForm(instance=order, read_only=True)
@@ -116,8 +130,13 @@ def measurement_report_detail(request, order_id):
                                                             'order_id': order_id, 'type': 'detail'})
 
 
+@login_required
+@permission_required("orders.change_measurementreport")
 def measurement_report_update(request, order_id):
     order = Order.objects.get(id=order_id)
+    if order.status == 'Done':
+        messages.error(request, message="Zamknięte raporty pomiarowe nie podlegają edycji")
+        return redirect('orders:orders_list')
     if request.method == 'GET':
         order_form = OrderForm(instance=order, measurement_report=True)
         measurement_report_form = MeasurementReportForm(instance=order.measurement_report)
@@ -146,8 +165,18 @@ def measurement_report_update(request, order_id):
                                              order_id=order_id)
 
 
+@login_required
+@permission_required("orders.delete_measurementreport")
 def measurement_report_close(request, order_id):
     order = Order.objects.get(id=order_id)
+    try:
+        order.measurement_report
+    except MeasurementReport.DoesNotExist:
+        messages.error(request, message="Nie można zamknąć raportu pomiarowego, który nie został zapisany.")
+        return redirect('orders:orders_list')
+    if order.status == 'Done':
+        messages.error(request, message="Raport pomiarowy już został zamknięty.")
+        return redirect('orders:orders_list')
     if request.method == 'POST':
         order.status = 'Done'
         order.save()
@@ -159,11 +188,9 @@ def measurement_report_close(request, order_id):
 
 def _render_measurement_form_post(request, order_form, measurement_report_form, measurement_formset, method,
                                   order_id):
-
     if order_form.is_valid() and measurement_report_form.is_valid():
         if all(measurement_form.is_valid() for measurement_form in measurement_formset):
             order = order_form.save(commit=False)
-            order.save()
             measurement_report = measurement_report_form.save(commit=False)
             measurement_report.order = order
             measurement_report.save()

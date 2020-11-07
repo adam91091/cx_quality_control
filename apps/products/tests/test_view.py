@@ -7,6 +7,8 @@ from apps.products.models import Product, Specification
 from apps.products.tests.factories import ProductFactory, SpecificationFactory
 from apps.providers import PAGINATION_OBJ_COUNT_PER_PAGE
 from apps.unittest_utils import assert_response_post, assert_response_get
+from apps.users.tests import PASSWORD
+from apps.users.tests.factories import CxUserFactory
 
 
 class ProductsViewTest(TestCase):
@@ -26,41 +28,50 @@ class ProductsViewTest(TestCase):
         cls.form_data['cores_packed_in'] = 'Horizontal'
         cls.form_data['pallet_wrapped_with_stretch_film'] = 'Y'
 
+        cls.user = CxUserFactory.create()
+
     def test_list(self):
+        self.view_client.login(username=self.user.username, password=PASSWORD)
         response = assert_response_get(test_case=self, url_name='products:products_list',
                                        exp_status_code=200, exp_template='products_list.html')
         self.assertEqual(response.context['page_obj'].paginator.num_pages,
                          ceil(len(self.products) / PAGINATION_OBJ_COUNT_PER_PAGE))
 
     def test_new_get(self):
+        self.view_client.login(username=self.user.username, password=PASSWORD)
         response = assert_response_get(test_case=self, url_name='products:product_new',
                                        exp_status_code=200, exp_template='product_form.html')
         self.assertTrue(isinstance(response.context['product_form'], ProductForm))
         self.assertTrue(isinstance(response.context['spec_form'], SpecificationForm))
 
     def test_new_post(self):
+        self.view_client.login(username=self.user.username, password=PASSWORD)
         product_sap_id = self.form_data['product_sap_id']
         assert_response_post(test_case=self, url_name='products:product_new',
                              exp_status_code=302, data=self.form_data)
         self.assertTrue(Product.objects.get(product_sap_id=product_sap_id))
 
     def test_delete_get(self):
+        self.view_client.login(username=self.user.username, password=PASSWORD)
         response = assert_response_get(test_case=self, url_name='products:product_delete', exp_status_code=200,
                                        exp_template='product_confirm_delete.html', id=self.product_to_be_deleted.id)
         self.assertEqual(response.context['product'].id, self.product_to_be_deleted.id)
 
     def test_delete_post(self):
+        self.view_client.login(username=self.user.username, password=PASSWORD)
         assert_response_post(test_case=self, url_name='products:product_delete', exp_status_code=302,
                              data={}, id=self.product_to_be_deleted.id)
         self.assertFalse(Product.objects.filter(id=self.product_to_be_deleted.id))
 
     def test_update_get(self):
+        self.view_client.login(username=self.user.username, password=PASSWORD)
         response = assert_response_get(test_case=self, url_name='products:product_update', exp_status_code=200,
                                        exp_template='product_form.html', id=self.product_to_be_updated.id)
         self.assertEqual(response.context['product_form'].instance.id, self.product_to_be_updated.id)
         self.assertEqual(response.context['spec_form'].instance.product_id, self.product_to_be_updated.id)
 
     def test_update_post(self):
+        self.view_client.login(username=self.user.username, password=PASSWORD)
         updated_product_desc = 'Updated_description'
         self.form_data['description'] = updated_product_desc
         assert_response_post(test_case=self, url_name='products:product_update', exp_status_code=302,

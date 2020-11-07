@@ -261,7 +261,7 @@
                 <div class="modal-content"></div>
                 </div>
             </div>
-            {% if type != 'new' %}
+            {% if type != 'new' and perms.orders.delete_measurementreport %}
                 <button id="{{ order_form.instance.id }}" class=" mt-3 ml-1 btn btn-danger" type="button" name="button">Zakończ pomiary </button>
                 <script type="text/javascript">
                   $(function () {

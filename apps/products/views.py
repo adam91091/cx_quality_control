@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import permission_required, login_required
 
 from apps.products.forms import ProductForm, SpecificationForm
 from apps.products.models import Product
@@ -7,6 +8,8 @@ from apps.providers import FilterProvider, PaginationProvider, SortingProvider
 from apps.views_utils import VIEW_MSG, render_one_to_one_form_response
 
 
+@login_required
+@permission_required('products.view_product')
 def products_list(request):
     product_filter_provider = FilterProvider(model=Product, session=request.session, params=request.GET)
     products = product_filter_provider.get_queryset()
@@ -22,6 +25,8 @@ def products_list(request):
                                                   'order_by': order_by})
 
 
+@login_required
+@permission_required('products.view_product')
 def product_detail(request, product_id):
     product = Product.objects.get(id=product_id)
     product_form = ProductForm(instance=product, read_only=True)
@@ -30,6 +35,8 @@ def product_detail(request, product_id):
                                                  'type': 'detail'})
 
 
+@login_required
+@permission_required("products.delete_product")
 def product_delete(request, product_id):
     product = Product.objects.get(id=product_id)
     if request.method == 'POST':
@@ -41,6 +48,8 @@ def product_delete(request, product_id):
         return render(request, 'product_confirm_delete.html', {'product': product})
 
 
+@login_required
+@permission_required("products.add_product")
 def product_new(request):
     if request.method == 'POST':
         product_form = ProductForm(data=request.POST)
@@ -52,6 +61,8 @@ def product_new(request):
                                            child_form=spec_form, parent_name='product', child_name='spec')
 
 
+@login_required
+@permission_required("products.change_product")
 def product_update(request, product_id):
     product = Product.objects.get(id=product_id)
     if request.method == 'POST':

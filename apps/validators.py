@@ -3,9 +3,10 @@ from django.core.validators import RegexValidator
 REGEXPS = {
     'common': {'sap_id': r'^([0-9]{7})$',
                'num_field': r'^([0-9]*|[0-9]*\.\d+)$',
-               'int_field': r'^[0-9]*$',
-               },
+               'int_field': r'^[0-9]*$', },
     'order': {'order_sap_id': r'^([0-9]{8})$', },
+    'user': {'username': r'^([a-z]{5})$',
+             'password': r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$', }
 }
 
 
@@ -28,3 +29,8 @@ def validate_num_field():
 def validate_int_field():
     return RegexValidator(regex=REGEXPS['common']['int_field'],
                           message="Pole integer powinno zawierać liczbę całkowitą")
+
+
+def validate_username():
+    return RegexValidator(regex=REGEXPS['user']['username'],
+                          message="Login powinien składać się z dokładnie pięciu małych liter")
