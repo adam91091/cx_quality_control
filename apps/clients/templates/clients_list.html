@@ -1,20 +1,20 @@
 {% extends 'base.html' %}
 {% block content %}
     {% if perms.clients.add_client %}
-        <a href="{% url "clients:client_new" %}" class="btn btn-secondary mb-2">Dodaj nowego klienta</a>
+        <a href="{% url "clients:client-new" %}" class="btn btn-secondary mb-2">Dodaj nowego klienta</a>
     {% endif %}
-    <a href="{% url "clients:clients_list" %}?clear_filters=true" class="btn btn-secondary mb-2">Wyczyść filtry</a>
+    <a href="{% url "clients:clients-list" %}?clear_filters=true" class="btn btn-secondary mb-2">Wyczyść filtry</a>
     <button onclick="window.location.reload();" class="btn btn-secondary mb-2">Odśwież</button>
-    <form name="search-form" method="GET" action="{% url 'clients:clients_list'%}" class="m-0">
+    <form name="search-form" method="GET" action="{% url 'clients:clients-list'%}" class="m-0">
     <table class="table table-bordered mb-0">
     <tr class="d-flex">
         <th class="col-3">
-            <a class="link m-2" href="{% url 'clients:clients_list' %}?sort_by=client_sap_id&order_by={{ order_by }}" style="width: 40%;">
+            <a class="link m-2" href="{% url 'clients:clients-list' %}?sort_by=client_sap_id&order_by={{ order_by }}" style="width: 40%;">
                 Numer SAP:</a>
             <input class="form-control" name="search-client_sap_id" type="text" value="{{ request.session.client_sap_id }}" aria-label="Search" style="width: 60%; display: inline;">
         </th>
         <th class="col-7">
-            <a class="link m-2" href="{% url 'clients:clients_list' %}?sort_by=client_name&order_by={{ order_by }}" style="width: 40%;">
+            <a class="link m-2" href="{% url 'clients:clients-list' %}?sort_by=client_name&order_by={{ order_by }}" style="width: 40%;">
                 Klient:</a>
                 <input class="form-control" name="search-client_name" type="text" value="{{ request.session.client_name }}" aria-label="Search" style="width: 60%; display: inline;">
         </th>
@@ -30,9 +30,9 @@
       <td class="col-sm-3">{{client.client_sap_id}}</td>
       <td class="col-sm-7">{{client.client_name}}</td>
     <td class="col-sm-2">
-        <a href="{% url "clients:client_detail" client.id %}" class="btn btn-secondary p-0 m-0">Info</a>
+        <a href="{% url "clients:client-detail" client.id %}" class="btn btn-secondary p-0 m-0">Info</a>
         {% if perms.clients.change_client %}
-            <a href="{% url "clients:client_update" client.id %}" class="btn btn-secondary p-0 m-0">Edytuj</a>
+            <a href="{% url "clients:client-update" client.id %}" class="btn btn-secondary p-0 m-0">Edytuj</a>
         {% endif %}
         {% if perms.clients.delete_client %}
             <div class="modal fade" tabindex="-1" role="dialog" id="modal">
@@ -43,7 +43,7 @@
             <button id="{{ client.id }}"  class="btn btn-secondary p-0 m-0" type="button" name="button">Usuń </button>
             <script type="text/javascript">
               $(function () {
-                $("#{{client.id}}").modalForm({formURL: "{% url 'clients:client_delete' client.id %}"});
+                $("#{{client.id}}").modalForm({formURL: "{% url 'clients:client-delete' client.id %}"});
               });
             </script>
         {% endif %}

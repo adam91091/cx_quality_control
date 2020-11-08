@@ -9,7 +9,7 @@ VIEW_MSG = {'client': {'new_success': "Utworzono nowego klienta",
                        'update_success': "Zaktualizowano dane klienta",
                        'update_error': "Nie zaktualizowano danych klienta. "
                                        "Wystąpiły następujące błędy formularza:",
-                       'delete': "Klient został usunięty", },
+                       'delete_success': "Klient został usunięty", },
             'product': {'new_success': "Utworzono nowy produkt",
                         'new_error': "Nie utworzono nowego produktu. "
                                      "Wystąpiły następujące błędy formularza:",

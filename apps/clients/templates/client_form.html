@@ -5,9 +5,8 @@
 <div class="card m-2 p-2 rounded" >
     <div class="header p-2 grey lighten-2">
         <h3 class="m-2">
-            {% if type == 'new' %} Dodaj nowego klienta
-            {% elif type == 'detail' %} Dane klienta
-            {% else %} Zaktualizuj dane klienta
+            {% if object %} Zaktualizuj dane klienta
+            {% else %} Dodaj nowego klienta
             {% endif %}
         </h3>
     </div>
@@ -15,20 +14,20 @@
     <form id="client-form" method="post" class="mb-0 needs-validation" novalidate>
     {% csrf_token %}
     <div class="form-group card-body mb-0">
-        {% for field in client_form %}
+        {% for field in form %}
             <div class="row">
                 <div class="col-sm-6 mb-2">
                 {{ field.label_tag }}
                 {{ field }}
                 <div class="invalid-feedback">
-                    {{ client_form.validation_hints|get_item:field.name }}
+                    {{ form.validation_hints|get_item:field.name }}
                 </div>
                 </div>
             </div>
         {% endfor %}
         <span>
             <input type="submit" value="Zapisz" class="mt-3 btn btn-secondary">
-            <a href="{% url 'clients:clients_list' %}" class="ml-2 mt-3 btn btn-primary">Anuluj</a>
+            <a href="{% url 'clients:clients-list' %}" class="ml-2 mt-3 btn btn-primary">Anuluj</a>
         </span>
     </div>
     </form>

@@ -1,10 +1,13 @@
-from django.shortcuts import render, redirect
-from django.contrib import messages
+from django.views.generic import DetailView, CreateView, UpdateView, DeleteView, ListView
+from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.urls import reverse_lazy
+from django.shortcuts import render
 from django.contrib.auth.decorators import permission_required, login_required
 
 from apps.clients.forms import ClientForm
 from apps.clients.models import Client
-from apps.views_utils import VIEW_MSG, render_form_response
+from apps.views_utils import VIEW_MSG, add_error_messages
 from apps.providers import FilterProvider, PaginationProvider, SortingProvider
 
 
@@ -26,42 +29,54 @@ def clients_list(request):
                                                  'order_by': order_by})
 
 
-@login_required
-@permission_required("clients.view_client")
-def client_detail(request, client_id):
-    client = Client.objects.get(id=client_id)
-    client_form = ClientForm(instance=client, read_only=True)
-    return render(request, 'client_form.html', {'client_form': client_form, 'type': 'detail'})
+class ClientListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    model = Client
+    template_name = 'clients_list.html'
+    permission_required = ('clients.view_client', )
+    login_url = 'users:user_login'
 
 
-@login_required
-@permission_required("clients.delete_client")
-def client_delete(request, client_id):
-    client = Client.objects.get(id=client_id)
-    if request.method == 'POST':
-        client.delete()
-        messages.success(request, VIEW_MSG['client']['delete'])
-        return redirect('clients:clients_list')
-    else:
-        return render(request, 'client_confirm_delete.html', {'client': client})
+class ClientDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
+    model = Client
+    template_name = 'client_detail.html'
+    permission_required = ('clients.view_client', )
+    login_url = 'users:user_login'
 
 
-@login_required
-@permission_required("clients.add_client")
-def client_new(request):
-    if request.method == 'POST':
-        client_form = ClientForm(data=request.POST)
-    else:
-        client_form = ClientForm()
-    return render_form_response(request=request, method='new', form=client_form, model_name='client')
+class ClientDeleteView(SuccessMessageMixin, LoginRequiredMixin,
+                       PermissionRequiredMixin, DeleteView):
+    model = Client
+    success_url = reverse_lazy('clients:clients-list')
+    template_name = 'client_confirm_delete.html'
+    permission_required = ('clients.delete_client', )
+    success_message = VIEW_MSG['client']['delete_success']
+    login_url = 'users:user_login'
 
 
-@login_required
-@permission_required("clients.change_client")
-def client_update(request, client_id):
-    client = Client.objects.get(id=client_id)
-    if request.method == 'POST':
-        client_form = ClientForm(data=request.POST, instance=client, update=True)
-    else:
-        client_form = ClientForm(instance=client, update=True)
-    return render_form_response(request=request, method='update', form=client_form, model_name='client')
+class ClientCreateView(SuccessMessageMixin, LoginRequiredMixin,
+                       PermissionRequiredMixin, CreateView):
+    form_class = ClientForm
+    template_name = 'client_form.html'
+    permission_required = ('clients.add_client', )
+    login_url = 'users:user_login'
+    success_url = reverse_lazy('clients:clients-list')
+    success_message = VIEW_MSG['client']['new_success']
+
+    def form_invalid(self, form):
+        add_error_messages(self.request, VIEW_MSG['client']['new_error'], form)
+        return super().form_invalid(form)
+
+
+class ClientUpdateView(SuccessMessageMixin, LoginRequiredMixin,
+                       PermissionRequiredMixin, UpdateView):
+    model = Client
+    form_class = ClientForm
+    template_name = 'client_form.html'
+    permission_required = ('clients.change_client', )
+    login_url = 'users:user_login'
+    success_url = reverse_lazy('clients:clients-list')
+    success_message = VIEW_MSG['client']['update_success']
+
+    def form_invalid(self, form):
+        add_error_messages(self.request, VIEW_MSG['client']['update_error'], form)
+        return super().form_invalid(form)

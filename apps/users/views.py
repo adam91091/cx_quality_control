@@ -25,7 +25,7 @@ def user_login(request):
             if user.is_active:
                 login(request=request, user=user)
                 messages.success(request, message=VIEW_MSG['user']['login_success'])
-                return redirect(to='clients:clients_list')
+                return redirect(to='clients:clients-list')
             else:
                 messages.error(request, message=VIEW_MSG['user']['inactive'])
         else:
