@@ -9,14 +9,14 @@
     <table class="table table-bordered mb-0">
     <tr class="d-flex">
         <th class="col-3">
-            <a class="link m-2" href="{% url 'clients:clients-list' %}?sort_by=client_sap_id&order_by={{ order_by }}" style="width: 40%;">
+            <a class="link m-2" href="{% url 'clients:clients-list' %}?ordering=client_sap_id" style="width: 40%;">
                 Numer SAP:</a>
-            <input class="form-control" name="search-client_sap_id" type="text" value="{{ request.session.client_sap_id }}" aria-label="Search" style="width: 60%; display: inline;">
+            <input class="form-control" id="id_client_sap_id" name="client_sap_id" type="text" value="{{ request.session.client_sap_id }}" aria-label="Search" style="width: 60%; display: inline;">
         </th>
         <th class="col-7">
-            <a class="link m-2" href="{% url 'clients:clients-list' %}?sort_by=client_name&order_by={{ order_by }}" style="width: 40%;">
+            <a class="link m-2" href="{% url 'clients:clients-list' %}?ordering=client_name" style="width: 40%;">
                 Klient:</a>
-                <input class="form-control" name="search-client_name" type="text" value="{{ request.session.client_name }}" aria-label="Search" style="width: 60%; display: inline;">
+                <input class="form-control" id="id_client_name" name="client_name" type="text" value="{{ request.session.client_name }}" aria-label="Search" style="width: 60%; display: inline;">
         </th>
         <th class="col-2">
                 <button class="btn btn-outline-primary search-bar" type="submit">Wyszukaj</button>

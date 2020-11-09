@@ -2,31 +2,12 @@ from django.views.generic import DetailView, CreateView, UpdateView, DeleteView,
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.urls import reverse_lazy
-from django.shortcuts import render
-from django.contrib.auth.decorators import permission_required, login_required
 
+from apps.clients.filters import ClientFilter
 from apps.clients.forms import ClientForm
 from apps.clients.models import Client
+from apps.providers import PAGINATION_OBJ_COUNT_PER_PAGE
 from apps.views_utils import VIEW_MSG, add_error_messages
-from apps.providers import FilterProvider, PaginationProvider, SortingProvider
-
-
-@login_required
-@permission_required("clients.view_client")
-def clients_list(request):
-    client_filter_provider = FilterProvider(model=Client, session=request.session, params=request.GET)
-    clients = client_filter_provider.get_queryset()
-
-    client_sorting_provider = SortingProvider(model=Client, session=request.session, params=request.GET)
-    clients = client_sorting_provider.sort_queryset(queryset=clients)
-    order_by = client_sorting_provider.get_next_order_by()
-
-    client_pagination_provider = PaginationProvider(queryset=clients, page=request.GET.get('page', 1))
-    page_obj, pages_range = client_pagination_provider.paginate()
-
-    return render(request, 'clients_list.html', {'page_obj': page_obj,
-                                                 'pages_range': pages_range,
-                                                 'order_by': order_by})
 
 
 class ClientListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
@@ -34,6 +15,29 @@ class ClientListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     template_name = 'clients_list.html'
     permission_required = ('clients.view_client', )
     login_url = 'users:user_login'
+    paginate_by = PAGINATION_OBJ_COUNT_PER_PAGE
+    ordering = ('id', )
+
+    def get_queryset(self):
+        for param in self.request.GET:
+            param_val = self.request.GET.get(param)
+            if param_val is not None:
+                self.request.session[param] = param_val
+        if 'clear_filters' in self.request.GET:
+            for field_name in ClientFilter.get_fields():
+                self.request.session[field_name] = ''
+
+        client_filter = ClientFilter(self.request.session, queryset=self.model.objects.all())
+        qs = client_filter.qs.order_by(self.get_ordering())
+        return qs
+
+    def get_ordering(self):
+        ordering = self.request.GET.get('ordering')
+        if ordering is not None:
+            self.request.session['ordering'] = ordering
+        if 'clear_filters' in self.request.GET:
+            self.request.session['ordering'] = 'id'
+        return self.request.session.get('ordering', 'id')
 
 
 class ClientDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
