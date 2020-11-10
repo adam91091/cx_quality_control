@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="card m-2 p-2 rounded" >
+    <div class="header p-2 grey lighten-2">
+        <h3 class="m-2"> Dane produktu </h3>
+    </div>
+    <hr class="border border-default">
+    <div class="form-group card-body mb-0">
+        <div class="row">
+            <div class="col-sm-4 mb-2">
+                <label>Numer SAP produktu:</label>
+                <p class="form-control">{{ product.product_sap_id }}</p>
+            </div>
+            <div class="col-sm-4 mb-2">
+                <label>Indeks produktu:</label>
+                <p class="form-control">{{ product.index }}</p>
+            </div>
+            <div class="col-sm-4 mb-2">
+                <label>Opis produktu:</label>
+                <p class="form-control">{{ product.description }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="form-group card-body mb-0">
+    <h3 class="m-2">Specyfikacja tulei papierowej</h3>
+        <div class="row">
+            <div class="col-lg-12">
+            <table class="table table-bordered mt-2">
+                <thead>
+                <tr>
+                  <th scope="col"></th>
+                  <th scope="col">Wartość nominalna</th>
+                  <th scope="col">Tolerancja</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th scope="row" style="width: 25%;">
+                        <p>Średnica wewnętrzna (mm)</p>
+                    </th>
+                    <td style="width: 20%;">
+                        <p class="form-control mb-0">{{ product.specification.internal_diameter_target}}</p>
+                    </td>
+                    <td style="width: 55%;">
+                        <div class="row">
+                        <div class="p-2 mx-2">+</div>
+                            <div class="col-sm-4 mb-2">
+                                <p class="form-control mb-0">{{ product.specification.internal_diameter_tolerance_top }}</p>
+                            </div>
+                            <div class="p-2">-</div>
+                            <div class="col-sm-4 mb-2">
+                                <p class="form-control mb-0">{{ product.specification.internal_diameter_tolerance_bottom }}</p>
+                            </div>
+                    </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" style="width: 25%;">
+                        <p class="mb-0">Średnica zewnętrzna (mm)</p>
+                    </th>
+                    <td style="width: 20%;">
+                        <p class="form-control mb-0">{{ product.specification.external_diameter_target}}</p>
+                    </td>
+                    <td style="width: 55%;">
+                        <div class="row">
+                        <div class="p-2 mx-2">+</div>
+                            <div class="col-sm-4 mb-2">
+                                <p class="form-control mb-0">{{ product.specification.external_diameter_tolerance_top }}</p>
+                            </div>
+                            <div class="p-2">-</div>
+                            <div class="col-sm-4 mb-2">
+                                <p class="form-control mb-0">{{ product.specification.external_diameter_tolerance_bottom }}</p>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><p>Grubość ścianki (mm)</p></th>
+                    <td style="width: 20%;">
+                        <p class="form-control mb-0">{{ product.specification.wall_thickness_target}}</p>
+                    </td>
+                    <td style="width: 55%;">
+                        <div class="row">
+                        <div class="p-2 mx-2">+</div>
+                            <div class="col-sm-4 mb-2">
+                                <p class="form-control mb-0">{{ product.specification.wall_thickness_tolerance_top }}</p>
+                            </div>
+                            <div class="p-2">-</div>
+                            <div class="col-sm-4 mb-2">
+                                <p class="form-control mb-0">{{ product.specification.wall_thickness_tolerance_bottom }}</p>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><p class="mb-0">Długość (mm)</p></th>
+                    <td style="width: 20%;">
+                        <p class="form-control mb-0">{{ product.specification.length_target}}</p>
+                    </td>
+                    <td style="width: 55%;">
+                        <div class="row">
+                        <div class="p-2 mx-2">+</div>
+                            <div class="col-sm-4 mb-2">
+                                <p class="form-control mb-0">{{ product.specification.length_tolerance_top }}</p>
+                            </div>
+                            <div class="p-2">-</div>
+                            <div class="col-sm-4 mb-2">
+                                <p class="form-control mb-0">{{ product.specification.length_tolerance_bottom }}</p>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><p class="mb-0">Wytrzymałość na ściskanie (100 MM)</p></th>
+                    <td style="width: 20%;">
+                        <p class="form-control mb-0">{{ product.specification.flat_crush_resistance_target}}</p>
+                    </td>
+                    <td style="width: 55%;">
+                        <div class="row">
+                        <div class="p-2 mx-2">+</div>
+                            <div class="col-sm-4 mb-2">
+                                <p class="form-control mb-0">{{ product.specification.flat_crush_resistance_tolerance_top }}</p>
+                            </div>
+                            <div class="p-2">-</div>
+                            <div class="col-sm-4 mb-2">
+                                <p class="form-control mb-0">{{ product.specification.flat_crush_resistance_tolerance_bottom }}</p>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><p>Wilgotność (%)</p></th>
+                    <td style="width: 20%;">
+                        <p class="form-control mb-0">{{ product.specification.moisture_content_target}}</p>
+                    </td>
+                    <td style="width: 55%;">
+                        <div class="row">
+                        <div class="p-2 mx-2">+</div>
+                            <div class="col-sm-4 mb-2">
+                                <p class="form-control mb-0">{{ product.specification.moisture_content_tolerance_top }}</p>
+                            </div>
+                            <div class="p-2">-</div>
+                            <div class="col-sm-4 mb-2">
+                                <p class="form-control mb-0">{{ product.specification.moisture_content_tolerance_bottom }}</p>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><p>Kolor</p></th>
+                    <td style="width: 20%;">
+                        <p class="form-control mb-0">{{ product.specification.colour}}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Powierzchnia zewnętrzna</th>
+                    <td style="width: 20%;">
+                        <p class="form-control mb-0">{{ product.specification.finish}}</p>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+        <br>
+        <h3 class="m-2">Specyfikacja opakowania</h3>
+            <div class="row form-group">
+                <div class="col-lg-12">
+                    <table class="table table-bordered mt-2">
+                    <tbody>
+                        <tr>
+                            <th scope="row">Maksymalna wysokość palety</th>
+                            <td style="width: 50%;">
+                                <p class="form-control mb-0">{{ product.specification.maximum_height_of_pallet}}</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Paleta zabezpieczona folią stretch?</th>
+                            <td style="width: 50%;">
+                                <p class="form-control mb-0">{{ product.specification.get_pallet_wrapped_with_stretch_film_display}}</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Paleta zabezpieczona kątownikami papierowymi?</th>
+                            <td style="width: 50%;">
+                                <p class="form-control mb-0">{{ product.specification.get_pallet_protected_with_paper_edges_display}}</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Tuleje pakowane:</th>
+                            <td style="width: 50%;">
+                                <p class="form-control mb-0">{{ product.specification.get_cores_packed_in_display}}</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Ilość sztuk na palecie:</th>
+                            <td style="width: 50%;">
+                                <p class="form-control mb-0">{{ product.specification.quantity_on_the_pallet}}</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Uwagi:</th>
+                            <td style="width: 50%;">
+                                <p class="form-control mb-0">{{ product.specification.remarks}}</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                    </table>
+                </div>
+        </div>
+        <span>
+            <a href="{% url 'products:products_list' %}" class="ml-2 mt-3 btn btn-primary">Wstecz</a>
+        </span>
+    </div>
+</div>
+{% endblock %}

@@ -1,11 +1,15 @@
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import permission_required, login_required
+from django.urls import reverse_lazy
+from django.views.generic import UpdateView, CreateView, DetailView, DeleteView
 
-from apps.products.forms import ProductForm, SpecificationForm
+from apps.products.forms import ProductForm, SpecificationForm, ProductSpecificationMultiForm
 from apps.products.models import Product
 from apps.providers import FilterProvider, PaginationProvider, SortingProvider
-from apps.views_utils import VIEW_MSG, render_one_to_one_form_response
+from apps.views_utils import VIEW_MSG, add_error_messages
 
 
 @login_required
@@ -25,51 +29,79 @@ def products_list(request):
                                                   'order_by': order_by})
 
 
-@login_required
-@permission_required('products.view_product')
-def product_detail(request, product_id):
-    product = Product.objects.get(id=product_id)
-    product_form = ProductForm(instance=product, read_only=True)
-    spec_form = SpecificationForm(instance=product.specification, read_only=True)
-    return render(request, 'product_form.html', {'product_form': product_form, 'spec_form': spec_form,
-                                                 'type': 'detail'})
+class ProductCreateView(SuccessMessageMixin, LoginRequiredMixin,
+                        PermissionRequiredMixin, CreateView):
+    form_class = ProductSpecificationMultiForm
+    template_name = 'product_form.html'
+    login_url = 'users:user_login'
+    permission_required = ('products.add_product', )
+    success_url = reverse_lazy('products:products_list')
+    success_message = VIEW_MSG['product']['new_success']
+
+    def form_valid(self, form):
+        product = form['product'].save()
+        specification = form['spec'].save(commit=False)
+        specification.product = product
+        specification.save()
+        messages.success(self.request, self.success_message)
+        return redirect(self.success_url)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['product_validation_hints'] = ProductForm.validation_hints
+        context['spec_validation_hints'] = SpecificationForm.validation_hints
+        return context
+
+    def form_invalid(self, form):
+        add_error_messages(self.request, VIEW_MSG['product']['update_error'], form)
+        return super().form_invalid(form)
 
 
-@login_required
-@permission_required("products.delete_product")
-def product_delete(request, product_id):
-    product = Product.objects.get(id=product_id)
-    if request.method == 'POST':
-        product.specification.delete()
-        product.delete()
-        messages.success(request, VIEW_MSG['product']['delete'])
-        return redirect('products:products_list')
-    else:
-        return render(request, 'product_confirm_delete.html', {'product': product})
+class ProductDetailView(DetailView):
+    model = Product
+    template_name = 'product_detail.html'
+    login_url = 'users:user_login'
+    permission_required = ('products.view_product', )
 
 
-@login_required
-@permission_required("products.add_product")
-def product_new(request):
-    if request.method == 'POST':
-        product_form = ProductForm(data=request.POST)
-        spec_form = SpecificationForm(data=request.POST)
-    else:
-        product_form = ProductForm()
-        spec_form = SpecificationForm()
-    return render_one_to_one_form_response(request=request, method='new', parent_form=product_form,
-                                           child_form=spec_form, parent_name='product', child_name='spec')
+class ProductUpdateView(SuccessMessageMixin, LoginRequiredMixin,
+                        PermissionRequiredMixin, UpdateView):
+    form_class = ProductSpecificationMultiForm
+    model = Product
+    template_name = 'product_form.html'
+    login_url = 'users:user_login'
+    permission_required = ('products.change_product', )
+    success_url = reverse_lazy('products:products_list')
+    success_message = VIEW_MSG['product']['update_success']
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update(instance={
+            'product': self.object,
+            'spec': self.object.specification
+        })
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['product_validation_hints'] = ProductForm.validation_hints
+        context['spec_validation_hints'] = SpecificationForm.validation_hints
+        return context
+
+    def form_invalid(self, form):
+        add_error_messages(self.request, VIEW_MSG['product']['update_error'], form)
+        return super().form_invalid(form)
 
 
-@login_required
-@permission_required("products.change_product")
-def product_update(request, product_id):
-    product = Product.objects.get(id=product_id)
-    if request.method == 'POST':
-        product_form = ProductForm(data=request.POST, instance=product, update=True)
-        spec_form = SpecificationForm(data=request.POST, instance=product.specification)
-    else:
-        product_form = ProductForm(instance=product, update=True)
-        spec_form = SpecificationForm(instance=product.specification)
-    return render_one_to_one_form_response(request=request, method='update', parent_form=product_form,
-                                           child_form=spec_form, parent_name='product', child_name='spec')
+class ProductDeleteView(SuccessMessageMixin, LoginRequiredMixin,
+                        PermissionRequiredMixin, DeleteView):
+    model = Product
+    template_name = 'product_confirm_delete.html'
+    login_url = 'users:user_login'
+    permission_required = 'products.delete_product'
+    success_url = reverse_lazy('products:products_list')
+    success_message = VIEW_MSG['product']['delete_success']
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, self.success_message)
+        return super().delete(request, *args, **kwargs)

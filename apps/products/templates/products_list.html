@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
     {% if perms.products.add_product %}
-        <a href="{% url "products:product_new" %}" class="btn btn-secondary mb-2">Dodaj nowy produkt</a>
+        <a href="{% url "products:product-new" %}" class="btn btn-secondary mb-2">Dodaj nowy produkt</a>
     {% endif %}
     <a href="{% url "products:products_list" %}?clear_filters=true" class="btn btn-secondary mb-2">Wyczyść filtry</a>
     <button onclick="window.location.reload();" class="btn btn-secondary mb-2">Odśwież</button>
@@ -37,10 +37,10 @@
       <td class="col-sm-4">{{product.description}}</td>
     <td class="col-sm-2">
         {% if perms.products.view_product %}
-            <a href="{% url 'products:product_detail' product.id %}" class="btn btn-secondary p-0 m-0">Specyfikacja</a>
+            <a href="{% url 'products:product-detail' product.id %}" class="btn btn-secondary p-0 m-0">Specyfikacja</a>
         {% endif %}
         {% if perms.products.change_product %}
-            <a href="{% url "products:product_update" product.id %}" class="btn btn-secondary p-0 m-0">Edytuj</a>
+            <a href="{% url "products:product-update" product.id %}" class="btn btn-secondary p-0 m-0">Edytuj</a>
         {% endif %}
         {% if perms.products.delete_product %}
             <div class="modal fade" tabindex="-1" role="dialog" id="modal">
@@ -51,7 +51,7 @@
             <button id="{{ product.id }}" class="btn btn-secondary p-0 m-0" type="button" name="button">Usuń </button>
             <script type="text/javascript">
               $(function () {
-                $("#{{ product.id }}").modalForm({formURL: "{% url 'products:product_delete' product.id %}"});
+                $("#{{ product.id }}").modalForm({formURL: "{% url 'products:product-delete' product.id %}"});
               });
             </script>
         {% endif %}

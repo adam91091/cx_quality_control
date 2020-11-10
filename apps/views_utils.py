@@ -15,7 +15,7 @@ VIEW_MSG = {'client': {'new_success': "Utworzono nowego klienta",
                                      "Wystąpiły następujące błędy formularza:",
                         'update_success': "Zaktualizowano dane produktu",
                         'update_error': "Nie zaktualizowano danych produktu",
-                        'delete': "Produkt został usunięty", },
+                        'delete_success': "Produkt został usunięty", },
             'order': {'new_success': "Utworzono nowe zlecenie produkcyjne",
                       'new_error': "Nie utworzono nowego zlecenia produkcyjnego. "
                                    "Wystąpiły następujące błędy formularza:",
@@ -65,23 +65,6 @@ def render_form_response(request, method, form, model_name):
         add_error_messages(request, main_msg=VIEW_MSG[model_name][f'{method}_error'],
                            form=form)
     return render(request, f'{model_name}_form.html', {f'{model_name}_form': form, 'type': method})
-
-
-def render_one_to_one_form_response(request, method, parent_form, child_form, parent_name, child_name):
-    if parent_form.is_valid() and child_form.is_valid():
-        parent = parent_form.save(commit=False)
-        parent.save()
-        messages.success(request, VIEW_MSG[parent_name][f'{method}_success'])
-        child = child_form.save(commit=False)
-        setattr(child, parent_name, parent)
-        child.save()
-        return redirect(f'{parent_name}s:{parent_name}s_list')
-    if request.method == 'POST':
-        add_error_messages(request, main_msg=VIEW_MSG[parent_name][f'{method}_error'], form=parent_form,
-                           secondary_forms=[child_form, ])
-    return render(request, f'{parent_name}_form.html', {f'{parent_name}_form': parent_form,
-                                                        f'{child_name}_form': child_form,
-                                                        'type': method})
 
 
 def check_if_related_object_exists(request, model, sap_id_name, sap_id_value, model_name):

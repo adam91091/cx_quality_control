@@ -5,8 +5,9 @@
 <div class="card m-2 p-2 rounded" >
     <div class="header p-2 grey lighten-2">
         <h3 class="m-2">
-            {% if type == 'new' %} Dodaj nowy produkt {% elif type == 'detail' %} Dane produktu
-            {% else %} Zaktualizuj dane produktu {% endif %}
+            {% if object %} Zaktualizuj dane produktu
+            {% else %} Dodaj nowy produkt
+            {% endif %}
         </h3>
     </div>
     <hr class="border border-default">
@@ -14,22 +15,34 @@
     {% csrf_token %}
     <div class="form-group card-body mb-0">
         <div class="row">
-            {% for field in product_form %}
-                <div class="col-sm-4 mb-2">
-                    {{ field.label_tag }}
-                    {{ field }}
-                    <div class="invalid-feedback">
-                        {{ product_form.validation_hints|get_item:field.name }}
-                    </div>
+            <div class="col-sm-4 mb-2">
+                {{ form.product.product_sap_id.label_tag }}
+                {{ form.product.product_sap_id }}
+                <div class="invalid-feedback">
+                    {{ product_validation_hints|get_item:'product_sap_id' }}
                 </div>
-            {% endfor %}
+            </div>
+            <div class="col-sm-4 mb-2">
+                {{ form.product.index.label_tag }}
+                {{ form.product.index }}
+                <div class="invalid-feedback">
+                    {{ product_validation_hints|get_item:'index' }}
+                </div>
+            </div>
+            <div class="col-sm-4 mb-2">
+                {{ form.product.description.label_tag }}
+                {{ form.product.description }}
+                <div class="invalid-feedback">
+                    {{ product_validation_hints|get_item:'description' }}
+                </div>
+            </div>
         </div>
     </div>
-    <h3 class="m-2">Specyfikacja tulei papierowej</h3>
     <div class="form-group card-body mb-0">
+    <h3 class="m-2">Specyfikacja tulei papierowej</h3>
         <div class="row">
             <div class="col-lg-12">
-            <table class="table table-bordered">
+            <table class="table table-bordered mt-2">
                 <thead>
                 <tr>
                   <th scope="col"></th>
@@ -40,207 +53,208 @@
                 <tbody>
                 <tr>
                     <th scope="row">
-                        {{ spec_form.internal_diameter_target.label }}
+                        {{ form.spec.internal_diameter_target.label }}
                     </th>
-                    <td>{{ spec_form.internal_diameter_target}}
+                    <td>{{ form.spec.internal_diameter_target}}
                         <div class="invalid-feedback">
-                            {{ spec_form.validation_hints|get_item:'float_field' }}
+                            {{ spec_validation_hints|get_item:'float_field' }}
                         </div>
                     </td>
                     <td>
                         <div class="row">
                         <div class="p-2 mx-2">+</div>
-                            <div class="col-sm-4 mb-2">{{ spec_form.internal_diameter_tolerance_top }}
+                            <div class="col-sm-4 mb-2">{{ form.spec.internal_diameter_tolerance_top }}
                                 <div class="invalid-feedback">
-                                    {{ spec_form.validation_hints|get_item:'float_field' }}
+                                    {{ spec_validation_hints|get_item:'float_field' }}
                                 </div>
                                 </div>
                             <div class="p-2">-</div>
-                            <div class="col-sm-4 mb-2">{{ spec_form.internal_diameter_tolerance_bottom }}
+                            <div class="col-sm-4 mb-2">{{ form.spec.internal_diameter_tolerance_bottom }}
                                 <div class="invalid-feedback">
-                                {{ spec_form.validation_hints|get_item:'float_field' }}
+                                {{ spec_validation_hints|get_item:'float_field' }}
                                 </div>
                             </div>
                     </div>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row">{{ spec_form.external_diameter_target.label }}</th>
-                    <td>{{ spec_form.external_diameter_target}}
+                    <th scope="row">{{ form.spec.external_diameter_target.label }}</th>
+                    <td>{{ form.spec.external_diameter_target}}
                         <div class="invalid-feedback">
-                            {{ spec_form.validation_hints|get_item:'float_field' }}
+                            {{ spec_validation_hints|get_item:'float_field' }}
                         </div>
                     </td>
                     <td>
                         <div class="row">
                         <div class="p-2 mx-2">+</div>
-                            <div class="col-sm-4 mb-2">{{ spec_form.external_diameter_tolerance_top }}
+                            <div class="col-sm-4 mb-2">{{ form.spec.external_diameter_tolerance_top }}
                                 <div class="invalid-feedback">
-                                    {{ spec_form.validation_hints|get_item:'float_field' }}
+                                    {{ spec_validation_hints|get_item:'float_field' }}
                                 </div>
                             </div>
                             <div class="p-2">-</div>
-                            <div class="col-sm-4 mb-2">{{ spec_form.external_diameter_tolerance_bottom }}
+                            <div class="col-sm-4 mb-2">{{ form.spec.external_diameter_tolerance_bottom }}
                                 <div class="invalid-feedback">
-                                    {{ spec_form.validation_hints|get_item:'float_field' }}
+                                    {{ spec_validation_hints|get_item:'float_field' }}
                                 </div>
                             </div>
                     </div>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row">{{ spec_form.wall_thickness_target.label }}</th>
-                    <td>{{ spec_form.wall_thickness_target}}
+                    <th scope="row">{{ form.spec.wall_thickness_target.label }}</th>
+                    <td>{{ form.spec.wall_thickness_target}}
                         <div class="invalid-feedback">
-                            {{ spec_form.validation_hints|get_item:'float_field' }}
+                            {{ spec_validation_hints|get_item:'float_field' }}
                         </div>
                     </td>
                     <td>
                         <div class="row">
                         <div class="p-2 mx-2">+</div>
-                            <div class="col-sm-4 mb-2">{{ spec_form.wall_thickness_tolerance_top }}
+                            <div class="col-sm-4 mb-2">{{ form.spec.wall_thickness_tolerance_top }}
                                 <div class="invalid-feedback">
-                                    {{ spec_form.validation_hints|get_item:'float_field' }}
+                                    {{ spec_validation_hints|get_item:'float_field' }}
                                 </div>
                             </div>
                             <div class="p-2">-</div>
-                            <div class="col-sm-4 mb-2">{{ spec_form.wall_thickness_tolerance_bottom }}
+                            <div class="col-sm-4 mb-2">{{ form.spec.wall_thickness_tolerance_bottom }}
                                 <div class="invalid-feedback">
-                                    {{ spec_form.validation_hints|get_item:'float_field' }}
+                                    {{ spec_validation_hints|get_item:'float_field' }}
                                 </div>
                             </div>
                     </div>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row">{{ spec_form.length_target.label }}</th>
-                    <td>{{ spec_form.length_target}}
+                    <th scope="row">{{ form.spec.length_target.label }}</th>
+                    <td>{{ form.spec.length_target}}
                         <div class="invalid-feedback">
-                            {{ spec_form.validation_hints|get_item:'float_field' }}
+                            {{ spec_validation_hints|get_item:'float_field' }}
                         </div>
                     </td>
                     <td>
                         <div class="row">
                         <div class="p-2 mx-2">+</div>
-                            <div class="col-sm-4 mb-2">{{ spec_form.length_tolerance_top }}
+                            <div class="col-sm-4 mb-2">{{ form.spec.length_tolerance_top }}
                                 <div class="invalid-feedback">
-                                    {{ spec_form.validation_hints|get_item:'float_field' }}
+                                    {{ spec_validation_hints|get_item:'float_field' }}
                                 </div>
                             </div>
                             <div class="p-2">-</div>
-                            <div class="col-sm-4 mb-2">{{ spec_form.length_tolerance_bottom }}
+                            <div class="col-sm-4 mb-2">{{ form.spec.length_tolerance_bottom }}
                                 <div class="invalid-feedback">
-                                    {{ spec_form.validation_hints|get_item:'float_field' }}
+                                    {{ spec_validation_hints|get_item:'float_field' }}
                                 </div>
                             </div>
                     </div>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row">{{ spec_form.flat_crush_resistance_target.label }}</th>
-                    <td>{{ spec_form.flat_crush_resistance_target}}
+                    <th scope="row">{{ form.spec.flat_crush_resistance_target.label }}</th>
+                    <td>{{ form.spec.flat_crush_resistance_target}}
                         <div class="invalid-feedback">
-                            {{ spec_form.validation_hints|get_item:'integer_field' }}
+                            {{ spec_validation_hints|get_item:'integer_field' }}
                         </div>
                     </td>
                     <td>
                         <div class="row">
                         <div class="p-2 mx-2">+</div>
-                            <div class="col-sm-4 mb-2">{{ spec_form.flat_crush_resistance_tolerance_top }}
+                            <div class="col-sm-4 mb-2">{{ form.spec.flat_crush_resistance_tolerance_top }}
                                 <div class="invalid-feedback">
-                                    {{ spec_form.validation_hints|get_item:'integer_field' }}
+                                    {{ spec_validation_hints|get_item:'integer_field' }}
                                 </div>
                             </div>
                             <div class="p-2">-</div>
-                            <div class="col-sm-4 mb-2">{{ spec_form.flat_crush_resistance_tolerance_bottom }}
+                            <div class="col-sm-4 mb-2">{{ form.spec.flat_crush_resistance_tolerance_bottom }}
                                 <div class="invalid-feedback">
-                                    {{ spec_form.validation_hints|get_item:'integer_field' }}
+                                    {{ spec_validation_hints|get_item:'integer_field' }}
                                 </div>
                             </div>
                     </div>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row">{{ spec_form.moisture_content_target.label }}</th>
-                    <td>{{ spec_form.moisture_content_target}}
+                    <th scope="row">{{ form.spec.moisture_content_target.label }}</th>
+                    <td>{{ form.spec.moisture_content_target}}
                         <div class="invalid-feedback">
-                            {{ spec_form.validation_hints|get_item:'integer_field' }}
+                            {{ spec_validation_hints|get_item:'integer_field' }}
                         </div>
                     </td>
                     <td>
                         <div class="row">
                         <div class="p-2 mx-2">+</div>
-                            <div class="col-sm-4 mb-2">{{ spec_form.moisture_content_tolerance_top }}
+                            <div class="col-sm-4 mb-2">{{ form.spec.moisture_content_tolerance_top }}
                                 <div class="invalid-feedback">
-                                    {{ spec_form.validation_hints|get_item:'integer_field' }}
+                                    {{ spec_validation_hints|get_item:'integer_field' }}
                                 </div>
                             </div>
                             <div class="p-2">-</div>
-                            <div class="col-sm-4 mb-2">{{ spec_form.moisture_content_tolerance_bottom }}
+                            <div class="col-sm-4 mb-2">{{ form.spec.moisture_content_tolerance_bottom }}
                                 <div class="invalid-feedback">
-                                    {{ spec_form.validation_hints|get_item:'integer_field' }}
+                                    {{ spec_validation_hints|get_item:'integer_field' }}
                                 </div>
                             </div>
                     </div>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row">{{ spec_form.colour.label }}</th>
-                    <td>{{ spec_form.colour}}
+                    <th scope="row">{{ form.spec.colour.label }}</th>
+                    <td>{{ form.spec.colour}}
                         <div class="invalid-feedback">
-                            {{ spec_form.validation_hints|get_item:'colour' }}
+                            {{ spec_validation_hints|get_item:'colour' }}
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row">{{ spec_form.finish.label }}</th>
-                    <td> {{ spec_form.finish }}
+                    <th scope="row">{{ form.spec.finish.label }}</th>
+                    <td> {{ form.spec.finish }}
                         <div class="invalid-feedback">
-                            {{ spec_form.validation_hints|get_item:'finish' }}
+                            {{ spec_validation_hints|get_item:'finish' }}
                         </div>
                     </td>
                 </tr>
                 </tbody>
             </table>
-            </div>
+        </div>
     </div>
+    <br>
         <h3 class="m-2">Specyfikacja opakowania</h3>
         <div class="row form-group">
                 <div class="col-lg-12">
-                    <table class="table table-bordered">
+                    <table class="table table-bordered mt-2">
                     <tbody>
                         <tr>
-                            <th scope="row">{{spec_form.maximum_height_of_pallet.label}}</th>
-                            <td> {{ spec_form.maximum_height_of_pallet }}
+                            <th scope="row">{{form.spec.maximum_height_of_pallet.label}}</th>
+                            <td> {{ form.spec.maximum_height_of_pallet }}
                                 <div class="invalid-feedback">
-                                    {{ spec_form.validation_hints|get_item:'maximum_height_of_pallet' }}
+                                    {{ spec_validation_hints|get_item:'maximum_height_of_pallet' }}
                                 </div>
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row">{{spec_form.pallet_wrapped_with_stretch_film.label}}</th>
-                            <td> {{ spec_form.pallet_wrapped_with_stretch_film }}</td>
+                            <th scope="row">{{form.spec.pallet_wrapped_with_stretch_film.label}}</th>
+                            <td> {{ form.spec.pallet_wrapped_with_stretch_film }}</td>
                         </tr>
                         <tr>
-                            <th scope="row">{{ spec_form.pallet_protected_with_paper_edges.label }}</th>
-                            <td> {{ spec_form.pallet_protected_with_paper_edges }}</td>
+                            <th scope="row">{{ form.spec.pallet_protected_with_paper_edges.label }}</th>
+                            <td> {{ form.spec.pallet_protected_with_paper_edges }}</td>
                         </tr>
                        <tr>
-                            <th scope="row">{{ spec_form.cores_packed_in.label }} </th>
-                            <td> {{ spec_form.cores_packed_in }}</td>
+                            <th scope="row">{{ form.spec.cores_packed_in.label }} </th>
+                            <td> {{ form.spec.cores_packed_in }}</td>
                         </tr>
                         <tr>
-                            <th scope="row">{{spec_form.quantity_on_the_pallet.label}}</th>
-                            <td> {{ spec_form.quantity_on_the_pallet }}
+                            <th scope="row">{{form.spec.quantity_on_the_pallet.label}}</th>
+                            <td> {{ form.spec.quantity_on_the_pallet }}
                                 <div class="invalid-feedback">
-                                    {{ spec_form.validation_hints|get_item:'quantity_on_the_pallet' }}
+                                    {{ spec_validation_hints|get_item:'quantity_on_the_pallet' }}
                                 </div>
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row">{{ spec_form.remarks.label }}</th>
-                            <td> {{ spec_form.remarks }}
-                                <div class="invalid-feedback">{{ spec_form.validation_hints|get_item:'remarks' }}</div>
+                            <th scope="row">{{ form.spec.remarks.label }}</th>
+                            <td> {{ form.spec.remarks }}
+                                <div class="invalid-feedback">{{ spec_validation_hints|get_item:'remarks' }}</div>
                             </td>
                         </tr>
                     </tbody>

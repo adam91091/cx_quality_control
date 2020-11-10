@@ -1,3 +1,4 @@
+from betterforms.multiform import MultiModelForm
 from django import forms
 from django.forms import ModelForm
 
@@ -99,3 +100,10 @@ class SpecificationForm(ModelForm):
             'quantity_on_the_pallet': forms.TextInput(attrs=INT_STYLE),
             'remarks': forms.Textarea(attrs={**BASIC_REQ_STYLE, **{'rows': 5, 'cols': 40}, })
         }
+
+
+class ProductSpecificationMultiForm(MultiModelForm):
+    form_classes = {
+        'product': ProductForm,
+        'spec': SpecificationForm,
+    }

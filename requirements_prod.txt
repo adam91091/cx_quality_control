@@ -4,3 +4,4 @@ django-bootstrap4
 django-bootstrap-modal-forms
 django-bootstrap-datepicker-plus
 django-filter==2.4.0
+django-betterforms==1.2

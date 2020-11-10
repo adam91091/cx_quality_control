@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.views.generic import DetailView, CreateView, UpdateView, DeleteView, ListView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -13,8 +14,8 @@ from apps.views_utils import VIEW_MSG, add_error_messages
 class ClientListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = Client
     template_name = 'clients_list.html'
-    permission_required = ('clients.view_client', )
     login_url = 'users:user_login'
+    permission_required = ('clients.view_client', )
     paginate_by = PAGINATION_OBJ_COUNT_PER_PAGE
     ordering = ('id', )
 
@@ -40,29 +41,12 @@ class ClientListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         return self.request.session.get('ordering', 'id')
 
 
-class ClientDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
-    model = Client
-    template_name = 'client_detail.html'
-    permission_required = ('clients.view_client', )
-    login_url = 'users:user_login'
-
-
-class ClientDeleteView(SuccessMessageMixin, LoginRequiredMixin,
-                       PermissionRequiredMixin, DeleteView):
-    model = Client
-    success_url = reverse_lazy('clients:clients-list')
-    template_name = 'client_confirm_delete.html'
-    permission_required = ('clients.delete_client', )
-    success_message = VIEW_MSG['client']['delete_success']
-    login_url = 'users:user_login'
-
-
 class ClientCreateView(SuccessMessageMixin, LoginRequiredMixin,
                        PermissionRequiredMixin, CreateView):
     form_class = ClientForm
     template_name = 'client_form.html'
-    permission_required = ('clients.add_client', )
     login_url = 'users:user_login'
+    permission_required = ('clients.add_client', )
     success_url = reverse_lazy('clients:clients-list')
     success_message = VIEW_MSG['client']['new_success']
 
@@ -71,16 +55,36 @@ class ClientCreateView(SuccessMessageMixin, LoginRequiredMixin,
         return super().form_invalid(form)
 
 
+class ClientDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
+    model = Client
+    template_name = 'client_detail.html'
+    login_url = 'users:user_login'
+    permission_required = ('clients.view_client', )
+
+
 class ClientUpdateView(SuccessMessageMixin, LoginRequiredMixin,
                        PermissionRequiredMixin, UpdateView):
     model = Client
     form_class = ClientForm
     template_name = 'client_form.html'
-    permission_required = ('clients.change_client', )
     login_url = 'users:user_login'
+    permission_required = ('clients.change_client', )
     success_url = reverse_lazy('clients:clients-list')
     success_message = VIEW_MSG['client']['update_success']
 
     def form_invalid(self, form):
         add_error_messages(self.request, VIEW_MSG['client']['update_error'], form)
         return super().form_invalid(form)
+
+
+class ClientDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    model = Client
+    template_name = 'client_confirm_delete.html'
+    login_url = 'users:user_login'
+    permission_required = ('clients.delete_client', )
+    success_url = reverse_lazy('clients:clients-list')
+    success_message = VIEW_MSG['client']['delete_success']
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, self.success_message)
+        return super().delete(request, *args, **kwargs)

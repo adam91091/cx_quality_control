@@ -61,7 +61,6 @@ class Specification(models.Model):
     finish = models.CharField(max_length=100, blank=True)
 
     maximum_height_of_pallet = models.FloatField(validators=[validate_num_field(), ])
-    quantity_on_the_pallet = models.IntegerField(validators=[validate_int_field(), ])
     pallet_protected_with_paper_edges = models.CharField(max_length=10, choices=BOOLEAN_CHOICES,
                                                          default=BOOLEAN_CHOICES[0])
     pallet_wrapped_with_stretch_film = models.CharField(max_length=10, choices=BOOLEAN_CHOICES,
@@ -69,6 +68,7 @@ class Specification(models.Model):
     cores_packed_in = models.CharField(max_length=20, choices=CORES_PACKED_IN_CHOICES,
                                        default=CORES_PACKED_IN_CHOICES[0][0],
                                        )
+    quantity_on_the_pallet = models.IntegerField(validators=[validate_int_field(), ])
     remarks = models.TextField()
 
     def __str__(self):

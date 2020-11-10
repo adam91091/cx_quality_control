@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'bootstrap_datepicker_plus',
     # backend tools
     'django_filters',
+    'betterforms',
     # apps
     'apps.users',
     'apps.clients',

@@ -30,7 +30,7 @@
       <td class="col-sm-3">{{client.client_sap_id}}</td>
       <td class="col-sm-7">{{client.client_name}}</td>
     <td class="col-sm-2">
-        <a href="{% url "clients:client-detail" client.id %}" class="btn btn-secondary p-0 m-0">Info</a>
+        <a href="{% url "clients:client-detail" client.id %}" class="btn btn-secondary p-0 m-0">Dane klienta</a>
         {% if perms.clients.change_client %}
             <a href="{% url "clients:client-update" client.id %}" class="btn btn-secondary p-0 m-0">Edytuj</a>
         {% endif %}
