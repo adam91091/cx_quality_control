@@ -3,25 +3,25 @@
     {% if perms.products.add_product %}
         <a href="{% url "products:product-new" %}" class="btn btn-secondary mb-2">Dodaj nowy produkt</a>
     {% endif %}
-    <a href="{% url "products:products_list" %}?clear_filters=true" class="btn btn-secondary mb-2">Wyczyść filtry</a>
+    <a href="{% url "products:products-list" %}?clear_filters=true" class="btn btn-secondary mb-2">Wyczyść filtry</a>
     <button onclick="window.location.reload();" class="btn btn-secondary mb-2">Odśwież</button>
-    <form name="search-form" method="GET" action="{% url 'products:products_list'%}" class="m-0">
+    <form name="search-form" method="GET" action="{% url 'products:products-list'%}" class="m-0">
     <table class="table table-bordered mb-0">
     <tr class="d-flex">
         <th class="col-3">
-            <a class="link m-2" href="{% url 'products:products_list' %}?sort_by=product_sap_id&order_by={{ order_by }}" style="width: 40%;">
+            <a class="link m-2" href="{% url 'products:products-list' %}?ordering=product_sap_id" style="width: 40%;">
                 Numer SAP:</a>
-            <input class="form-control" name="search-product_sap_id" type="text" value="{{ request.session.product_sap_id }}" aria-label="Search" style="width: 60%; display: inline;">
+            <input class="form-control" id="id_product_sap_id" name="product_sap_id" type="text" value="{{ request.session.product_sap_id }}" aria-label="Search" style="width: 60%; display: inline;">
         </th>
         <th class="col-3">
-            <a class="link m-2" href="{% url 'products:products_list' %}?sort_by=index&order_by={{ order_by }}" style="width: 40%;">
+            <a class="link m-2" href="{% url 'products:products-list' %}?ordering=index" style="width: 40%;">
                 Indeks:</a>
-                <input class="form-control" name="search-index" type="text" value="{{ request.session.index }}" aria-label="Search" style="width: 60%; display: inline;">
+                <input class="form-control" id="id_index" name="index" type="text" value="{{ request.session.index }}" aria-label="Search" style="width: 60%; display: inline;">
         </th>
         <th class="col-4">
-            <a class="link m-2" href="{% url 'products:products_list' %}?sort_by=description&order_by={{ order_by }}" style="width: 40%;">
+            <a class="link m-2" href="{% url 'products:products-list' %}?ordering=description" style="width: 40%;">
                 Opis:</a>
-                <input class="form-control" name="search-description" type="text" value="{{ request.session.description }}" aria-label="Search" style="width: 60%; display: inline;">
+                <input class="form-control" id="id_description" name="description" type="text" value="{{ request.session.description }}" aria-label="Search" style="width: 60%; display: inline;">
         </th>
         <th class="col-2">
                 <button class="btn btn-outline-primary search-bar" type="submit">Wyszukaj</button>

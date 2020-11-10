@@ -1,32 +1,46 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import permission_required, login_required
-from django.urls import reverse_lazy
-from django.views.generic import UpdateView, CreateView, DetailView, DeleteView
 
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
+from django.views.generic import UpdateView, CreateView, DetailView, DeleteView, ListView
+
+from apps.products.filters import ProductFilter
 from apps.products.forms import ProductForm, SpecificationForm, ProductSpecificationMultiForm
 from apps.products.models import Product
-from apps.providers import FilterProvider, PaginationProvider, SortingProvider
+from apps.providers import PAGINATION_OBJ_COUNT_PER_PAGE
 from apps.views_utils import VIEW_MSG, add_error_messages
 
 
-@login_required
-@permission_required('products.view_product')
-def products_list(request):
-    product_filter_provider = FilterProvider(model=Product, session=request.session, params=request.GET)
-    products = product_filter_provider.get_queryset()
-    product_sorting_provider = SortingProvider(model=Product, session=request.session, params=request.GET)
-    products = product_sorting_provider.sort_queryset(queryset=products)
-    order_by = product_sorting_provider.get_next_order_by()
+class ProductListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    model = Product
+    template_name = 'products_list.html'
+    login_url = 'users:user_login'
+    permission_required = ('products.view_product', )
+    paginate_by = PAGINATION_OBJ_COUNT_PER_PAGE
+    ordering = ('id', )
 
-    product_pagination_provider = PaginationProvider(queryset=products, page=request.GET.get('page', 1))
-    page_obj, pages_range = product_pagination_provider.paginate()
+    def get_queryset(self):
+        for param in self.request.GET:
+            param_val = self.request.GET.get(param)
+            if param_val is not None:
+                self.request.session[param] = param_val
+        if 'clear_filters' in self.request.GET:
+            for field_name in ProductFilter.get_fields():
+                self.request.session[field_name] = ''
 
-    return render(request, 'products_list.html', {'page_obj': page_obj,
-                                                  'pages_range': pages_range,
-                                                  'order_by': order_by})
+        product_filter = ProductFilter(self.request.session, queryset=self.model.objects.all())
+        qs = product_filter.qs.order_by(self.get_ordering())
+        return qs
+
+    def get_ordering(self):
+        ordering = self.request.GET.get('ordering')
+        if ordering is not None:
+            self.request.session['ordering'] = ordering
+        if 'clear_filters' in self.request.GET:
+            self.request.session['ordering'] = 'id'
+        return self.request.session.get('ordering', 'id')
 
 
 class ProductCreateView(SuccessMessageMixin, LoginRequiredMixin,
@@ -35,7 +49,7 @@ class ProductCreateView(SuccessMessageMixin, LoginRequiredMixin,
     template_name = 'product_form.html'
     login_url = 'users:user_login'
     permission_required = ('products.add_product', )
-    success_url = reverse_lazy('products:products_list')
+    success_url = reverse_lazy('products:products-list')
     success_message = VIEW_MSG['product']['new_success']
 
     def form_valid(self, form):
@@ -71,7 +85,7 @@ class ProductUpdateView(SuccessMessageMixin, LoginRequiredMixin,
     template_name = 'product_form.html'
     login_url = 'users:user_login'
     permission_required = ('products.change_product', )
-    success_url = reverse_lazy('products:products_list')
+    success_url = reverse_lazy('products:products-list')
     success_message = VIEW_MSG['product']['update_success']
 
     def get_form_kwargs(self):
@@ -99,7 +113,7 @@ class ProductDeleteView(SuccessMessageMixin, LoginRequiredMixin,
     template_name = 'product_confirm_delete.html'
     login_url = 'users:user_login'
     permission_required = 'products.delete_product'
-    success_url = reverse_lazy('products:products_list')
+    success_url = reverse_lazy('products:products-list')
     success_message = VIEW_MSG['product']['delete_success']
 
     def delete(self, request, *args, **kwargs):

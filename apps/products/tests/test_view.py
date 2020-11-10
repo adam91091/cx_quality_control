@@ -2,7 +2,7 @@ from math import ceil
 
 from django.test import TestCase, Client as ViewClient
 
-from apps.products.forms import ProductForm, SpecificationForm, ProductSpecificationMultiForm
+from apps.products.forms import ProductSpecificationMultiForm
 from apps.products.models import Product, Specification
 from apps.products.tests.factories import ProductFactory, SpecificationFactory
 from apps.providers import PAGINATION_OBJ_COUNT_PER_PAGE
@@ -33,7 +33,7 @@ class ProductsViewTest(TestCase):
 
     def test_list(self):
         self.view_client.login(username=self.user.username, password=PASSWORD)
-        response = assert_response_get(test_case=self, url_name='products:products_list',
+        response = assert_response_get(test_case=self, url_name='products:products-list',
                                        exp_status_code=200, exp_template='products_list.html')
         self.assertEqual(response.context['page_obj'].paginator.num_pages,
                          ceil(len(self.products) / PAGINATION_OBJ_COUNT_PER_PAGE))
