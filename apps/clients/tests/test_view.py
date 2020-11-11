@@ -7,7 +7,7 @@ from .factories import ClientFactory
 from apps.clients.forms import ClientForm
 from apps.clients.models import Client
 from apps.unittest_utils import assert_response_get, assert_response_post
-from apps.providers import PAGINATION_OBJ_COUNT_PER_PAGE
+from apps.globals import PAGINATION_OBJ_COUNT_PER_PAGE
 from ...users.tests import PASSWORD
 from ...users.tests.factories import CxUserFactory
 

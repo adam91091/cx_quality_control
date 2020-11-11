@@ -1,6 +1,6 @@
 from django.template.defaulttags import register
 
-from apps.providers import PAGINATION_LINKS_MAX_COUNT
+from apps.globals import PAGINATION_LINKS_MAX_COUNT
 
 
 @register.filter

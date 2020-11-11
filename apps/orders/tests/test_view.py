@@ -8,7 +8,7 @@ from apps.orders.forms import OrderForm, MeasurementReportForm, MeasurementFormS
 from apps.orders.models import Order
 from apps.orders.tests.factories import OrderFactory, MeasurementFactory, MeasurementReportFactory
 from apps.products.tests.factories import ProductFactory
-from apps.providers import PAGINATION_OBJ_COUNT_PER_PAGE
+from apps.globals import PAGINATION_OBJ_COUNT_PER_PAGE
 from apps.unittest_utils import assert_response_post, assert_response_get
 from apps.users.tests import PASSWORD
 from apps.users.tests.factories import CxUserFactory
@@ -37,7 +37,7 @@ class OrdersViewTest(TestCase):
 
     def test_list(self):
         self.view_client.login(username=self.user.username, password=PASSWORD)
-        response = assert_response_get(test_case=self, url_name='orders:orders_list',
+        response = assert_response_get(test_case=self, url_name='orders:orders-list',
                                        exp_status_code=200, exp_template='orders_list.html')
         self.assertEqual(response.context['page_obj'].paginator.num_pages,
                          ceil(len(self.orders) / PAGINATION_OBJ_COUNT_PER_PAGE))

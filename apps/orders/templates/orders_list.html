@@ -3,48 +3,48 @@
     {% if perms.orders.view_order %}
         <a href="{% url "orders:order-new" %}" class="btn btn-secondary mb-2">Dodaj nowe zlecenie produkcyjne</a>
     {% endif %}
-    <a href="{% url "orders:orders_list" %}?clear_filters=true" class="btn btn-secondary mb-2">Wyczyść filtry</a>
+    <a href="{% url "orders:orders-list" %}?clear_filters=true" class="btn btn-secondary mb-2">Wyczyść filtry</a>
     <button onclick="window.location.reload();" class="btn btn-secondary mb-2">Odśwież</button>
-    <form name="search-form" method="GET" action="{% url 'orders:orders_list'%}" class="m-0">
+    <form name="search-form" method="GET" action="{% url 'orders:orders-list'%}" class="m-0">
     <table class="table table-bordered mb-0">
     <tr class="d-flex">
         <th class="col-2">
-            <a class="link mt-2 mb-2" href="{% url 'orders:orders_list' %}?sort_by=client_name&order_by={{ order_by }}" style="width: 40%;">
+            <a class="link mt-2 mb-2" href="{% url 'orders:orders-list' %}?ordering=client__client_name" style="width: 40%;">
                 Klient:</a>
-            <input class="form-control mt-2 mb-2" name="search-client_name" type="text" value="{{ request.session.client_name }}" aria-label="Search" style="width: 100%; display: block;">
+            <input class="form-control mt-2 mb-2" id="id_client_name" name="client_name" type="text" value="{{ request.session.client_name }}" aria-label="Search" style="width: 100%; display: block;">
         </th>
         <th class="col-1">
-            <a class="link mt-2 mb-2" href="{% url 'orders:orders_list' %}?sort_by=order_sap_id&order_by={{ order_by }}" style="width: 40%;">
+            <a class="link mt-2 mb-2" href="{% url 'orders:orders-list' %}?ordering=order_sap_id" style="width: 40%;">
                 Nr partii:</a>
-            <input class="form-control mt-2 mb-2" name="search-order_sap_id" type="text" value="{{ request.session.order_sap_id }}" aria-label="Search" style="width: 100%; display: block;">
+            <input class="form-control mt-2 mb-2" id="id_order_sap_id" name="order_sap_id" type="text" value="{{ request.session.order_sap_id }}" aria-label="Search" style="width: 100%; display: block;">
         </th>
         <th class="col-1">
-            <a class="link mt-2 mb-2" href="{% url 'orders:orders_list' %}?sort_by=product_sap_id&order_by={{ order_by }}" style="width: 40%;">
+            <a class="link mt-2 mb-2" href="{% url 'orders:orders-list' %}?ordering=product__product_sap_id" style="width: 40%;">
                 Kod prod:</a>
-            <input class="form-control mt-2 mb-2" name="search-product_sap_id" type="text" value="{{ request.session.product_sap_id }}" aria-label="Search" style="width: 100%; display: block;">
+            <input class="form-control mt-2 mb-2" id="id_product_sap_id" name="product_sap_id" type="text" value="{{ request.session.product_sap_id }}" aria-label="Search" style="width: 100%; display: block;">
         </th>
         <th class="col-2">
-            <a class="link mt-2 mb-2" href="{% url 'orders:orders_list' %}?sort_by=date_of_production&order_by={{ order_by }}" style="width: 40%;">
+            <a class="link mt-2 mb-2" href="{% url 'orders:orders-list' %}?ordering=date_of_production" style="width: 40%;">
                 Data produkcji:</a>
                 {{ date_filtering_form.media }}
             <div class="form-group form-inline mt-2 mb-1">
-                {{ date_filtering_form.search_start_date.label_tag }}
-                <div style="width: 80%;" class="ml-1">{{ date_filtering_form.search_start_date }}</div>
+                {{ date_filtering_form.date_of_production_after.label_tag }}
+                <div style="width: 80%;" class="ml-1">{{ date_filtering_form.date_of_production_after }}</div>
             </div>
             <div class="form-group form-inline mt-2 mb-1">
-                {{ date_filtering_form.search_end_date.label_tag }}
-                <div style="width: 80%;" class="ml-1">{{ date_filtering_form.search_end_date }}</div>
+                {{ date_filtering_form.date_of_production_before.label_tag }}
+                <div style="width: 80%;" class="ml-1">{{ date_filtering_form.date_of_production_before }}</div>
             </div>
         </th>
         <th class="col-2">
-            <a class="link mt-2 mb-2" href="{% url 'orders:orders_list' %}?sort_by=description&order_by={{ order_by }}" style="width: 40%;">
+            <a class="link mt-2 mb-2" href="{% url 'orders:orders-list' %}?ordering=product__description" style="width: 40%;">
                 Opis produktu:</a>
-            <input class="form-control mt-2 mb-2" name="search-description" type="text" value="{{ request.session.description }}" aria-label="Search" style="width: 100%; display: block;">
+            <input class="form-control mt-2 mb-2" id="id_description" name="description" type="text" value="{{ request.session.description }}" aria-label="Search" style="width: 100%; display: block;">
         </th>
         <th class="col-2">
-            <a class="link mt-2 mb-2" href="{% url 'orders:orders_list' %}?sort_by=status&order_by={{ order_by }}" style="width: 40%;">
+            <a class="link mt-2 mb-2" href="{% url 'orders:orders-list' %}?ordering=status" style="width: 40%;">
                 Status:</a>
-            <select class="form-control mt-2" aria-label="Search" style="width: 100%;" name="search-status">
+            <select class="form-control mt-2" aria-label="Search" style="width: 100%;" id="id_status" name="status">
                 <option value="" {% if request.session.status == '' %} selected {% endif %}>Wszystkie</option>
                 <option value="Started" {% if request.session.status == 'Started' %} selected {% endif %}>Otwarte</option>
                 <option value="Open" {% if request.session.status == 'Open' %} selected {% endif %}>W trakcie</option>

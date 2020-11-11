@@ -143,9 +143,14 @@ MeasurementFormSet = inlineformset_factory(parent_model=MeasurementReport, model
 
 
 class DateFilteringForm(forms.Form):
-    search_start_date = forms.DateField(
+    date_of_production_after = forms.DateField(
         widget=DatePickerInput(options={'showClear': False, 'locale': 'pl', },
-                               attrs=BASIC_NO_HINTS_STYLE, format='%Y-%m-%d'), label='Od')
-    search_end_date = forms.DateField(
+                               attrs={**BASIC_NO_HINTS_STYLE, **{'name': 'date_of_production_after',
+                                                                 'id': 'id_date_of_production_0'}},
+                               format='%Y-%m-%d'), label='Od')
+
+    date_of_production_before = forms.DateField(
         widget=DatePickerInput(options={'showClear': False, 'locale': 'pl', },
-                               attrs=BASIC_NO_HINTS_STYLE, format='%Y-%m-%d'), label='Do')
+                               attrs={**BASIC_NO_HINTS_STYLE, **{'name': 'date_of_production_before',
+                                                                 'id': 'id_date_of_production_1'}},
+                               format='%Y-%m-%d'), label='Do')

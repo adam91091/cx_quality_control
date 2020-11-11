@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 from apps.clients.filters import ClientFilter
 from apps.clients.forms import ClientForm
 from apps.clients.models import Client
-from apps.providers import PAGINATION_OBJ_COUNT_PER_PAGE
+from apps.globals import PAGINATION_OBJ_COUNT_PER_PAGE
 from apps.views_utils import VIEW_MSG, add_error_messages
 
 

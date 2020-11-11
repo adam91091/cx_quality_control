@@ -4,36 +4,54 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import permission_required, login_required
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
+from django.views.generic import CreateView, UpdateView, DeleteView, DetailView, ListView
 
-from apps.providers import MAX_DATE, MIN_DATE
+from apps.globals import PAGINATION_OBJ_COUNT_PER_PAGE
+from .filters import OrderFilter
 
 from .forms import OrderForm, MeasurementFormSet, MeasurementReportForm, DateFilteringForm, MeasurementForm
 from .models import Order, MeasurementReport
-from ..providers import FilterProvider, SortingProvider, PaginationProvider
 from ..views_utils import VIEW_MSG, add_error_messages
 
 
-@login_required
-@permission_required("orders.view_order")
-def orders_list(request):
-    order_filter_provider = FilterProvider(model=Order, session=request.session, params=request.GET)
-    orders = order_filter_provider.get_queryset()
-    order_sorting_provider = SortingProvider(model=Order, session=request.session, params=request.GET)
-    orders = order_sorting_provider.sort_queryset(queryset=orders)
-    order_by = order_sorting_provider.get_next_order_by()
+class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    model = Order
+    template_name = 'orders_list.html'
+    login_url = 'users:user-login'
+    permission_required = ('orders.view_order', )
+    paginate_by = PAGINATION_OBJ_COUNT_PER_PAGE
+    ordering = ('id', )
 
-    order_pagination_provider = PaginationProvider(queryset=orders, page=request.GET.get('page', 1))
-    page_obj, pages_range = order_pagination_provider.paginate()
+    def get_queryset(self):
+        for param in self.request.GET:
+            param_val = self.request.GET.get(param)
+            if param_val is not None:
+                self.request.session[param] = param_val
+        if 'clear_filters' in self.request.GET:
+            for field_name in OrderFilter.get_fields():
+                self.request.session[field_name] = ''
+            self.request.session['date_of_production_after'] = Order.get_date_of_production('today')
+            self.request.session['date_of_production_before'] = Order.get_date_of_production('max')
 
-    start_from = request.session.get('start_date', MIN_DATE)
-    end_to = request.session.get('end_date', MAX_DATE)
-    date_filtering_form = DateFilteringForm(initial={'search_start_date': start_from, 'search_end_date': end_to})
+        order_filter = OrderFilter(self.request.session, queryset=self.model.objects.all())
+        qs = order_filter.qs.order_by(self.get_ordering())
+        return qs
 
-    return render(request, 'orders_list.html', {'page_obj': page_obj,
-                                                'pages_range': pages_range,
-                                                'order_by': order_by,
-                                                'date_filtering_form': date_filtering_form})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        date_filtering_form = DateFilteringForm(initial={
+            'date_of_production_after': self.request.session.get('date_of_production_after'),
+            'date_of_production_before': self.request.session.get('date_of_production_before'), })
+        context['date_filtering_form'] = date_filtering_form
+        return context
+
+    def get_ordering(self):
+        ordering = self.request.GET.get('ordering')
+        if ordering is not None:
+            self.request.session['ordering'] = ordering
+        if 'clear_filters' in self.request.GET:
+            self.request.session['ordering'] = 'id'
+        return self.request.session.get('ordering', 'id')
 
 
 class OrderCreateView(SuccessMessageMixin, LoginRequiredMixin,
@@ -42,7 +60,7 @@ class OrderCreateView(SuccessMessageMixin, LoginRequiredMixin,
     template_name = 'order_form.html'
     login_url = 'users:user-login'
     permission_required = ('orders.add_order', )
-    success_url = reverse_lazy('orders:orders_list')
+    success_url = reverse_lazy('orders:orders-list')
     success_message = VIEW_MSG['order']['new_success']
 
     def form_invalid(self, form):
@@ -64,7 +82,7 @@ class OrderUpdateView(SuccessMessageMixin, LoginRequiredMixin,
     template_name = 'order_form.html'
     login_url = 'users:user-login'
     permission_required = ('orders.change_order', )
-    success_url = reverse_lazy('orders:orders_list')
+    success_url = reverse_lazy('orders:orders-list')
     success_message = VIEW_MSG['order']['update_success']
 
     def form_invalid(self, form):
@@ -77,7 +95,7 @@ class OrderDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     template_name = 'order_confirm_delete.html'
     login_url = 'users:user-login'
     permission_required = ('orders.delete_order', )
-    success_url = reverse_lazy('orders:orders_list')
+    success_url = reverse_lazy('orders:orders-list')
     success_message = VIEW_MSG['order']['delete_success']
 
     def delete(self, request, *args, **kwargs):
@@ -134,7 +152,7 @@ def measurement_report_update(request, order_id):
     order = Order.objects.get(id=order_id)
     if order.status == 'Done':
         messages.error(request, message="Zamknięte raporty pomiarowe nie podlegają edycji")
-        return redirect('orders:orders_list')
+        return redirect('orders:orders-list')
     if request.method == 'GET':
         order_form = OrderForm(instance=order, measurement_report=True)
         measurement_report_form = MeasurementReportForm(instance=order.measurement_report)
@@ -171,15 +189,15 @@ def measurement_report_close(request, order_id):
         order.measurement_report
     except MeasurementReport.DoesNotExist:
         messages.error(request, message="Nie można zamknąć raportu pomiarowego, który nie został zapisany.")
-        return redirect('orders:orders_list')
+        return redirect('orders:orders-list')
     if order.status == 'Done':
         messages.error(request, message="Raport pomiarowy już został zamknięty.")
-        return redirect('orders:orders_list')
+        return redirect('orders:orders-list')
     if request.method == 'POST':
         order.status = 'Done'
         order.save()
         messages.success(request, VIEW_MSG['measurement_report']['close_success'])
-        return redirect('orders:orders_list')
+        return redirect('orders:orders-list')
     else:
         return render(request, 'measurement_confirm_close.html', {'order': order})
 
@@ -206,7 +224,7 @@ def _render_measurement_form_post(request, order_form, measurement_report_form, 
                 order.status = 'Open'
                 order.save()
             messages.success(request, VIEW_MSG['measurement_report'][f'{method}_success'])
-            return redirect('orders:orders_list')
+            return redirect('orders:orders-list')
 
         add_error_messages(request, main_msg=VIEW_MSG['measurement_report'][f'{method}_error'], form=order_form,
                            secondary_forms=[measurement_report_form] + [_ for _ in measurement_formset])

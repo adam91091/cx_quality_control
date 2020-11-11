@@ -1,6 +1,6 @@
 import datetime
 from django.db import models
-from django.db.models import Field, Transform
+from django.db.models import Field, Transform, Min, Max
 
 from apps.clients.models import Client
 from apps.products.models import Product
@@ -36,6 +36,13 @@ class Order(models.Model):
     def __str__(self):
         return f"Zlecenie produkcyjne. Nr partii: {self.order_sap_id} " \
                f"Kod produktu: {self.product.product_sap_id} Klient: {self.client}"
+
+    @staticmethod
+    def get_date_of_production(value):
+        dates = {'min': Order.objects.aggregate(Min('date_of_production'))['date_of_production__min'],
+                 'max': Order.objects.aggregate(Max('date_of_production'))['date_of_production__max'],
+                 'today': datetime.date.today()}
+        return dates.get(value).strftime('%Y-%m-%d')
 
 
 class MeasurementReport(models.Model):

@@ -5,7 +5,7 @@ from django.test import TestCase, Client as ViewClient
 from apps.products.forms import ProductSpecificationMultiForm
 from apps.products.models import Product, Specification
 from apps.products.tests.factories import ProductFactory, SpecificationFactory
-from apps.providers import PAGINATION_OBJ_COUNT_PER_PAGE
+from apps.globals import PAGINATION_OBJ_COUNT_PER_PAGE
 from apps.unittest_utils import assert_response_post, assert_response_get
 from apps.users.tests import PASSWORD
 from apps.users.tests.factories import CxUserFactory
