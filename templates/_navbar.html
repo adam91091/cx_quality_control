@@ -13,10 +13,10 @@
     <ul class="navbar-nav ml-auto" >
         {% if user.is_authenticated %}
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'users:user_profile' %}">Moje konto</a>
+                <a class="nav-link" href="{% url 'users:user-profile' %}">Moje konto</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'users:user_logout' %}">Wyloguj się</a>
+                <a class="nav-link" href="{% url 'users:user-logout' %}">Wyloguj się</a>
             </li>
         {% endif %}
     </ul>

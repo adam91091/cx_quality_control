@@ -16,7 +16,7 @@ from apps.views_utils import VIEW_MSG, add_error_messages
 class ProductListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = Product
     template_name = 'products_list.html'
-    login_url = 'users:user_login'
+    login_url = 'users:user-login'
     permission_required = ('products.view_product', )
     paginate_by = PAGINATION_OBJ_COUNT_PER_PAGE
     ordering = ('id', )
@@ -47,7 +47,7 @@ class ProductCreateView(SuccessMessageMixin, LoginRequiredMixin,
                         PermissionRequiredMixin, CreateView):
     form_class = ProductSpecificationMultiForm
     template_name = 'product_form.html'
-    login_url = 'users:user_login'
+    login_url = 'users:user-login'
     permission_required = ('products.add_product', )
     success_url = reverse_lazy('products:products-list')
     success_message = VIEW_MSG['product']['new_success']
@@ -74,7 +74,7 @@ class ProductCreateView(SuccessMessageMixin, LoginRequiredMixin,
 class ProductDetailView(DetailView):
     model = Product
     template_name = 'product_detail.html'
-    login_url = 'users:user_login'
+    login_url = 'users:user-login'
     permission_required = ('products.view_product', )
 
 
@@ -83,7 +83,7 @@ class ProductUpdateView(SuccessMessageMixin, LoginRequiredMixin,
     form_class = ProductSpecificationMultiForm
     model = Product
     template_name = 'product_form.html'
-    login_url = 'users:user_login'
+    login_url = 'users:user-login'
     permission_required = ('products.change_product', )
     success_url = reverse_lazy('products:products-list')
     success_message = VIEW_MSG['product']['update_success']
@@ -111,7 +111,7 @@ class ProductDeleteView(SuccessMessageMixin, LoginRequiredMixin,
                         PermissionRequiredMixin, DeleteView):
     model = Product
     template_name = 'product_confirm_delete.html'
-    login_url = 'users:user_login'
+    login_url = 'users:user-login'
     permission_required = 'products.delete_product'
     success_url = reverse_lazy('products:products-list')
     success_message = VIEW_MSG['product']['delete_success']

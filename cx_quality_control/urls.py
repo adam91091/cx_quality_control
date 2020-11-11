@@ -19,7 +19,7 @@ from django.urls import path, include
 from apps.users import views
 
 urlpatterns = [
-    path('', views.user_login, name='user_login'),
+    path('', views.CxUserLoginView.as_view(), name='user-login'),
     path('admin/', admin.site.urls),
     path('clients/', include('apps.clients.urls')),
     path('products/', include('apps.products.urls')),

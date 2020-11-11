@@ -14,7 +14,7 @@ from apps.views_utils import VIEW_MSG, add_error_messages
 class ClientListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = Client
     template_name = 'clients_list.html'
-    login_url = 'users:user_login'
+    login_url = 'users:user-login'
     permission_required = ('clients.view_client', )
     paginate_by = PAGINATION_OBJ_COUNT_PER_PAGE
     ordering = ('id', )
@@ -45,7 +45,7 @@ class ClientCreateView(SuccessMessageMixin, LoginRequiredMixin,
                        PermissionRequiredMixin, CreateView):
     form_class = ClientForm
     template_name = 'client_form.html'
-    login_url = 'users:user_login'
+    login_url = 'users:user-login'
     permission_required = ('clients.add_client', )
     success_url = reverse_lazy('clients:clients-list')
     success_message = VIEW_MSG['client']['new_success']
@@ -58,7 +58,7 @@ class ClientCreateView(SuccessMessageMixin, LoginRequiredMixin,
 class ClientDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     model = Client
     template_name = 'client_detail.html'
-    login_url = 'users:user_login'
+    login_url = 'users:user-login'
     permission_required = ('clients.view_client', )
 
 
@@ -67,7 +67,7 @@ class ClientUpdateView(SuccessMessageMixin, LoginRequiredMixin,
     model = Client
     form_class = ClientForm
     template_name = 'client_form.html'
-    login_url = 'users:user_login'
+    login_url = 'users:user-login'
     permission_required = ('clients.change_client', )
     success_url = reverse_lazy('clients:clients-list')
     success_message = VIEW_MSG['client']['update_success']
@@ -80,7 +80,7 @@ class ClientUpdateView(SuccessMessageMixin, LoginRequiredMixin,
 class ClientDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = Client
     template_name = 'client_confirm_delete.html'
-    login_url = 'users:user_login'
+    login_url = 'users:user-login'
     permission_required = ('clients.delete_client', )
     success_url = reverse_lazy('clients:clients-list')
     success_message = VIEW_MSG['client']['delete_success']
