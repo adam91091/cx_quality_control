@@ -1,15 +1,17 @@
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import permission_required, login_required
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
 
 from apps.providers import MAX_DATE, MIN_DATE
 
 from .forms import OrderForm, MeasurementFormSet, MeasurementReportForm, DateFilteringForm, MeasurementForm
 from .models import Order, MeasurementReport
-from ..clients.models import Client
-from ..products.models import Product
 from ..providers import FilterProvider, SortingProvider, PaginationProvider
-from ..views_utils import render_form_response, VIEW_MSG, check_if_related_object_exists, add_error_messages
+from ..views_utils import VIEW_MSG, add_error_messages
 
 
 @login_required
@@ -34,57 +36,53 @@ def orders_list(request):
                                                 'date_filtering_form': date_filtering_form})
 
 
-@login_required
-@permission_required("orders.view_order")
-def order_detail(request, order_id):
-    order = Order.objects.get(id=order_id)
-    order_form = OrderForm(instance=order, read_only=True)
-    return render(request, 'order_form.html', {'order_form': order_form, 'type': 'detail'})
+class OrderCreateView(SuccessMessageMixin, LoginRequiredMixin,
+                      PermissionRequiredMixin, CreateView):
+    form_class = OrderForm
+    template_name = 'order_form.html'
+    login_url = 'users:user-login'
+    permission_required = ('orders.add_order', )
+    success_url = reverse_lazy('orders:orders_list')
+    success_message = VIEW_MSG['order']['new_success']
+
+    def form_invalid(self, form):
+        add_error_messages(self.request, VIEW_MSG['order']['new_error'], form)
+        return super().form_invalid(form)
 
 
-@login_required
-@permission_required("orders.add_order")
-def order_new(request):
-    if request.method == 'POST':
-        product = check_if_related_object_exists(request=request, model=Product, sap_id_name='product_sap_id',
-                                                 sap_id_value=request.POST.get('product'), model_name='Produkt')
-        client = check_if_related_object_exists(request=request, model=Client, sap_id_name='client_sap_id',
-                                                sap_id_value=request.POST.get('client'), model_name='Klient')
-        order_form = OrderForm(data=request.POST)
-        if None in [product, client]:
-            return render(request, 'order_form.html', {'order_form': order_form, 'type': 'new'})
-    else:
-        order_form = OrderForm()
-    return render_form_response(request=request, method='new', form=order_form, model_name='order')
+class OrderDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
+    model = Order
+    template_name = 'order_detail.html'
+    login_url = 'users:user-login'
+    permission_required = ('orders.view_order', )
 
 
-@login_required
-@permission_required("orders.change_order")
-def order_update(request, order_id):
-    order = Order.objects.get(id=order_id)
-    if request.method == 'POST':
-        product = check_if_related_object_exists(request=request, model=Product, sap_id_name='product_sap_id',
-                                                 sap_id_value=request.POST.get('product'), model_name='Produkt')
-        client = check_if_related_object_exists(request=request, model=Client, sap_id_name='client_sap_id',
-                                                sap_id_value=request.POST.get('client'), model_name='Klient')
-        order_form = OrderForm(data=request.POST, instance=order)
-        if None in [product, client]:
-            return render(request, 'order_form.html', {'order_form': order_form, 'type': 'update'})
-    else:
-        order_form = OrderForm(instance=order)
-    return render_form_response(request=request, method='update', form=order_form, model_name='order')
+class OrderUpdateView(SuccessMessageMixin, LoginRequiredMixin,
+                      PermissionRequiredMixin, UpdateView):
+    model = Order
+    form_class = OrderForm
+    template_name = 'order_form.html'
+    login_url = 'users:user-login'
+    permission_required = ('orders.change_order', )
+    success_url = reverse_lazy('orders:orders_list')
+    success_message = VIEW_MSG['order']['update_success']
+
+    def form_invalid(self, form):
+        add_error_messages(self.request, VIEW_MSG['order']['update_error'], form)
+        return super().form_invalid(form)
 
 
-@login_required
-@permission_required("orders.delete_order")
-def order_delete(request, order_id):
-    order = Order.objects.get(id=order_id)
-    if request.method == 'POST':
-        order.delete()
-        messages.success(request, VIEW_MSG['order']['delete'])
-        return redirect('orders:orders_list')
-    else:
-        return render(request, 'order_confirm_delete.html', {'order': order})
+class OrderDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    model = Order
+    template_name = 'order_confirm_delete.html'
+    login_url = 'users:user-login'
+    permission_required = ('orders.delete_order', )
+    success_url = reverse_lazy('orders:orders_list')
+    success_message = VIEW_MSG['order']['delete_success']
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, self.success_message)
+        return super().delete(request, *args, **kwargs)
 
 
 @login_required

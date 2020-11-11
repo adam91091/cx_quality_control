@@ -56,7 +56,9 @@ class OrderForm(ModelForm):
         }
 
         error_messages = {
-            'order_sap_id': {'unique': "Podany nr partii już istnieje.", }
+            'order_sap_id': {'unique': "Podany nr partii już istnieje.", },
+            'product': {'invalid_choice': 'Produkt o podanym nr SAP nie istnieje w bazie danych.', },
+            'client': {'invalid_choice': 'Klient o podanym nr SAP nie istnieje w bazie danych.', },
         }
 
 

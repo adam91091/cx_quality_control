@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
     {% if perms.orders.view_order %}
-        <a href="{% url "orders:order_new" %}" class="btn btn-secondary mb-2">Dodaj nowe zlecenie produkcyjne</a>
+        <a href="{% url "orders:order-new" %}" class="btn btn-secondary mb-2">Dodaj nowe zlecenie produkcyjne</a>
     {% endif %}
     <a href="{% url "orders:orders_list" %}?clear_filters=true" class="btn btn-secondary mb-2">Wyczyść filtry</a>
     <button onclick="window.location.reload();" class="btn btn-secondary mb-2">Odśwież</button>
@@ -73,10 +73,10 @@
       <td class="col-sm-2">{{order.get_status_display}}</td>
     <td class="col-sm-2">
         {% if perms.orders.view_order %}
-            <a href="{% url "orders:order_detail" order.id %}" class="btn btn-secondary p-0 m-0">Info</a>
+            <a href="{% url "orders:order-detail" order.id %}" class="btn btn-secondary p-0 m-0">Info</a>
         {% endif %}
         {% if perms.orders.change_order %}
-            <a href="{% url "orders:order_update" order.id %}" class="btn btn-secondary p-0 m-0">Edytuj</a>
+            <a href="{% url "orders:order-update" order.id %}" class="btn btn-secondary p-0 m-0">Edytuj</a>
         {% endif %}
         {% if perms.orders.delete_order %}
             <div class="modal fade" tabindex="-1" role="dialog" id="modal">
@@ -87,7 +87,7 @@
             <button id="{{ order.id }}" class="btn btn-secondary p-0 m-0" type="button" name="button">Usuń </button>
             <script type="text/javascript">
               $(function () {
-                $("#{{ order.id }}").modalForm({formURL: "{% url 'orders:order_delete' order.id %}"});
+                $("#{{ order.id }}").modalForm({formURL: "{% url 'orders:order-delete' order.id %}"});
               });
             </script>
         {% endif %}

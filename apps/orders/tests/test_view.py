@@ -44,39 +44,39 @@ class OrdersViewTest(TestCase):
 
     def test_new_get(self):
         self.view_client.login(username=self.user.username, password=PASSWORD)
-        response = assert_response_get(test_case=self, url_name='orders:order_new',
+        response = assert_response_get(test_case=self, url_name='orders:order-new',
                                        exp_status_code=200, exp_template='order_form.html')
-        self.assertTrue(isinstance(response.context['order_form'], OrderForm))
+        self.assertTrue(isinstance(response.context['form'], OrderForm))
 
     def test_new_post(self):
         self.view_client.login(username=self.user.username, password=PASSWORD)
         order_sap_id = self.form_data['order_sap_id']
-        assert_response_post(test_case=self, url_name='orders:order_new',
+        assert_response_post(test_case=self, url_name='orders:order-new',
                              exp_status_code=302, data=self.form_data)
         self.assertTrue(Order.objects.get(order_sap_id=order_sap_id))
 
     def test_delete_get(self):
         self.view_client.login(username=self.user.username, password=PASSWORD)
-        response = assert_response_get(test_case=self, url_name='orders:order_delete', exp_status_code=200,
+        response = assert_response_get(test_case=self, url_name='orders:order-delete', exp_status_code=200,
                                        exp_template='order_confirm_delete.html', id=self.order_to_be_deleted.id)
         self.assertEqual(response.context['order'].id, self.order_to_be_deleted.id)
 
     def test_delete_post(self):
         self.view_client.login(username=self.user.username, password=PASSWORD)
-        assert_response_post(test_case=self, url_name='orders:order_delete', exp_status_code=302,
+        assert_response_post(test_case=self, url_name='orders:order-delete', exp_status_code=302,
                              data={}, id=self.order_to_be_deleted.id)
         self.assertFalse(Order.objects.filter(id=self.order_to_be_deleted.id))
 
     def test_update_get(self):
         self.view_client.login(username=self.user.username, password=PASSWORD)
-        response = assert_response_get(test_case=self, url_name='orders:order_update', exp_status_code=200,
+        response = assert_response_get(test_case=self, url_name='orders:order-update', exp_status_code=200,
                                        exp_template='order_form.html', id=self.order_to_be_updated.id)
-        self.assertEqual(response.context['order_form'].instance.id, self.order_to_be_updated.id)
+        self.assertEqual(response.context['form'].instance.id, self.order_to_be_updated.id)
 
     def test_update_post(self):
         self.view_client.login(username=self.user.username, password=PASSWORD)
         updated_length = self.form_data['length']
-        assert_response_post(test_case=self, url_name='orders:order_update', exp_status_code=302,
+        assert_response_post(test_case=self, url_name='orders:order-update', exp_status_code=302,
                              data=self.form_data, id=self.order_to_be_updated.id)
         self.assertEqual(Order.objects.get(id=self.order_to_be_updated.id).length, updated_length)
 

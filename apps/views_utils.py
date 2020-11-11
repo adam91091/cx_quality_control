@@ -22,7 +22,7 @@ VIEW_MSG = {'client': {'new_success': "Utworzono nowego klienta",
                       'update_success': "Zaktualizowano dane zlecenia produkcyjnego",
                       'update_error': "Nie zaktualizowano danych zlecenia produkcyjnego. "
                                       "Wystąpiły następujące błędy formularza:",
-                      'delete': "Zlecenie produkcyjne zostało usunięte", },
+                      'delete_success': "Zlecenie produkcyjne zostało usunięte", },
             'measurement_report': {'new_success': "Dodano raport pomiarowy",
                                    'new_error': "Raport pomiarowy nie został dodany. "
                                                 "Wystąpiły następujące błędy formularza:",
@@ -53,25 +53,3 @@ def add_error_messages(request, main_msg, form, secondary_forms=None):
                 cleanr = re.compile('<.*?>')
                 msg = re.sub(cleanr, '', f"{err_msg}: {form.errors[err_msg]}")
                 messages.error(request, msg)
-
-
-def render_form_response(request, method, form, model_name):
-    if form.is_valid():
-        obj = form.save(commit=False)
-        obj.save()
-        messages.success(request, VIEW_MSG[model_name][f'{method}_success'])
-        return redirect(f'{model_name}s:{model_name}s_list')
-    if request.method == 'POST':
-        add_error_messages(request, main_msg=VIEW_MSG[model_name][f'{method}_error'],
-                           form=form)
-    return render(request, f'{model_name}_form.html', {f'{model_name}_form': form, 'type': method})
-
-
-def check_if_related_object_exists(request, model, sap_id_name, sap_id_value, model_name):
-    try:
-        obj = model.objects.get(**{sap_id_name: sap_id_value})
-    except model.DoesNotExist:
-        messages.error(request, f"Operacja anulowana. "
-                                f"{model_name} o numerze SAP: {sap_id_value}  nie istnieje w bazie danych")
-        return None
-    return obj
