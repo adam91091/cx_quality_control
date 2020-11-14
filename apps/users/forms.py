@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm, Password
 from django.utils.translation import gettext_lazy as _
 
 from apps.users.models import CxUser
-from apps.forms_utils import USERNAME_STYLE, PASSWORD_STYLE
+from apps.form_styles import USERNAME_STYLE, PASSWORD_STYLE
 
 
 class CxUserCreationForm(UserCreationForm):

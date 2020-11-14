@@ -5,7 +5,7 @@ from django.test import TestCase, Client as ViewClient
 from . import PASSWORD
 from .factories import CxUserFactory
 from ..forms import CxUserPasswordChangeForm, CxUserAuthenticationForm
-from ...unittest_utils import assert_response_get, assert_response_post
+from ...unittest_helpers import assert_response_get, assert_response_post
 
 
 class UsersViewTest(TestCase):

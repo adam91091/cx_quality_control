@@ -1,7 +1,12 @@
-import re
+PRODUCT_SAP_DIGITS = 7
+ORDER_SAP_DIGITS = 8
+CLIENT_SAP_DIGITS = 7
 
-from django.contrib import messages
-from django.shortcuts import redirect, render
+FLOAT_DEFAULT = 1.0
+INT_DEFAULT = 1
+
+PAGINATION_LINKS_MAX_COUNT = 20
+PAGINATION_OBJ_COUNT_PER_PAGE = 10
 
 VIEW_MSG = {'client': {'new_success': "Utworzono nowego klienta",
                        'new_error': "Nie utworzono nowego klienta. "
@@ -41,15 +46,3 @@ VIEW_MSG = {'client': {'new_success': "Utworzono nowego klienta",
                      'email_change_error': "Adres email nie został zmieniony. Wystąpiły następujące błędy formularza:",
                      }
             }
-
-
-def add_error_messages(request, main_msg, form, secondary_forms=None):
-    messages.error(request, main_msg)
-    for err_msg in form.errors:
-        messages.error(request, form.errors[err_msg])
-    if secondary_forms is not None:
-        for form in secondary_forms:
-            for err_msg in form.errors:
-                cleanr = re.compile('<.*?>')
-                msg = re.sub(cleanr, '', f"{err_msg}: {form.errors[err_msg]}")
-                messages.error(request, msg)

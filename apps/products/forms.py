@@ -2,7 +2,7 @@ from betterforms.multiform import MultiModelForm
 from django import forms
 from django.forms import ModelForm
 
-from apps.forms_utils import NUM_STYLE, INT_STYLE, BASIC_REQ_STYLE, BASIC_STYLE, BASIC_NO_HINTS_STYLE, SAP_STYLE
+from apps.form_styles import NUM_STYLE, INT_STYLE, BASIC_REQ_STYLE, BASIC_STYLE, BASIC_NO_HINTS_STYLE, SAP_STYLE
 from apps.products.models import Product, Specification
 
 

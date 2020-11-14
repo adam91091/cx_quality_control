@@ -7,7 +7,8 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
 from apps.users.forms import CxUserPasswordChangeForm, CxUserAuthenticationForm
-from apps.views_utils import VIEW_MSG, add_error_messages
+from apps.view_helpers import add_error_messages
+from apps.constants import VIEW_MSG
 
 
 class CxUserLoginView(SuccessMessageMixin, LoginView):

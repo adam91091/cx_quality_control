@@ -6,12 +6,12 @@ from django.contrib.auth.decorators import permission_required, login_required
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView, ListView
 
-from apps.globals import PAGINATION_OBJ_COUNT_PER_PAGE
+from apps.constants import PAGINATION_OBJ_COUNT_PER_PAGE, VIEW_MSG
 from .filters import OrderFilter
 
 from .forms import OrderForm, MeasurementFormSet, MeasurementReportForm, DateFilteringForm, MeasurementForm
 from .models import Order, MeasurementReport
-from ..views_utils import VIEW_MSG, add_error_messages
+from apps.view_helpers import add_error_messages
 
 
 class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):

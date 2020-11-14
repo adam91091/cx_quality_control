@@ -1,6 +1,6 @@
 import factory
 from apps.clients.models import Client
-from apps.globals import CLIENT_SAP_DIGITS
+from apps.constants import CLIENT_SAP_DIGITS
 
 
 class ClientFactory(factory.DjangoModelFactory):

@@ -3,13 +3,13 @@ from math import ceil
 from django.test import TestCase, Client as ViewClient
 
 from apps.clients.tests.factories import ClientFactory
-from apps.factories_utils import MeasurementReportPostDictProvider, MeasurementsPostDictProvider, OrderPostDictProvider
 from apps.orders.forms import OrderForm, MeasurementReportForm, MeasurementFormSet
 from apps.orders.models import Order
-from apps.orders.tests.factories import OrderFactory, MeasurementFactory, MeasurementReportFactory
+from apps.orders.tests.factories import OrderFactory, MeasurementFactory, MeasurementReportFactory, \
+    MeasurementReportPostDictProvider, MeasurementsPostDictProvider, OrderPostDictProvider
 from apps.products.tests.factories import ProductFactory
-from apps.globals import PAGINATION_OBJ_COUNT_PER_PAGE
-from apps.unittest_utils import assert_response_post, assert_response_get
+from apps.constants import PAGINATION_OBJ_COUNT_PER_PAGE
+from apps.unittest_helpers import assert_response_post, assert_response_get
 from apps.users.tests import PASSWORD
 from apps.users.tests.factories import CxUserFactory
 

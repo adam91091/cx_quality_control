@@ -1,6 +1,5 @@
 from apps.validators import REGEXPS
 
-# Widget attrs helper dicts
 BASIC_STYLE = {'class': 'form-control'}
 
 BASIC_REQ_STYLE = {'class': 'form-control', 'required': 'true'}

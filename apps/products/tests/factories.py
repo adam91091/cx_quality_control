@@ -1,6 +1,6 @@
 import factory
 
-from apps.globals import PRODUCT_SAP_DIGITS, FLOAT_DEFAULT, INT_DEFAULT
+from apps.constants import PRODUCT_SAP_DIGITS, FLOAT_DEFAULT, INT_DEFAULT
 from apps.products.models import Product, Specification
 
 

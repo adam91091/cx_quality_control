@@ -1,7 +1,7 @@
 from django import forms
 
 from .models import Client
-from ..forms_utils import SAP_STYLE, BASIC_REQ_STYLE
+from ..form_styles import SAP_STYLE, BASIC_REQ_STYLE
 
 
 class ClientForm(forms.ModelForm):
