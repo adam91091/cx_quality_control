@@ -1,21 +1,10 @@
 import datetime
 from django.db import models
-from django.db.models import Field, Transform, Min, Max
+from django.db.models import Min, Max
 
 from apps.clients.models import Client
 from apps.products.models import Product
-from apps.validators import validate_num_field, validate_int_field, validate_sap_id, validate_order_sap_id
-
-
-@Field.register_lookup
-class CharValue(Transform):
-    lookup_name = 'char'
-    bilateral = False
-
-    def as_sql(self, compiler, connection, function=None, template=None, arg_joiner=None, **extra_context):
-        sql, params = compiler.compile(self.lhs)
-        sql = 'CAST(%s AS CHAR)' % sql
-        return sql, params
+from apps.validators import validate_num_field, validate_int_field, validate_order_sap_id
 
 
 class Order(models.Model):

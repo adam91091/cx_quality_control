@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from django.forms.models import inlineformset_factory
+from django.forms.models import inlineformset_factory, BaseInlineFormSet
 
 from bootstrap_datepicker_plus import DatePickerInput
 
@@ -84,6 +84,7 @@ class MeasurementReportForm(ModelForm):
 
 
 class MeasurementForm(ModelForm):
+
     class Meta:
         model = Measurement
         exclude = ('measurement_report', 'id')
@@ -138,8 +139,23 @@ class MeasurementForm(ModelForm):
             form.fields[field_name].disabled = True
 
 
+class MeasurementInlineFormSet(BaseInlineFormSet):
+    def is_valid(self) -> bool:
+        if not self.check_pallet_uniqueness():
+            for form in self.forms[:1]:
+                form.add_error(field='pallet_number',
+                               error="Numery palet nie mogą się powtarzać w raporcie pomiarowym!")
+            return False
+        return super().is_valid()
+
+    def check_pallet_uniqueness(self) -> bool:
+        """Check pallet numbers uniqueness"""
+        pallet_nums = [form['pallet_number'].value() for form in self.forms]
+        return len(set(pallet_nums)) == len(pallet_nums)
+
+
 MeasurementFormSet = inlineformset_factory(parent_model=MeasurementReport, model=Measurement,
-                                           form=MeasurementForm, extra=0, min_num=1)
+                                           form=MeasurementForm, extra=0, min_num=1, formset=MeasurementInlineFormSet)
 
 
 class DateFilteringForm(forms.Form):

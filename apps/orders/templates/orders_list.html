@@ -93,12 +93,12 @@
         {% endif %}
         <!-- Measurement reports -->
         {% if perms.orders.view_measurementreport and order.status != 'Started'%}
-            <a href="{% url "orders:measurement_report_detail" order.id %}" class="btn btn-secondary p-0 m-0">Wyświetl pomiary</a>
+            <a href="{% url "orders:measurement-report-detail" order.id %}" class="btn btn-secondary p-0 m-0">Wyświetl pomiary</a>
         {% endif %}
         {% if order.status == 'Started' and perms.orders.add_measurementreport%}
-            <a href="{% url "orders:measurement_report_new" order.id %}" class="btn btn-secondary p-0 m-0">Dodaj pomiary</a>
+            <a href="{% url "orders:measurement-report-new" order.id %}" class="btn btn-secondary p-0 m-0">Dodaj pomiary</a>
         {% elif order.status == 'Open' and perms.orders.change_measurementreport %}
-            <a href="{% url "orders:measurement_report_update" order.id %}" class="btn btn-secondary p-0 m-0">Edytuj pomiary</a>
+            <a href="{% url "orders:measurement-report-update" order.id %}" class="btn btn-secondary p-0 m-0">Edytuj pomiary</a>
         {% endif %}
     </td>
     </tr>

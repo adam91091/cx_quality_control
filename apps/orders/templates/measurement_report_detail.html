@@ -1,16 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load filters %}
 {% block content %}
-<div class="card rounded">
-    <h3 class="m-3">
-        {% if object %} Zaktualizuj dane raportu pomiarowego
-        {% else %} Dodaj nowy raport pomiarowy
-        {% endif %}
-    </h3>
+    <div class="card rounded">
+    <h3 class="m-3">Dane raportu pomiarowego</h3>
     <hr class="border border-default">
-    <form method="post" class="needs-validation" novalidate>
-        {% csrf_token %}
     <div class="form-group card-body mb-0">
     <!-- Order data-->
     <div class="row">
@@ -34,85 +27,60 @@
     <h3 class="m-1 mt-3 mb-2">Dane pomiarowe</h3>
         <!-- Measurements table -->
     <div class="row">
-        {{ formset.management_form }}
-        {% for form in formset %}
+        {% for measurement in order.measurement_report.measurements.all %}
             {% if forloop.first %}
                 <div class="col-md-3">
                 <table class="table table-bordered" style="height: 740px;">
                     <tr style="height: 50px;">
                         <td colspan="2">
-                            {{ form.pallet_number.label }}:
+                            Paleta nr:
                         </td>
                     </tr>
                     <tr style="height: 50px;">
                         <td rowspan="3">
                             Kontrola średnicy wewnętrznej:
                         </td>
-                        <td>
-                            {{ form.internal_diameter_tolerance_top.label }}
-                        </td>
+                        <td>Góra</td>
                     <tr style="height: 50px;">
-                        <td>
-                            {{ form.internal_diameter_target.label }}
-                        </td>
+                        <td>Środek</td>
                     </tr>
                     <tr style="height: 50px;">
-                        <td>
-                            {{ form.internal_diameter_tolerance_bottom.label }}
-                        </td>
+                        <td>Dół</td>
                     </tr>
                     <tr style="height: 50px;">
-                        <td rowspan="3">
-                            Kontrola średnicy zewnętrznej:
-                        </td>
-                        <td>
-                            {{ form.external_diameter_tolerance_top.label }}
-                        </td>
+                        <td rowspan="3">Kontrola średnicy zewnętrznej:</td>
+                        <td>Góra</td>
                     <tr style="height: 50px;">
-                        <td>
-                            {{ form.external_diameter_target.label }}
-                        </td>
+                        <td>Środek</td>
                     </tr>
                     <tr style="height: 50px;">
-                        <td>
-                            {{ form.external_diameter_tolerance_bottom.label }}
-                        </td>
+                        <td>Dół</td>
                     </tr>
                     <tr style="height: 50px;">
                         <td rowspan="3">
                             Kontrola długości:
                         </td>
-                        <td>
-                            {{ form.length_tolerance_top.label }}
-                        </td>
+                        <td>Góra</td>
                     <tr style="height: 50px;">
-                        <td>
-                            {{ form.length_target.label }}
+                        <td>Środek</td>
+                    </tr>
+                    <tr style="height: 50px;">
+                        <td>Dół</td>
+                    </tr>
+                    <tr style="height: 70px;">
+                        <td colspan="2">Kontrola wytrzymałości:</td>
+                    </tr>
+                    <tr style="height: 50px;">
+                        <td colspan="2">
+                            Wilgotność:
                         </td>
                     </tr>
                     <tr style="height: 50px;">
-                        <td>
-                            {{ form.length_tolerance_bottom.label }}
+                        <td colspan="2">Waga:
                         </td>
                     </tr>
                     <tr style="height: 70px;">
-                        <td colspan="2">
-                            {{ form.flat_crush_resistance_target.label }}:
-                        </td>
-                    </tr>
-                    <tr style="height: 50px;">
-                        <td colspan="2">
-                            {{ form.moisture_content_target.label }}:
-                        </td>
-                    </tr>
-                    <tr style="height: 50px;">
-                        <td colspan="2">
-                            {{ form.weight.label }}:
-                        </td>
-                    </tr>
-                    <tr style="height: 70px;">
-                        <td colspan="2">
-                            {{ form.remarks.label }}:
+                        <td colspan="2">Uwagi, klejenie, pakowanie:
                         </td>
                     </tr>
                 </table>
@@ -121,152 +89,118 @@
         </div>
             <div id="measurement-formset-unique" class="col-md-9 p-0"
                  style="overflow-x: auto; white-space: nowrap;">
-                {% for form in formset %}
+                {% for measurement in order.measurement_report.measurements.all %}
                     {% if forloop.last %}
                         <div id="measurement-form-last" style="display: inline-block; width: 12%;" class="pl-1 pr-1">
                     {% else %}
                         <div style="display: inline-block; width: 12%;" class="pl-1 pr-1">
                     {% endif %}
                     <div class="input-group input-group-sm">
-                        {{ form.pallet_number }}
+                        <p class="form-control" style="height: 50px; border-radius: 0;">{{ measurement.pallet_number }}</p>
                         <div class="input-group-append">
                                 <span class="input-group-text">-----</span>
                         </div>
                     </div>
                     <div class="input-group input-group-sm">
-                        {{ form.internal_diameter_tolerance_top }}
+                        <p class="form-control" style="height: 50px; border-radius: 0;">{{ measurement.internal_diameter_tolerance_top }}</p>
                         <div class="input-group-append">
                                 <span class="input-group-text">mm</span>
                         </div>
                     </div>
                     <div class="input-group input-group-sm">
-                        {{ form.internal_diameter_target }}
+                        <p class="form-control" style="height: 50px; border-radius: 0;">{{ measurement.internal_diameter_target }}</p>
                         <div class="input-group-append">
                                 <span class="input-group-text">mm</span>
                         </div>
                     </div>
                     <div class="input-group input-group-sm">
-                        {{ form.internal_diameter_tolerance_bottom }}
+                        <p class="form-control" style="height: 50px; border-radius: 0;">{{ measurement.internal_diameter_tolerance_bottom }}</p>
                         <div class="input-group-append">
                                 <span class="input-group-text">mm</span>
                         </div>
                     </div>
                     <div class="input-group input-group-sm">
-                        {{ form.external_diameter_tolerance_top }}
+                        <p class="form-control" style="height: 50px; border-radius: 0;">{{ measurement.external_diameter_tolerance_top }}</p>
                         <div class="input-group-append">
                                 <span class="input-group-text">mm</span>
                         </div>
                     </div>
                     <div class="input-group input-group-sm">
-                    {{ form.external_diameter_target }}
+                        <p class="form-control" style="height: 50px; border-radius: 0;">{{ measurement.external_diameter_target }}</p>
                         <div class="input-group-append">
                                 <span class="input-group-text">mm</span>
                         </div>
                     </div>
                     <div class="input-group input-group-sm">
-                    {{ form.external_diameter_tolerance_bottom }}
+                        <p class="form-control" style="height: 50px; border-radius: 0;">{{ measurement.external_diameter_tolerance_bottom }}</p>
                         <div class="input-group-append">
                                 <span class="input-group-text">mm</span>
                         </div>
                     </div>
                     <div class="input-group input-group-sm">
-                    {{ form.length_tolerance_top }}
+                        <p class="form-control" style="height: 50px; border-radius: 0;">{{ measurement.length_tolerance_top }}</p>
                         <div class="input-group-append">
                                 <span class="input-group-text">mm</span>
                         </div>
                     </div>
                     <div class="input-group input-group-sm">
-                    {{ form.length_target }}
+                        <p class="form-control" style="height: 50px; border-radius: 0;">{{ measurement.length_target }}</p>
                         <div class="input-group-append">
                                 <span class="input-group-text">mm</span>
                         </div>
                     </div>
                     <div class="input-group input-group-sm">
-                    {{ form.length_tolerance_bottom }}
+                        <p class="form-control" style="height: 50px; border-radius: 0;">{{ measurement.length_tolerance_bottom }}</p>
                         <div class="input-group-append">
                                 <span class="input-group-text">mm</span>
                         </div>
                     </div>
                     <div class="input-group input-group-sm">
-                    {{ form.flat_crush_resistance_target }}
+                        <p class="form-control" style="height: 70px; border-radius: 0;">{{ measurement.flat_crush_resistance_target|default_if_none:'' }}</p>
                         <div class="input-group-append">
                                 <span class="input-group-text">N/mm</span>
                         </div>
                     </div>
                    <div class="input-group input-group-sm">
-                    {{ form.moisture_content_target }}
+                        <p class="form-control" style="height: 50px; border-radius: 0;">{{ measurement.moisture_content_target|default_if_none:'' }}</p>
                        <div class="input-group-append">
                                 <span class="input-group-text">%</span>
                         </div>
                     </div>
                    <div class="input-group input-group-sm">
-                    {{ form.weight }}
+                        <p class="form-control" style="height: 50px; border-radius: 0;">{{ measurement.weight|default_if_none:'' }}</p>
                        <div class="input-group-append">
                                 <span class="input-group-text">kg</span>
                         </div>
                     </div>
                     <div class="input-group input-group-sm">
-                    {{ form.remarks }}
+                        <p class="form-control" style="height: 71px; border-radius: 0;">{{ measurement.remarks|default_if_none:'' }}</p>
                     </div>
-                    {% for hidden in form.hidden_fields %}
-                    {{ hidden }}
-                    {% endfor %}
                 </div>
                 {% endfor %}
             </div>
     </div>
     <br>
-    {% if type != 'detail' %}
-        <button type="button" class="btn btn-secondary add-form-row">Dodaj nowy pomiar</button>
-        <button type="button" class="btn btn-secondary ml-1" data-toggle="modal"
-                data-target="#confirmDeleteMeasurement">Usuń ostatni pomiar</button>
-        <div class="modal fade" id="confirmDeleteMeasurement">
-          <div class="modal-dialog">
-              <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title">Czy na pewno chcesz usunąć ostatni pomiar?</h5>
-                  </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-primary" data-dismiss="modal">Nie</button>
-                  <button type="button" class="btn btn-secondary remove-form-row" data-dismiss="modal">Tak</button>
-                </div>
-              </div>
-          </div>
-        </div>
-    {% endif %}
-        <hr class="border border-default">
-        <!-- Measurement report form data-->
-        {{ form.media }}
+    <hr class="border border-default">
         <div class="row">
             <div class="col-md-3">
-                {{ form.author.label_tag }}
-                {{ form.author }}
+                <label>Kontrolował:</label>
+                <p class="form-control">{{ order.measurement_report.author }}</p>
             </div>
             <div class="col-md-3">
-                {{ form.date_of_control.label_tag }}
-                {{ form.date_of_control }}
+                <label>Data kontroli:</label>
+                <p class="form-control">{{ order.measurement_report.date_of_control }}</p>
             </div>
         </div>
     <span>
-        <input type="submit" value="Zapisz" class="mt-3 btn btn-secondary">
-        <a href="{% url 'orders:orders-list' %}" class="ml-1 mt-3 btn btn-primary">Anuluj</a>
-        </span>
-        </div>
-        </form>
+        <a href="{% url 'orders:orders-list' %}" class="ml-1 mt-3 btn btn-primary">Wstecz</a>
+    </span>
+    </div>
         <div class="modal fade" tabindex="-1" role="dialog" id="modal">
           <div class="modal-dialog" role="document">
             <div class="modal-content"></div>
             </div>
         </div>
-        {% if order.status != 'Started' and perms.orders.delete_measurementreport %}
-            <button id="{{ order.id }}" class=" mt-3 ml-1 btn btn-danger" type="button" name="button">Zakończ pomiary </button>
-            <script type="text/javascript">
-              $(function () {
-                $("#{{ order.id }}").modalForm({formURL: "{% url 'orders:measurement-report-close' order.id %}"});
-              });
-            </script>
-        {% endif %}
+    </div>
 </div>
-<script type="text/javascript" src="{% static "measurementReportReloading.js" %}"></script>
-<script type="text/javascript" src="{% static 'clientSideValidation.js' %}"></script>
 {% endblock %}

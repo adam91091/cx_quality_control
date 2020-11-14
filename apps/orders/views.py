@@ -1,15 +1,14 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import permission_required, login_required
+from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView, DeleteView, DetailView, ListView
+from django.views.generic import CreateView, UpdateView, DeleteView, DetailView, ListView, FormView
 
 from apps.constants import PAGINATION_OBJ_COUNT_PER_PAGE, VIEW_MSG
 from .filters import OrderFilter
 
-from .forms import OrderForm, MeasurementFormSet, MeasurementReportForm, DateFilteringForm, MeasurementForm
+from .forms import OrderForm, MeasurementFormSet, MeasurementReportForm, DateFilteringForm
 from .models import Order, MeasurementReport
 from apps.view_helpers import add_error_messages
 
@@ -103,141 +102,148 @@ class OrderDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
-@login_required
-@permission_required("orders.add_measurementreport")
-def measurement_report_new(request, order_id):
-    order = Order.objects.get(id=order_id)
-    if request.method == 'GET':
-        order_form = OrderForm(instance=order, measurement_report=True)
-        measurement_report_form = MeasurementReportForm()
-        measurement_formset = MeasurementFormSet()
-        return render(request, 'measurement_report_form.html', {'order_form': order_form,
-                                                                'measurement_report_form': measurement_report_form,
-                                                                'measurement_formset': measurement_formset,
-                                                                'order_id': order_id, 'type': 'new'})
-    else:
-        order_form = OrderForm(data=request.POST, instance=order)
-        measurement_report_form = MeasurementReportForm(data=request.POST)
-        measurement_formset = MeasurementFormSet(data=request.POST)
-        if not check_report_data(data=request.POST):
-            messages.error(request, 'Numery zmierzonych palet nie mogą się powtarzać!')
-            return render(request, 'measurement_report_form.html', {'order_form': order_form,
-                                                                    'measurement_report_form': measurement_report_form,
-                                                                    'measurement_formset': measurement_formset,
-                                                                    'order_id': order_id, 'type': 'new'})
-        return _render_measurement_form_post(request=request, order_form=order_form,
-                                             measurement_report_form=measurement_report_form,
-                                             measurement_formset=measurement_formset, method='new', order_id=order_id)
+class MeasurementReportCreateView(SuccessMessageMixin, LoginRequiredMixin,
+                                  PermissionRequiredMixin, CreateView):
+    form_class = MeasurementReportForm
+    template_name = 'measurement_report_form.html'
+    login_url = 'users:user-login'
+    permission_required = ('orders.add_measurementreport', )
+    success_url = reverse_lazy('orders:orders-list')
+    success_message = VIEW_MSG['measurement_report']['new_success']
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['formset'] = MeasurementFormSet()
+        context['order'] = get_object_or_404(Order, pk=self.kwargs.get('pk'))
+        return context
+
+    def post(self, request, *args, **kwargs):
+        multiform = {'form': self.get_form(), 'formset': MeasurementFormSet(data=request.POST)}
+        if all(form.is_valid() for form in multiform.values()):
+            return self.form_valid(multiform)
+        else:
+            return self.form_invalid(multiform)
+
+    def form_valid(self, multiform):
+        order = get_object_or_404(Order, pk=self.kwargs.get('pk'))
+        measurement_report = multiform['form'].save(commit=False)
+        measurement_report.order = order
+        measurement_report.save()
+
+        order.status = 'Open'
+        order.save()
+
+        for measurement_form in multiform['formset']:
+            measurement = measurement_form.save(commit=False)
+            measurement.measurement_report = measurement_report
+            measurement.save()
+
+        messages.success(self.request, self.success_message)
+        return redirect(self.success_url)
+
+    def form_invalid(self, multiform):
+        add_error_messages(self.request, VIEW_MSG['measurement_report']['new_error'], multiform)
+        return super().form_invalid(multiform['form'])
 
 
-@login_required
-@permission_required("orders.view_measurementreport")
-def measurement_report_detail(request, order_id):
-    order = Order.objects.get(id=order_id)
-    order_form = OrderForm(instance=order, read_only=True)
-    measurement_report_form = MeasurementReportForm(instance=order.measurement_report, read_only=True)
-    measurement_formset = MeasurementFormSet(instance=order.measurement_report,
-                                             queryset=order.measurement_report.measurements.all())
-    for form in measurement_formset.forms:
-        MeasurementForm.make_form_readonly(form)
-    return render(request, 'measurement_report_form.html', {'order_form': order_form,
-                                                            'measurement_report_form': measurement_report_form,
-                                                            'measurement_formset': measurement_formset,
-                                                            'order_id': order_id, 'type': 'detail'})
+class MeasurementReportDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
+    model = Order
+    template_name = 'measurement_report_detail.html'
+    login_url = 'users:user-login'
+    permission_required = ('orders.view_measurementreport', )
 
 
-@login_required
-@permission_required("orders.change_measurementreport")
-def measurement_report_update(request, order_id):
-    order = Order.objects.get(id=order_id)
-    if order.status == 'Done':
-        messages.error(request, message="Zamknięte raporty pomiarowe nie podlegają edycji")
-        return redirect('orders:orders-list')
-    if request.method == 'GET':
-        order_form = OrderForm(instance=order, measurement_report=True)
-        measurement_report_form = MeasurementReportForm(instance=order.measurement_report)
-        measurement_formset = MeasurementFormSet(instance=order.measurement_report,
-                                                 queryset=order.measurement_report.measurements.all())
-        return render(request, 'measurement_report_form.html', {'order_form': order_form,
-                                                                'measurement_report_form': measurement_report_form,
-                                                                'measurement_formset': measurement_formset,
-                                                                'order_id': order_id, 'type': 'update'})
-    else:
-        order_form = OrderForm(data=request.POST, instance=order)
-        measurement_ids = [request.POST[key] for key in request.POST.keys() if 'measurements-' in key and '-id' in key]
-        measurement_report_form = MeasurementReportForm(data=request.POST, instance=order.measurement_report)
-        queryset = order.measurement_report.measurements.filter(id__in=measurement_ids)
-        measurement_formset = MeasurementFormSet(data=request.POST, instance=order.measurement_report,
-                                                 queryset=queryset)
-        if not check_report_data(data=request.POST):
-            messages.error(request, 'Numery zmierzonych palet nie mogą się powtarzać!')
-            return render(request, 'measurement_report_form.html', {'order_form': order_form,
-                                                                    'measurement_report_form': measurement_report_form,
-                                                                    'measurement_formset': measurement_formset,
-                                                                    'order_id': order_id, 'type': 'new'})
-        return _render_measurement_form_post(request=request, order_form=order_form,
-                                             measurement_report_form=measurement_report_form,
-                                             measurement_formset=measurement_formset, method='update',
-                                             order_id=order_id)
+class MeasurementReportUpdateView(SuccessMessageMixin, LoginRequiredMixin,
+                                  PermissionRequiredMixin, UpdateView):
+    model = Order
+    form_class = MeasurementReportForm
+    template_name = 'measurement_report_form.html'
+    login_url = 'users:user-login'
+    permission_required = ('orders.change_measurementreport', )
+    success_url = reverse_lazy('orders:orders-list')
+    success_message = VIEW_MSG['measurement_report']['update_success']
+
+    def dispatch(self, request, *args, **kwargs):
+        self.object = get_object_or_404(Order, pk=self.kwargs.get('pk'))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = self.form_class(instance=self.object.measurement_report)
+        context['formset'] = MeasurementFormSet(instance=self.object.measurement_report,
+                                                queryset=self.object.measurement_report.measurements.all())
+        context['order'] = self.object
+        return context
+
+    def get(self, request, *args, **kwargs):
+        if self.object.status == 'Done':
+            messages.error(request, message="Zamknięte raporty pomiarowe nie podlegają edycji")
+            return redirect('orders:orders-list')
+        else:
+            return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        form = MeasurementReportForm(data=request.POST, instance=self.object.measurement_report)
+        formset = MeasurementFormSet(data=request.POST, instance=self.object.measurement_report)
+        multiform = {'form': form, 'formset': formset}
+        if all(form.is_valid() for form in multiform.values()):
+            return self.form_valid(multiform)
+        else:
+            return self.form_invalid(multiform)
+
+    def form_valid(self, multiform):
+        measurement_report = multiform['form'].save(commit=False)
+        measurement_report.order = self.object
+        measurement_report.save()
+
+        # this solution is caused by invalid management form in formset in template
+        # formset can automatically delete unused forms, but such form must be marked in management form
+        # for deletion: delete field must be set for on : DELETE: on
+        # Proposed solution: integrate django-dynamic-formset in templates - replace current frontend mechanism
+        measurements = []
+        for form in multiform['formset']:
+            measurement = form.save(commit=False)
+            measurement.instance = measurement_report
+            measurements.append(measurement)
+            measurement.save()
+        for measurement in measurement_report.measurements.all():
+            if measurement not in measurements:
+                measurement.delete()
+
+        messages.success(self.request, self.success_message)
+        return redirect(self.success_url)
+
+    def form_invalid(self, multiform):
+        add_error_messages(self.request, VIEW_MSG['measurement_report']['update_error'], form=multiform['form'],
+                           secondary_forms=[form for form in multiform['formset']])
+        return super().form_invalid(multiform['form'])
 
 
-@login_required
-@permission_required("orders.delete_measurementreport")
-def measurement_report_close(request, order_id):
-    order = Order.objects.get(id=order_id)
-    try:
-        order.measurement_report
-    except MeasurementReport.DoesNotExist:
-        messages.error(request, message="Nie można zamknąć raportu pomiarowego, który nie został zapisany.")
-        return redirect('orders:orders-list')
-    if order.status == 'Done':
-        messages.error(request, message="Raport pomiarowy już został zamknięty.")
-        return redirect('orders:orders-list')
-    if request.method == 'POST':
+class MeasurementReportCloseView(SuccessMessageMixin, LoginRequiredMixin,
+                                 PermissionRequiredMixin, FormView):
+    model = Order
+    form_class = OrderForm
+    template_name = 'measurement_confirm_close.html'
+    login_url = 'users:user-login'
+    permission_required = ('orders.delete_measurementreport', )
+    success_url = reverse_lazy('orders:orders-list')
+    success_message = VIEW_MSG['measurement_report']['close_success']
+
+    def get(self, request, *args, **kwargs):
+        order = get_object_or_404(self.model, pk=self.kwargs.get('pk'))
+        try:
+            order.measurement_report
+        except MeasurementReport.DoesNotExist:
+            messages.error(request, message="Nie można zamknąć raportu pomiarowego, który nie został zapisany.")
+            return redirect('orders:orders-list')
+        if order.status == 'Done':
+            messages.error(request, message="Raport pomiarowy już został zamknięty.")
+            return redirect('orders:orders-list')
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        order = get_object_or_404(self.model, pk=self.kwargs.get('pk'))
         order.status = 'Done'
         order.save()
-        messages.success(request, VIEW_MSG['measurement_report']['close_success'])
+        messages.success(request, message=self.success_message)
         return redirect('orders:orders-list')
-    else:
-        return render(request, 'measurement_confirm_close.html', {'order': order})
-
-
-def _render_measurement_form_post(request, order_form, measurement_report_form, measurement_formset, method,
-                                  order_id):
-    if order_form.is_valid() and measurement_report_form.is_valid():
-        if all(measurement_form.is_valid() for measurement_form in measurement_formset):
-            order = order_form.save(commit=False)
-            measurement_report = measurement_report_form.save(commit=False)
-            measurement_report.order = order
-            measurement_report.save()
-            measurements = []
-            for measurement_form in measurement_formset:
-                measurement = measurement_form.save(commit=False)
-                measurements.append(measurement)
-                measurement.measurement_report = measurement_report
-                measurement.save()
-            if method == 'update':
-                for measurement in measurement_report.measurements.all():
-                    if measurement not in measurements:
-                        measurement.delete()
-            if method == 'new':
-                order.status = 'Open'
-                order.save()
-            messages.success(request, VIEW_MSG['measurement_report'][f'{method}_success'])
-            return redirect('orders:orders-list')
-
-        add_error_messages(request, main_msg=VIEW_MSG['measurement_report'][f'{method}_error'], form=order_form,
-                           secondary_forms=[measurement_report_form] + [_ for _ in measurement_formset])
-    return render(request, 'measurement_report_form.html', {'order_form': order_form,
-                                                            'measurement_report_form': measurement_report_form,
-                                                            'measurement_formset': measurement_formset,
-                                                            'order_id': order_id, 'type': method})
-
-
-def check_report_data(data) -> bool:
-    """Check pallet numbers uniqueness"""
-    pallet_nums = []
-    for key in data:
-        if 'pallet_number' in key:
-            pallet_nums.append(data[key])
-    return len(set(pallet_nums)) == len(pallet_nums)
