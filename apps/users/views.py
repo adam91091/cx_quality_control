@@ -12,36 +12,37 @@ from apps.constants import VIEW_MSG
 
 
 class CxUserLoginView(SuccessMessageMixin, LoginView):
+    """Login home page view."""
     template_name = 'login_form.html'
     form_class = CxUserAuthenticationForm
     success_message = VIEW_MSG['user']['login_success']
 
     def form_invalid(self, form):
-        add_error_messages(self.request, main_msg=VIEW_MSG['user']['login_fail'], form=form)
+        add_error_messages(request=self.request, forms=[form, ],
+                           base_msg=VIEW_MSG['user']['login_fail'])
         return super().form_invalid(form)
 
 
 class CxUserLogoutView(LoginRequiredMixin, LogoutView):
-
+    """Redirect to login home page after logout."""
     def get(self, request, *args, **kwargs):
         messages.success(request, message=VIEW_MSG['user']['logout_success'])
         return redirect('users:user-login')
 
 
 class CxUserProfileView(LoginRequiredMixin, TemplateView):
-    template_name = 'profile_form.html'
+    """Display user profile data."""
+    template_name = 'profile_detail.html'
 
 
-class CxUserPasswordChangeView(PasswordChangeView):
+class CxUserPasswordChangeView(SuccessMessageMixin, PasswordChangeView):
+    """Allows user password change."""
     template_name = 'password_change_form.html'
     form_class = CxUserPasswordChangeForm
     success_url = reverse_lazy('users:user-profile')
+    success_message = VIEW_MSG['user']['password_change_success']
 
-    def post(self, request, **kwargs):
-        form = self.get_form()
-        if form.is_valid():
-            messages.success(request=request, message=VIEW_MSG['user']['password_change_success'])
-            return self.form_valid(form)
-        else:
-            add_error_messages(request=request, main_msg=VIEW_MSG['user']['password_change_fail'], form=form)
-            return self.form_invalid(form)
+    def form_invalid(self, form):
+        add_error_messages(request=self.request, forms=[form, ],
+                           base_msg=VIEW_MSG['user']['password_change_fail'])
+        return super().form_invalid(form)

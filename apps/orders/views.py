@@ -7,13 +7,13 @@ from django.views.generic import CreateView, UpdateView, DeleteView, DetailView,
 
 from apps.constants import PAGINATION_OBJ_COUNT_PER_PAGE, VIEW_MSG
 from .filters import OrderFilter
-
 from .forms import OrderForm, MeasurementFormSet, MeasurementReportForm, DateFilteringForm
 from .models import Order, MeasurementReport
-from apps.view_helpers import add_error_messages
+from apps.view_helpers import add_error_messages, update_ordering, update_filter_params
 
 
 class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    """List orders, provide order filtering and sorting"""
     model = Order
     template_name = 'orders_list.html'
     login_url = 'users:user-login'
@@ -22,21 +22,18 @@ class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     ordering = ('id', )
 
     def get_queryset(self):
-        for param in self.request.GET:
-            param_val = self.request.GET.get(param)
-            if param_val is not None:
-                self.request.session[param] = param_val
-        if 'clear_filters' in self.request.GET:
-            for field_name in OrderFilter.get_fields():
-                self.request.session[field_name] = ''
-            self.request.session['date_of_production_after'] = Order.get_date_of_production('today')
-            self.request.session['date_of_production_before'] = Order.get_date_of_production('max')
-
+        """Update session for request GET parameters.
+        Filter & sort orders by parameters values stored in session.
+        """
+        self.request.session = update_filter_params(params=self.request.GET,
+                                                    session=self.request.session,
+                                                    filter_class=OrderFilter)
         order_filter = OrderFilter(self.request.session, queryset=self.model.objects.all())
         qs = order_filter.qs.order_by(self.get_ordering())
         return qs
 
     def get_context_data(self, **kwargs):
+        """Update context for data required by date filter."""
         context = super().get_context_data(**kwargs)
         date_filtering_form = DateFilteringForm(initial={
             'date_of_production_after': self.request.session.get('date_of_production_after'),
@@ -45,16 +42,19 @@ class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         return context
 
     def get_ordering(self):
-        ordering = self.request.GET.get('ordering')
-        if ordering is not None:
-            self.request.session['ordering'] = ordering
-        if 'clear_filters' in self.request.GET:
-            self.request.session['ordering'] = 'id'
+        """Update session for ordering parameter from request.
+        Return ordering value stored in session or id as a default.
+        """
+        self.request.session = update_ordering(params=self.request.GET,
+                                               session=self.request.session)
         return self.request.session.get('ordering', 'id')
 
 
 class OrderCreateView(SuccessMessageMixin, LoginRequiredMixin,
                       PermissionRequiredMixin, CreateView):
+    """Create a new order in database using order form.
+    Requires references for existing product & client.
+    """
     form_class = OrderForm
     template_name = 'order_form.html'
     login_url = 'users:user-login'
@@ -63,11 +63,13 @@ class OrderCreateView(SuccessMessageMixin, LoginRequiredMixin,
     success_message = VIEW_MSG['order']['new_success']
 
     def form_invalid(self, form):
-        add_error_messages(self.request, VIEW_MSG['order']['new_error'], form)
+        add_error_messages(request=self.request, forms=[form, ],
+                           base_msg=VIEW_MSG['order']['new_error'])
         return super().form_invalid(form)
 
 
 class OrderDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
+    """Provide information about order."""
     model = Order
     template_name = 'order_detail.html'
     login_url = 'users:user-login'
@@ -76,6 +78,7 @@ class OrderDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
 
 class OrderUpdateView(SuccessMessageMixin, LoginRequiredMixin,
                       PermissionRequiredMixin, UpdateView):
+    """Update order in database using order form."""
     model = Order
     form_class = OrderForm
     template_name = 'order_form.html'
@@ -85,11 +88,13 @@ class OrderUpdateView(SuccessMessageMixin, LoginRequiredMixin,
     success_message = VIEW_MSG['order']['update_success']
 
     def form_invalid(self, form):
-        add_error_messages(self.request, VIEW_MSG['order']['update_error'], form)
+        add_error_messages(request=self.request, forms=[form, ],
+                           base_msg=VIEW_MSG['order']['update_error'])
         return super().form_invalid(form)
 
 
 class OrderDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    """Delete order with measurement report from database."""
     model = Order
     template_name = 'order_confirm_delete.html'
     login_url = 'users:user-login'
@@ -104,6 +109,9 @@ class OrderDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
 
 class MeasurementReportCreateView(SuccessMessageMixin, LoginRequiredMixin,
                                   PermissionRequiredMixin, CreateView):
+    """Create a new measurement report with measurements in database
+    using measurement report form & measurements formset.
+    """
     form_class = MeasurementReportForm
     template_name = 'measurement_report_form.html'
     login_url = 'users:user-login'
@@ -112,12 +120,16 @@ class MeasurementReportCreateView(SuccessMessageMixin, LoginRequiredMixin,
     success_message = VIEW_MSG['measurement_report']['new_success']
 
     def get_context_data(self, **kwargs):
+        """Add to context formset & order reference for measurement report."""
         context = super().get_context_data(**kwargs)
         context['formset'] = MeasurementFormSet()
         context['order'] = get_object_or_404(Order, pk=self.kwargs.get('pk'))
         return context
 
     def post(self, request, *args, **kwargs):
+        """Pack measurement report form and measurements formset into
+        measurement report multiform.
+        """
         multiform = {'form': self.get_form(), 'formset': MeasurementFormSet(data=request.POST)}
         if all(form.is_valid() for form in multiform.values()):
             return self.form_valid(multiform)
@@ -125,13 +137,16 @@ class MeasurementReportCreateView(SuccessMessageMixin, LoginRequiredMixin,
             return self.form_invalid(multiform)
 
     def form_valid(self, multiform):
+        """Retrieve order object, set its status as open, and
+        set as reference for created measurement report with measurements.
+        """
         order = get_object_or_404(Order, pk=self.kwargs.get('pk'))
+        order.status = 'Open'
+        order.save()
+
         measurement_report = multiform['form'].save(commit=False)
         measurement_report.order = order
         measurement_report.save()
-
-        order.status = 'Open'
-        order.save()
 
         for measurement_form in multiform['formset']:
             measurement = measurement_form.save(commit=False)
@@ -142,11 +157,16 @@ class MeasurementReportCreateView(SuccessMessageMixin, LoginRequiredMixin,
         return redirect(self.success_url)
 
     def form_invalid(self, multiform):
-        add_error_messages(self.request, VIEW_MSG['measurement_report']['new_error'], multiform)
+        add_error_messages(request=self.request,
+                           forms=[multiform['form'], [form for form in multiform['formset']]],
+                           base_msg=VIEW_MSG['measurement_report']['new_error'])
         return super().form_invalid(multiform['form'])
 
 
 class MeasurementReportDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
+    """Provide information about order with referenced
+    measurement report and its measurements.
+    """
     model = Order
     template_name = 'measurement_report_detail.html'
     login_url = 'users:user-login'
@@ -155,6 +175,9 @@ class MeasurementReportDetailView(LoginRequiredMixin, PermissionRequiredMixin, D
 
 class MeasurementReportUpdateView(SuccessMessageMixin, LoginRequiredMixin,
                                   PermissionRequiredMixin, UpdateView):
+    """Update measurement report with measurements in database using
+    measurement report form & measurements formset.
+    """
     model = Order
     form_class = MeasurementReportForm
     template_name = 'measurement_report_form.html'
@@ -168,6 +191,8 @@ class MeasurementReportUpdateView(SuccessMessageMixin, LoginRequiredMixin,
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
+        """Add to context formset & order reference for measurement report.
+        Bind to form order referenced measurement report instance."""
         context = super().get_context_data(**kwargs)
         context['form'] = self.form_class(instance=self.object.measurement_report)
         context['formset'] = MeasurementFormSet(instance=self.object.measurement_report,
@@ -176,6 +201,7 @@ class MeasurementReportUpdateView(SuccessMessageMixin, LoginRequiredMixin,
         return context
 
     def get(self, request, *args, **kwargs):
+        """Check if measurement report of closed order is not served."""
         if self.object.status == 'Done':
             messages.error(request, message="Zamknięte raporty pomiarowe nie podlegają edycji")
             return redirect('orders:orders-list')
@@ -183,6 +209,9 @@ class MeasurementReportUpdateView(SuccessMessageMixin, LoginRequiredMixin,
             return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        """Pack measurement report form and measurements formset into
+        measurement report multiform.
+        """
         form = MeasurementReportForm(data=request.POST, instance=self.object.measurement_report)
         formset = MeasurementFormSet(data=request.POST, instance=self.object.measurement_report)
         multiform = {'form': form, 'formset': formset}
@@ -192,14 +221,11 @@ class MeasurementReportUpdateView(SuccessMessageMixin, LoginRequiredMixin,
             return self.form_invalid(multiform)
 
     def form_valid(self, multiform):
-        measurement_report = multiform['form'].save(commit=False)
-        measurement_report.order = self.object
-        measurement_report.save()
+        """Update measurements in database for measurements formset.
+        Remove all extra measurements if are not present in formset.
+        """
+        measurement_report = multiform['form'].save()
 
-        # this solution is caused by invalid management form in formset in template
-        # formset can automatically delete unused forms, but such form must be marked in management form
-        # for deletion: delete field must be set for on : DELETE: on
-        # Proposed solution: integrate django-dynamic-formset in templates - replace current frontend mechanism
         measurements = []
         for form in multiform['formset']:
             measurement = form.save(commit=False)
@@ -214,13 +240,15 @@ class MeasurementReportUpdateView(SuccessMessageMixin, LoginRequiredMixin,
         return redirect(self.success_url)
 
     def form_invalid(self, multiform):
-        add_error_messages(self.request, VIEW_MSG['measurement_report']['update_error'], form=multiform['form'],
-                           secondary_forms=[form for form in multiform['formset']])
+        add_error_messages(request=self.request, forms=[multiform['form'],
+                                                        [form for form in multiform['formset']]],
+                           base_msg=VIEW_MSG['measurement_report']['update_error'])
         return super().form_invalid(multiform['form'])
 
 
 class MeasurementReportCloseView(SuccessMessageMixin, LoginRequiredMixin,
                                  PermissionRequiredMixin, FormView):
+    """Close measurement report & measurements."""
     model = Order
     form_class = OrderForm
     template_name = 'measurement_confirm_close.html'
@@ -230,6 +258,7 @@ class MeasurementReportCloseView(SuccessMessageMixin, LoginRequiredMixin,
     success_message = VIEW_MSG['measurement_report']['close_success']
 
     def get(self, request, *args, **kwargs):
+        """Check if closing measurement report view is called properly."""
         order = get_object_or_404(self.model, pk=self.kwargs.get('pk'))
         try:
             order.measurement_report
@@ -242,6 +271,7 @@ class MeasurementReportCloseView(SuccessMessageMixin, LoginRequiredMixin,
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        """Closing measurement report is performed as set order status as done."""
         order = get_object_or_404(self.model, pk=self.kwargs.get('pk'))
         order.status = 'Done'
         order.save()
