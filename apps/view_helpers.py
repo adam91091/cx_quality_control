@@ -39,7 +39,6 @@ def update_filter_params(params: "QueryDict", session: "SessionBase",
     :param params:       request query parameters
     :param session:      Django session reference
     :param filter_class: filter class reference
-
     :return session:     reference for updated session
     """
     for param in params:
@@ -61,7 +60,6 @@ def update_ordering(params: "QueryDict", session: "SessionBase") -> "SessionBase
     Clear session when specific clear parameter occurs.
     :param params:       request query parameters
     :param session:      Django session reference
-
     :return session:     reference for updated session
     """
     ordering = params.get('ordering')

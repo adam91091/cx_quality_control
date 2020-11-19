@@ -8,6 +8,8 @@ INT_DEFAULT = 1
 PAGINATION_LINKS_MAX_COUNT = 20
 PAGINATION_OBJ_COUNT_PER_PAGE = 10
 
+STRFTIME_STRING = '%Y-%m-%d 00:00:00'
+
 VIEW_MSG = {'client': {'new_success': "Utworzono nowego klienta",
                        'new_error': "Nie utworzono nowego klienta. "
                                     "Wystąpiły następujące błędy formularza:",

@@ -8,18 +8,22 @@ from apps.form_styles import USERNAME_STYLE, PASSWORD_STYLE
 
 
 class CxUserCreationForm(UserCreationForm):
+    """Customize user creation form in django admin."""
     class Meta:
         model = CxUser
         fields = ('username', )
 
 
 class CxUserChangeForm(UserChangeForm):
+    """Customize user update form in django admin."""
     class Meta:
         model = CxUser
         fields = ('username', )
 
 
 class CxUserAuthenticationForm(AuthenticationForm):
+    """Customize user login form & add hint
+    messages for client side validation."""
     validation_hints = {'username': "Login z pięciu pierwszych liter imienia i "
                                     "nazwiska (np. Jan Kowalski - jkowa).",
                         'password': "Przynajmniej 8 znakowe hasło z 1 cyfrą lub więcej.",
@@ -43,6 +47,7 @@ class CxUserAuthenticationForm(AuthenticationForm):
 
 
 class CxUserPasswordChangeForm(PasswordChangeForm):
+    """Provide form for user password changing in user profile."""
     validation_hints = {'password': "Przynajmniej 8 znakowe hasło z 1 cyfrą lub więcej.", }
 
     old_password = forms.CharField(required=True, label='Stare hasło',

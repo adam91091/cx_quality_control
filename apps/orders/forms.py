@@ -9,26 +9,17 @@ from apps.form_styles import SAP_STYLE, NUM_STYLE_NO_REQ, BASIC_NO_HINTS_STYLE, 
     INT_STYLE, PALLET_NUMBER_STYLE
 from apps.orders.models import Order, MeasurementReport, Measurement
 
-STRFTIME_STRING = '%Y-%m-%d 00:00:00'
-
 
 class OrderForm(ModelForm):
+    """Provide form for order crud operations
+    & hint messages for client side validation.
+    """
     validation_hints = {'order_sap_id': "Numer partii musi się składać z 8 cyfr oraz nie może być polem pustym",
                         'product': "Kod produktu musi się składać z 7 cyfr oraz nie może być polem pustym",
                         'client': "Numer SAP klienta musi się składać z 7 cyfr oraz nie może być polem pustym",
                         'date_of_production': 'Pole z datą produkcji nie może być puste',
                         'quantity': 'Podaj całkowitą liczbę tulei w sztukach',
                         }
-
-    def __init__(self, read_only=False, measurement_report=False, *args, **kwargs):
-        super(OrderForm, self).__init__(*args, **kwargs)
-        if read_only:
-            for field in self.fields.values():
-                field.widget.attrs['readonly'] = True
-                field.widget.attrs['disabled'] = 'true'
-        elif measurement_report:
-            for field in self.fields:
-                self.fields[field].widget.attrs['readonly'] = True
 
     class Meta:
         model = Order
@@ -63,12 +54,7 @@ class OrderForm(ModelForm):
 
 
 class MeasurementReportForm(ModelForm):
-    def __init__(self, read_only=False, *args, **kwargs):
-        super(MeasurementReportForm, self).__init__(*args, **kwargs)
-        if read_only:
-            for field_name in self.fields:
-                self.fields[field_name].disabled = True
-
+    """Provide form for measurement report crud operations."""
     class Meta:
         model = MeasurementReport
         exclude = ('order',)
@@ -84,7 +70,7 @@ class MeasurementReportForm(ModelForm):
 
 
 class MeasurementForm(ModelForm):
-
+    """Provide base measurement form used by measurement formset."""
     class Meta:
         model = Measurement
         exclude = ('measurement_report', 'id')
@@ -133,14 +119,13 @@ class MeasurementForm(ModelForm):
             'remarks': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_71px, **BASIC_NO_HINTS_STYLE}),
         }
 
-    @staticmethod
-    def make_form_readonly(form):
-        for field_name in form.fields:
-            form.fields[field_name].disabled = True
-
 
 class MeasurementInlineFormSet(BaseInlineFormSet):
+    """Measurement inline formset customization."""
     def is_valid(self) -> bool:
+        """Extend all measurement form validation for
+        pallet number uniqueness check.
+        """
         if not self.check_pallet_uniqueness():
             for form in self.forms[:1]:
                 form.add_error(field='pallet_number',
@@ -149,7 +134,7 @@ class MeasurementInlineFormSet(BaseInlineFormSet):
         return super().is_valid()
 
     def check_pallet_uniqueness(self) -> bool:
-        """Check pallet numbers uniqueness"""
+        """Verify if pallet numbers collection contains unique values."""
         pallet_nums = [form['pallet_number'].value() for form in self.forms]
         return len(set(pallet_nums)) == len(pallet_nums)
 
@@ -159,6 +144,7 @@ MeasurementFormSet = inlineformset_factory(parent_model=MeasurementReport, model
 
 
 class DateFilteringForm(forms.Form):
+    """Helper form for date filter."""
     date_of_production_after = forms.DateField(
         widget=DatePickerInput(options={'showClear': False, 'locale': 'pl', },
                                attrs={**BASIC_NO_HINTS_STYLE, **{'name': 'date_of_production_after',

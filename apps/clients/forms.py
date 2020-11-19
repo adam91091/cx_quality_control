@@ -5,17 +5,11 @@ from ..form_styles import SAP_STYLE, BASIC_REQ_STYLE
 
 
 class ClientForm(forms.ModelForm):
-
+    """Provide form for client crud operations
+    & hint messages for client side validation.
+    """
     validation_hints = {'client_sap_id': "Numer SAP musi się składać z 7 cyfr oraz nie może być polem pustym",
                         'client_name': "Pole z nazwą klienta nie może być puste"}
-
-    def __init__(self, read_only=False, update=False, *args, **kwargs):
-        super(ClientForm, self).__init__(*args, **kwargs)
-        if read_only:
-            for field_name in self.fields:
-                self.fields[field_name].disabled = True
-        if update:
-            self.fields['client_sap_id'].disabled = True
 
     class Meta:
         model = Client

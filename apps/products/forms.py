@@ -7,16 +7,11 @@ from apps.products.models import Product, Specification
 
 
 class ProductForm(ModelForm):
+    """Provide form for product crud operations
+    & hint messages for client side validation.
+    """
     validation_hints = {'product_sap_id': "Numer SAP musi się składać z 7 cyfr oraz nie może być polem pustym",
                         'description': "Pole z opisem nie może być puste", }
-
-    def __init__(self, read_only=False, update=False, *args, **kwargs):
-        super(ProductForm, self).__init__(*args, **kwargs)
-        if read_only:
-            for field_name in self.fields:
-                self.fields[field_name].disabled = True
-        if update:
-            self.fields['product_sap_id'].disabled = True
 
     class Meta:
         model = Product
@@ -37,6 +32,9 @@ class ProductForm(ModelForm):
 
 
 class SpecificationForm(ModelForm):
+    """Provide form for specification crud operations
+    & hint messages for client side validation.
+    """
     validation_hints = {'remarks': "Pole z uwagami nie może być puste",
                         'float_field': "Podaj liczbę, np. 1 lub 1.0",
                         'integer_field': "Podaj liczbę całkowitą, np. 1",
@@ -45,13 +43,6 @@ class SpecificationForm(ModelForm):
                         'maximum_height_of_pallet': "Podaj liczbę, np. 1 lub 1.0",
                         'quantity_on_the_pallet': "Podaj całkowitą liczbę sztuk tulei na palecie",
                         }
-
-    def __init__(self, read_only=False, *args, **kwargs):
-        super(SpecificationForm, self).__init__(*args, **kwargs)
-        if read_only:
-            for field in self.fields.values():
-                field.widget.attrs['readonly'] = True
-                field.widget.attrs['disabled'] = 'true'
 
     class Meta:
         model = Specification
@@ -103,6 +94,7 @@ class SpecificationForm(ModelForm):
 
 
 class ProductSpecificationMultiForm(MultiModelForm):
+    """Wrap product & specification forms for product views simplicity."""
     form_classes = {
         'product': ProductForm,
         'spec': SpecificationForm,
