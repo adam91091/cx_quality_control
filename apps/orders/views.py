@@ -5,7 +5,8 @@ from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView, ListView, FormView
 
-from apps.constants import PAGINATION_OBJ_COUNT_PER_PAGE, VIEW_MSG
+from apps.constants import PAGINATION_OBJ_COUNT_PER_PAGE
+from apps.user_texts import VIEW_MSG
 from .filters import OrderFilter
 from .forms import OrderForm, MeasurementFormSet, MeasurementReportForm, DateFilteringForm
 from .models import Order, MeasurementReport
@@ -203,7 +204,7 @@ class MeasurementReportUpdateView(SuccessMessageMixin, LoginRequiredMixin,
     def get(self, request, *args, **kwargs):
         """Check if measurement report of closed order is not served."""
         if self.object.status == 'Done':
-            messages.error(request, message="Zamknięte raporty pomiarowe nie podlegają edycji")
+            messages.error(request, message=VIEW_MSG['orders']['measurement_report'])
             return redirect('orders:orders-list')
         else:
             return super().get(request, *args, **kwargs)
@@ -263,10 +264,10 @@ class MeasurementReportCloseView(SuccessMessageMixin, LoginRequiredMixin,
         try:
             order.measurement_report
         except MeasurementReport.DoesNotExist:
-            messages.error(request, message="Nie można zamknąć raportu pomiarowego, który nie został zapisany.")
+            messages.error(request, message=VIEW_MSG['measurement_report']['close_not_saved_error'])
             return redirect('orders:orders-list')
         if order.status == 'Done':
-            messages.error(request, message="Raport pomiarowy już został zamknięty.")
+            messages.error(request, message=VIEW_MSG['measurement_report']['close_access_error'])
             return redirect('orders:orders-list')
         return super().get(request, *args, **kwargs)
 

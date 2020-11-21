@@ -1,9 +1,14 @@
 from django.db import models
 
+from apps.user_texts import MODEL_MSG
 from apps.validators import validate_sap_id, validate_num_field, validate_int_field
 
 
 class Product(models.Model):
+    """Product model is consistent with SAP product model
+    but contains only necessary data for quality control process. Extends product by
+    specification data, related to quality control process.
+    """
     product_sap_id = models.IntegerField(unique=True, validators=[validate_sap_id(), ])
     index = models.CharField(max_length=30, null=True, blank=True)
     description = models.CharField(max_length=100)
@@ -13,10 +18,11 @@ class Product(models.Model):
 
 
 class Specification(models.Model):
-    CORES_PACKED_IN_CHOICES = [('Horizontal', 'w pozycji pionowej'),
-                               ('Vertical', 'w pozycji poziomej'),
-                               ('On_carton', 'na kartonach')]
-    BOOLEAN_CHOICES = [("Y", 'Tak'), ("N", 'Nie')]
+    """Specification model is responsible for managing
+    technical product data for quality control requirements.
+    """
+    CORES_PACKED_IN_CHOICES = list(zip(['Horizontal', 'Vertical', 'On_carton'], MODEL_MSG['cores_packed_in']))
+    BOOLEAN_CHOICES = list(zip(["Y", "N"], MODEL_MSG['boolean_choices']))
 
     product = models.OneToOneField(
         Product, on_delete=models.CASCADE, primary_key=True, related_name="specification"
@@ -60,4 +66,4 @@ class Specification(models.Model):
     remarks = models.TextField()
 
     def __str__(self):
-        return "Specyfikacja produktu: {}".format(self.product.description)
+        return f"Specification of product: {self.product.description}"

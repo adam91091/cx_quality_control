@@ -8,7 +8,8 @@ from django.views.generic import UpdateView, CreateView, DetailView, DeleteView,
 from apps.products.filters import ProductFilter
 from apps.products.forms import ProductForm, SpecificationForm, ProductSpecificationMultiForm
 from apps.products.models import Product
-from apps.constants import PAGINATION_OBJ_COUNT_PER_PAGE, VIEW_MSG
+from apps.constants import PAGINATION_OBJ_COUNT_PER_PAGE
+from apps.user_texts import VIEW_MSG
 from apps.view_helpers import add_error_messages, update_filter_params, update_ordering
 
 

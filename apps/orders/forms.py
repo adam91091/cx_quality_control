@@ -8,35 +8,25 @@ from apps.form_styles import SAP_STYLE, NUM_STYLE_NO_REQ, BASIC_NO_HINTS_STYLE, 
     INPUT_MEASUREMENT_FORM_STYLE_70px, INPUT_MEASUREMENT_FORM_STYLE_71px, ORDER_SAP_STYLE, NUM_STYLE, BASIC_REQ_STYLE, \
     INT_STYLE, PALLET_NUMBER_STYLE
 from apps.orders.models import Order, MeasurementReport, Measurement
+from apps.user_texts import HINTS, LABELS, ERROR_MSG, FORMSET_MSG
+from cx_quality_control.settings import LANGUAGE_CODE
 
 
 class OrderForm(ModelForm):
     """Provide form for order crud operations
     & hint messages for client side validation.
     """
-    validation_hints = {'order_sap_id': "Numer partii musi się składać z 8 cyfr oraz nie może być polem pustym",
-                        'product': "Kod produktu musi się składać z 7 cyfr oraz nie może być polem pustym",
-                        'client': "Numer SAP klienta musi się składać z 7 cyfr oraz nie może być polem pustym",
-                        'date_of_production': 'Pole z datą produkcji nie może być puste',
-                        'quantity': 'Podaj całkowitą liczbę tulei w sztukach',
-                        }
+    validation_hints = HINTS['order']
 
     class Meta:
         model = Order
         exclude = ('status',)
-        labels = {
-            'order_sap_id': "Nr partii",
-            'date_of_production': "Data produkcji",
-            'product': "Kod produktu",
-            'client': "Nr sap klienta",
-            'internal_diameter_reference': "Średnica wewnętrzna",
-            'external_diameter_reference': "Średnica zewnętrzna",
-            'length': "Długość",
-            'quantity': "Ilość",
-        }
+
+        labels = LABELS['order']
+
         widgets = {
             'order_sap_id': forms.TextInput(attrs=ORDER_SAP_STYLE),
-            'date_of_production': DatePickerInput(options={'showClear': False, 'locale': 'pl', },
+            'date_of_production': DatePickerInput(options={'showClear': False, 'locale': LANGUAGE_CODE, },
                                                   attrs=BASIC_REQ_STYLE),
             'product': forms.TextInput(attrs=SAP_STYLE),
             'client': forms.TextInput(attrs=SAP_STYLE),
@@ -46,25 +36,20 @@ class OrderForm(ModelForm):
             'quantity': forms.TextInput(attrs=INT_STYLE),
         }
 
-        error_messages = {
-            'order_sap_id': {'unique': "Podany nr partii już istnieje.", },
-            'product': {'invalid_choice': 'Produkt o podanym nr SAP nie istnieje w bazie danych.', },
-            'client': {'invalid_choice': 'Klient o podanym nr SAP nie istnieje w bazie danych.', },
-        }
+        error_messages = ERROR_MSG['order']
 
 
 class MeasurementReportForm(ModelForm):
     """Provide form for measurement report crud operations."""
     class Meta:
         model = MeasurementReport
-        exclude = ('order',)
-        labels = {
-            'author': "Kontrolował",
-            'date_of_control': "Data kontroli",
-        }
+        exclude = ('order', )
+
+        labels = LABELS['measurement_report']
+
         widgets = {
             'author': forms.TextInput(attrs=BASIC_REQ_STYLE),
-            'date_of_control': DatePickerInput(options={'showClear': False, 'locale': 'pl', },
+            'date_of_control': DatePickerInput(options={'showClear': False, 'locale': LANGUAGE_CODE, },
                                                attrs=BASIC_REQ_STYLE),
         }
 
@@ -73,23 +58,10 @@ class MeasurementForm(ModelForm):
     """Provide base measurement form used by measurement formset."""
     class Meta:
         model = Measurement
-        exclude = ('measurement_report', 'id')
-        labels = {
-            'pallet_number': "Paleta nr",
-            'internal_diameter_tolerance_top': "Góra",
-            'internal_diameter_target': "Środek",
-            'internal_diameter_tolerance_bottom': "Dół",
-            'external_diameter_tolerance_top': "Góra",
-            'external_diameter_target': "Środek",
-            'external_diameter_tolerance_bottom': "Dół",
-            'length_tolerance_top': "Góra",
-            'length_target': "Środek",
-            'length_tolerance_bottom': "Dół",
-            'flat_crush_resistance_target': "Kontrola wytrzymałości",
-            'moisture_content_target': "Wilgotność",
-            'weight': "Waga",
-            'remarks': 'Uwagi, klejenie, pakowanie',
-        }
+        exclude = ('measurement_report', 'id', )
+
+        labels = LABELS['measurement']
+
         widgets = {
             'pallet_number': forms.TextInput(attrs={**INPUT_MEASUREMENT_FORM_STYLE_50px,
                                                     **PALLET_NUMBER_STYLE}),
@@ -129,7 +101,7 @@ class MeasurementInlineFormSet(BaseInlineFormSet):
         if not self.check_pallet_uniqueness():
             for form in self.forms[:1]:
                 form.add_error(field='pallet_number',
-                               error="Numery palet nie mogą się powtarzać w raporcie pomiarowym!")
+                               error=FORMSET_MSG['pallet_number'])
             return False
         return super().is_valid()
 

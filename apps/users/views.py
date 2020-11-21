@@ -8,7 +8,7 @@ from django.views.generic import TemplateView
 
 from apps.users.forms import CxUserPasswordChangeForm, CxUserAuthenticationForm
 from apps.view_helpers import add_error_messages
-from apps.constants import VIEW_MSG
+from apps.user_texts import VIEW_MSG
 
 
 class CxUserLoginView(SuccessMessageMixin, LoginView):
