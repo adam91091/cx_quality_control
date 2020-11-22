@@ -4,14 +4,15 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import UpdateView, CreateView, DetailView, DeleteView, ListView
+from django.views.generic import UpdateView, CreateView, DetailView, DeleteView, ListView, FormView
 from django.views.generic.base import View
 from django.views.generic.detail import SingleObjectMixin
 
+from apps.clients.models import Client
 from apps.pdf_creator import render_template_to_pdf
 from apps.products.filters import ProductFilter
-from apps.products.forms import ProductForm, SpecificationForm, ProductSpecificationMultiForm
-from apps.products.models import Product
+from apps.products.forms import ProductForm, SpecificationForm, ProductSpecificationMultiForm, SpecificationIssueForm
+from apps.products.models import Product, SpecificationIssued
 from apps.constants import PAGINATION_OBJ_COUNT_PER_PAGE
 from apps.user_texts import VIEW_MSG
 from apps.view_helpers import add_error_messages, update_filter_params, update_ordering
@@ -144,7 +145,7 @@ class ProductDeleteView(SuccessMessageMixin, LoginRequiredMixin,
         return super().delete(request, *args, **kwargs)
 
 
-class SpecificationPdfView(SingleObjectMixin, View):
+class SpecificationPdfRenderView(SingleObjectMixin, View):
     model = Product
 
     def dispatch(self, request, *args, **kwargs):
@@ -153,6 +154,49 @@ class SpecificationPdfView(SingleObjectMixin, View):
 
     def get(self, request, *args, **kwargs):
         data = self.get_context_data()
-        pdf = render_template_to_pdf('specification_pdf.html', data)
+        pdf = render_template_to_pdf('specification_to_pdf.html', data)
         response = HttpResponse(pdf, content_type='application/pdf')
         return response
+
+
+class SpecificationIssueView(SingleObjectMixin, FormView):
+    model = Product
+    form_class = SpecificationIssueForm
+    template_name = 'specification_issue_form.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.object = get_object_or_404(self.model, pk=self.kwargs.get('pk'))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse_lazy('products:specification-pdf-render', kwargs={'pk': self.object.pk})
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        client_sap_id = form['client_sap_id'].value()
+        client = Client.objects.filter(client_sap_id=client_sap_id)
+        if client:
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        date_of_issue = form['date_of_issue'].value()
+        client_sap_id = form['client_sap_id'].value()
+
+        client = Client.objects.get(client_sap_id=client_sap_id)
+        specification_ss = SpecificationIssued(client=client,
+                                               product=self.object,
+                                               date_of_issue=date_of_issue)
+        for field in self.object.specification._meta.get_fields():
+            field_value = getattr(self.object.specification, field.name)
+            setattr(specification_ss, field.name, field_value)
+
+        specification_ss.save()
+
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        add_error_messages(request=self.request, forms=[form, ],
+                           base_msg=VIEW_MSG['specification']['issue_error'])
+        return super().form_invalid(form)

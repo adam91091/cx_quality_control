@@ -9,5 +9,7 @@ urlpatterns = [
     path('detail/<int:pk>', views.ProductDetailView.as_view(), name='product-detail'),
     path('update/<int:pk>', views.ProductUpdateView.as_view(), name='product-update'),
     path('delete/<int:pk>', views.ProductDeleteView.as_view(), name='product-delete'),
-    path('specification-print/<int:pk>', views.SpecificationPdfView.as_view(), name='specification-print'),
+    path('specification-issue/<int:pk>', views.SpecificationIssueView.as_view(), name='specification-issue'),
+    path('specification-pdf-render/<int:pk>', views.SpecificationPdfRenderView.as_view(),
+         name='specification-pdf-render'),
 ]

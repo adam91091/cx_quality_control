@@ -11,6 +11,9 @@ VIEW_MSG = {'client': {'new_success': "Utworzono nowego klienta",
                         'update_success': "Zaktualizowano dane produktu",
                         'update_error': "Nie zaktualizowano danych produktu",
                         'delete_success': "Produkt został usunięty", },
+            'specification': {'issue_error': "Nie wystawiono specyfikacji dla klienta. "
+                                             "Wystąpiły nastęþujące błędy formularza:",
+                              },
             'order': {'new_success': "Utworzono nowe zlecenie produkcyjne",
                       'new_error': "Nie utworzono nowego zlecenia produkcyjnego. "
                                    "Wystąpiły następujące błędy formularza:",

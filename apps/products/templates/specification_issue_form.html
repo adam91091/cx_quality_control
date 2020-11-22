@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load filters %}
+{% block content %}
+
+<div class="card m-2 p-2 rounded" >
+    <div class="header p-2 grey lighten-2">
+        <h3 class="m-2">Wystaw specyfikację dla klienta</h3>
+    <hr class="border border-default">
+        <p class="m-2">Uwaga: Każde wystawienie specyfikacji spowoduje zapisanie jej stanu w bazie danych.</p>
+        <p class="m-2">Po zakończeniu procesu wystawiania sprawdź w sekcji klienta,
+            czy nie zostały wystawione nadmiarowe specyfikacje.</p>
+        <p class="m-2">Jeśli chcesz zapisać istniejącą specyfikację do pliku PDF, znajdź ją w zakładce Klienci
+        w widoku szczegółowym danego klienta.</p>
+    </div>
+    <hr class="border border-default">
+    <form id="client-form" method="post" class="mb-0 needs-validation" novalidate>
+    {% csrf_token %}
+    {{ form.media }}
+    <div class="form-group card-body mb-0">
+        {% for field in form %}
+            <div class="row">
+                <div class="col-sm-6 mb-2">
+                {{ field.label_tag }}
+                {{ field }}
+                <div class="invalid-feedback">
+                    {{ form.validation_hints|get_item:field.name }}
+                </div>
+                </div>
+            </div>
+        {% endfor %}
+        <span>
+            <a href="{% url 'products:product-detail' product.id %}" class="ml-2 mt-3 btn btn-primary">Wstecz</a>
+            <input type="submit" value="Wystaw specyfikację" class="mt-3 btn btn-danger">
+        </span>
+    </div>
+    </form>
+</div>
+    <script type="text/javascript" src="{% static 'clientSideValidation.js' %}"></script>
+{% endblock %}

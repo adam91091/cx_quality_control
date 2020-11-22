@@ -1,13 +1,13 @@
 from betterforms.multiform import MultiModelForm
+from bootstrap_datepicker_plus import DatePickerInput
 from django import forms
-from django.forms import ModelForm
 
 from apps.form_styles import NUM_STYLE, INT_STYLE, BASIC_REQ_STYLE, BASIC_STYLE, BASIC_NO_HINTS_STYLE, SAP_STYLE
 from apps.products.models import Product, Specification
 from apps.user_texts import HINTS, LABELS, ERROR_MSG
 
 
-class ProductForm(ModelForm):
+class ProductForm(forms.ModelForm):
     """Provide form for product crud operations
     & hint messages for client side validation.
     """
@@ -28,7 +28,7 @@ class ProductForm(ModelForm):
         error_messages = ERROR_MSG['product']
 
 
-class SpecificationForm(ModelForm):
+class SpecificationForm(forms.ModelForm):
     """Provide form for specification crud operations
     & hint messages for client side validation.
     """
@@ -76,3 +76,13 @@ class ProductSpecificationMultiForm(MultiModelForm):
         'product': ProductForm,
         'spec': SpecificationForm,
     }
+
+
+class SpecificationIssueForm(forms.Form):
+    validation_hints = {'client_sap_id': HINTS['client']['client_sap_id'],
+                        'date_of_issue': HINTS['order']['date_of_production'], }
+
+    client_sap_id = forms.CharField(widget=forms.TextInput(attrs=SAP_STYLE), label='Numer SAP klienta')
+    date_of_issue = forms.DateField(widget=DatePickerInput(options={'showClear': False, 'locale': 'pl', },
+                                    attrs={**BASIC_STYLE, },
+                                    format='%Y-%m-%d'), label='Data wystawienia specyfikacji')
