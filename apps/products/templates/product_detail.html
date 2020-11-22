@@ -211,6 +211,8 @@
         </div>
         <span>
             <a href="{% url 'products:products-list' %}" class="ml-2 mt-3 btn btn-primary">Wstecz</a>
+            <a href="{% url 'products:specification-print' product.id %}" class="ml-2 mt-3 btn btn-primary">
+                Eksportuj do PDF</a>
         </span>
     </div>
 </div>

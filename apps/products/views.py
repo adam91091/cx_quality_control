@@ -1,10 +1,14 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.shortcuts import redirect
+from django.http import HttpResponse
+from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import UpdateView, CreateView, DetailView, DeleteView, ListView
+from django.views.generic.base import View
+from django.views.generic.detail import SingleObjectMixin
 
+from apps.pdf_creator import render_template_to_pdf
 from apps.products.filters import ProductFilter
 from apps.products.forms import ProductForm, SpecificationForm, ProductSpecificationMultiForm
 from apps.products.models import Product
@@ -138,3 +142,17 @@ class ProductDeleteView(SuccessMessageMixin, LoginRequiredMixin,
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, self.success_message)
         return super().delete(request, *args, **kwargs)
+
+
+class SpecificationPdfView(SingleObjectMixin, View):
+    model = Product
+
+    def dispatch(self, request, *args, **kwargs):
+        self.object = get_object_or_404(self.model, pk=self.kwargs.get('pk'))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        data = self.get_context_data()
+        pdf = render_template_to_pdf('specification_pdf.html', data)
+        response = HttpResponse(pdf, content_type='application/pdf')
+        return response
