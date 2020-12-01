@@ -26,6 +26,33 @@
             <li class="list-group-item">{{ client.client_name}}</li>
           </ul>
         </div>
+        <br>
+        <h3>Wystawione specyfikacje</h3>
+        <table class="table table-bordered"
+         style="overflow-y: auto; white-space: nowrap;">
+        <tr class="d-flex">
+            <th class="col-sm-2">Kod produktu</th>
+            <th class="col-sm-2">Data wystawienia</th>
+            <th class="col-sm-7">Opis</th>
+            <th class="col-sm-1">Akcje</th>
+        </tr>
+            {% for spec in client.issued_specifications.all %}
+                <tr class="d-flex">
+                <td class="col-sm-2">
+                    {{ spec.product.product_sap_id }}
+                </td>
+                <td class="col-sm-2">
+                    {{ spec.date_of_issue }}
+                </td>
+                <td class="col-sm-7">
+                    {{ spec.product.description }}
+                </td>
+                <td class="col-sm-1">
+                <a href="{% url 'products:specification-pdf-render' spec.product.id spec.date_of_issue client.client_name %}">
+                Widok PDF</a>
+                </td>
+            {% endfor %}
+        </table>
         <a href="{% url 'clients:clients-list' %}" class="mt-3 btn btn-primary">Wstecz</a>
     </div>
 </div>
