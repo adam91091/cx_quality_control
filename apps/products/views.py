@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import UpdateView, CreateView, DetailView, DeleteView, ListView, FormView
@@ -152,6 +152,14 @@ class SpecificationPdfRenderView(SingleObjectMixin, View):
         self.object = get_object_or_404(self.model, pk=self.kwargs.get('pk'))
         return super().dispatch(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        client_name = self.kwargs.get('client_name')
+        issue_date = self.kwargs.get('date')
+        context = super().get_context_data(**kwargs)
+        context['client_name'] = client_name
+        context['date'] = issue_date
+        return context
+
     def get(self, request, *args, **kwargs):
         data = self.get_context_data()
         pdf = render_template_to_pdf('specification_to_pdf.html', data)
@@ -167,9 +175,6 @@ class SpecificationIssueView(SingleObjectMixin, FormView):
     def dispatch(self, request, *args, **kwargs):
         self.object = get_object_or_404(self.model, pk=self.kwargs.get('pk'))
         return super().dispatch(request, *args, **kwargs)
-
-    def get_success_url(self):
-        return reverse_lazy('products:specification-pdf-render', kwargs={'pk': self.object.pk})
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
@@ -194,7 +199,10 @@ class SpecificationIssueView(SingleObjectMixin, FormView):
 
         specification_ss.save()
 
-        return super().form_valid(form)
+        return HttpResponseRedirect(reverse_lazy('products:specification-pdf-render',
+                                                 kwargs={'pk': self.object.pk,
+                                                         'date': date_of_issue,
+                                                         'client_name': client.client_name}))
 
     def form_invalid(self, form):
         add_error_messages(request=self.request, forms=[form, ],

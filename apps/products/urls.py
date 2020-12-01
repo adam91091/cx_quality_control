@@ -10,6 +10,6 @@ urlpatterns = [
     path('update/<int:pk>', views.ProductUpdateView.as_view(), name='product-update'),
     path('delete/<int:pk>', views.ProductDeleteView.as_view(), name='product-delete'),
     path('specification-issue/<int:pk>', views.SpecificationIssueView.as_view(), name='specification-issue'),
-    path('specification-pdf-render/<int:pk>', views.SpecificationPdfRenderView.as_view(),
+    path('specification-pdf-render/<int:pk>/<str:date>/<str:client_name>', views.SpecificationPdfRenderView.as_view(),
          name='specification-pdf-render'),
 ]

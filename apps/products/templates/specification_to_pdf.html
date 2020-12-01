@@ -58,11 +58,11 @@
             <table class="spec-table">
                 <tr>
                     <th>Odbiorca:</th>
-                    <td colspan="6">Klient</td>
+                    <td colspan="6">{{ client_name }}</td>
                 </tr>
                 <tr>
                     <th>Data:</th>
-                    <td colspan="6">30.11.2020</td>
+                    <td colspan="6">{{ date }}</td>
                 </tr>
             </table>
             <br>
@@ -74,52 +74,71 @@
                 </tr>
                 <tr>
                     <th>Średnica wewnętrzna:</th>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
+                    <td><p>{{ product.specification.internal_diameter_target }} mm</p></td>
+                    <td>
+                        <p> + {{ product.specification.internal_diameter_tolerance_top }} mm /
+                            - {{ product.specification.internal_diameter_tolerance_bottom }} mm</p>
+                    </td>
                 </tr>
                 <tr>
                     <th>Średnica zewnętrzna:</th>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
+                    <td><p>{{ product.specification.external_diameter_target }} mm</p></td>
+                    <td>
+                        <p> + {{ product.specification.external_diameter_tolerance_top }} mm /
+                            - {{ product.specification.external_diameter_tolerance_bottom }} mm</p>
+                    </td>
                 </tr>
                 <tr>
                     <th>Grubość ścianki:</th>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
+                    <td><p>{{ product.specification.wall_thickness_target }} mm</p></td>
+                    <td>
+                        <p> + {{ product.specification.wall_thickness_tolerance_top }} mm /
+                            - {{ product.specification.wall_thickness_tolerance_bottom }} mm</p>
+                    </td>
                 </tr>
                 <tr>
                     <th>Długość:</th>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
+                    <td><p>{{ product.specification.length_target }} mm</p></td>
+                    <td>
+                        <p> + {{ product.specification.length_tolerance_top }} mm /
+                            - {{ product.specification.length_tolerance_bottom }} mm</p>
+                    </td>
                 </tr>
                 <tr>
                     <th>Wytrzymałość na ściskanie (100 MM):</th>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
+                    <td><p>{{ product.specification.flat_crush_resistance_target }} mm</p></td>
+                    <td>
+                        <p> + {{ product.specification.flat_crush_resistance_tolerance_top }} % /
+                            - {{ product.specification.flat_crush_resistance_tolerance_bottom }} % </p>
+                    </td>
                 </tr>
                 <tr>
                     <th>Wilgotność:</th>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
+                    <td><p>{{ product.specification.moisture_content_target }} mm</p></td>
+                    <td>
+                        <p> + {{ product.specification.moisture_content_tolerance_top }} % /
+                            - {{ product.specification.moisture_content_tolerance_bottom }} % </p>
+                    </td>
                 </tr>
                 <tr>
                     <th>Kolor:</th>
-                    <td colspan="2">&nbsp;</td>
+                    <td colspan="2"><p>{{ product.specification.colour }}</p></td>
                 </tr>
                 <tr>
                     <th>Powierzchnia:</th>
-                    <td colspan="2">&nbsp;</td>
+                    <td colspan="2"><p>{{ product.specification.finish }}</p></td>
                 </tr>
             </table>
             <br>
             <h3 class="label-textarea">Specyfikacja opakowania</h3>
             <div class="spec-textarea">
-                <span>Paleta drewniania jednorazowa 1000 x 1200, 1 szt.</span><br>
-                <span>Maksymalna wysokość palety: </span><br>
-                <span>Ilość sztuk na palecie: </span><br>
-                <span>Narożniki palety zostały zabezpieczone kątownikami tekturowymi</span><br>
-                <span>Paleta zabezpieczona folią stretch</span><br>
-                <span>Gilzy pakowane w pozycji poziomej</span>
+                <span>Maksymalna wysokość palety: {{ product.specification.maximum_height_of_pallet }} mm</span><br>
+                <span>Ilość sztuk na palecie: {{ product.specification.quantity_on_the_pallet }} szt.</span><br>
+                <span>Narożniki palety zostały zabezpieczone kątownikami tekturowymi?
+                    {{ product.specification.get_pallet_protected_with_paper_edges_display }}</span><br>
+                <span>Paleta zabezpieczona folią stretch?
+                    {{ product.specification.get_pallet_wrapped_with_stretch_film_display }}</span><br>
+                <span>Gilzy pakowane: {{ product.specification.get_cores_packed_in_display }}</span>
             </div>
             <br>
             <h3 class="label-textarea">Uwagi</h3>
@@ -131,7 +150,7 @@
                 <span>&nbsp;</span><br>
                 <span>&nbsp;</span><br>
             </div>
-            <p class="label-textarea">Jeżeli masz jakiekolwiek uwagi do powyższych specyfikacji wpisz je w ramkę powyżej</p>
+            <p class="label-textarea">Jeżeli masz jakiekolwiek uwagi do powyższych specyfikacji dopisz je w ramkę powyżej</p>
             <br>
             <table class="sign-table">
                 <tr>
