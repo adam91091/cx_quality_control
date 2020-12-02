@@ -4,9 +4,9 @@ from . import views
 app_name = 'clients'
 
 urlpatterns = [
-    path('', views.clients_list, name='clients_list'),
-    path('new/', views.client_new, name='client_new'),
-    path('detail/<int:client_id>', views.client_detail, name='client_detail'),
-    path('update/<int:client_id>', views.client_update, name='client_update'),
-    path('delete/<int:client_id>', views.client_delete, name='client_delete'),
+    path('', views.ClientListView.as_view(), name='clients-list'),
+    path('new/', views.ClientCreateView.as_view(), name='client-new'),
+    path('detail/<int:pk>', views.ClientDetailView.as_view(), name='client-detail'),
+    path('update/<int:pk>', views.ClientUpdateView.as_view(), name='client-update'),
+    path('delete/<int:pk>', views.ClientDeleteView.as_view(), name='client-delete'),
 ]

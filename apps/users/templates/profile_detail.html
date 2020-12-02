@@ -23,16 +23,9 @@
                 <td>{{ request.user.last_name }}</td>
             </tr>
             <tr>
-                <th>Adres email</th>
-                <td>
-                    <p>{{ request.user.email }}</p>
-                    <a href="{% url 'users:email_change' %}">Zmień adres email</a>
-                </td>
-            </tr>
-            <tr>
                 <th>Hasło</th>
                 <td>
-                    <a href="{% url 'users:password_change' %}">Zmień hasło</a>
+                    <a href="{% url 'users:password-change' %}">Zmień hasło</a>
                 </td>
             </tr>
             <tr>
@@ -42,7 +35,6 @@
                     <p>{{ group }}</p>
                 {% endfor %}
                 {% if request.user.is_staff %}
-                    <p>Administrator</p>
                     <a href="{% url 'admin:login' %}">Przejdź do panelu administratora</a>
                 {% endif %}
                 </td>

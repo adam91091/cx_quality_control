@@ -1,7 +1,5 @@
-import datetime
 from apps.validators import REGEXPS
 
-# Widget attrs helper dicts
 BASIC_STYLE = {'class': 'form-control'}
 
 BASIC_REQ_STYLE = {'class': 'form-control', 'required': 'true'}
@@ -39,11 +37,12 @@ INPUT_MEASUREMENT_FORM_STYLE_70px = {'style': 'height: 70px; border-radius: 0;'}
 INPUT_MEASUREMENT_FORM_STYLE_71px = {'style': 'height: 71px; border-radius: 0;'}
 
 USERNAME_STYLE = {'class': 'form-control',
+                  'autofocus': True,
                   'required': 'true',
                   'pattern': REGEXPS['user']['username'],
-                  'style': 'width: 30%', }
+                  'style': 'width: 35%', }
 
 PASSWORD_STYLE = {'class': 'form-control',
                   'required': 'true',
                   'pattern': REGEXPS['user']['password'],
-                  'style': 'width: 30%', }
+                  'style': 'width: 35%', }

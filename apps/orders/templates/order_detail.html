@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card m-2 p-2 rounded" >
+    <div class="header p-2 grey lighten-2">
+        <h3 class="m-2">Dane zlecenia produkcyjnego</h3>
+    </div>
+    <hr class="border border-default">
+        <div class="form-group card-body mb-0">
+            <div class="row">
+                <div class="col-sm-4 mb-2">
+                    <label>Numer partii:</label>
+                    <p class="form-control">{{ order.order_sap_id }}</p>
+                </div>
+                <div class="col-sm-4 mb-2">
+                    <label>Klient:</label>
+                    <p class="form-control">{{ order.client.client_name }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4 mb-2">
+                    <label>Kod produktu:</label>
+                    <p class="form-control">{{ order.product.product_sap_id }}</p>
+                </div>
+                <div class="col-sm-4 mb-2">
+                    <label>Data produkcji:</label>
+                    <p class="form-control">{{ order.date_of_production }}</p>
+                </div>
+            </div>
+            <br>
+            <h5>Dane techniczne</h5>
+            <br>
+            <div class="row">
+                <div class="col-sm-4 mb-2">
+                    <label>Długość:</label>
+                    <p class="form-control">{{ order.length|default_if_none:"" }}</p>
+                </div>
+                <div class="col-sm-4 mb-2">
+                    <label>Ilość:</label>
+                    <p class="form-control">{{ order.quantity }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4 mb-2">
+                    <label>Średnica wewnętrzna:</label>
+                    <p class="form-control">{{ order.internal_diameter_reference|default_if_none:"" }}</p>
+                </div>
+                <div class="col-sm-4 mb-2">
+                    <label>Średnica zewnętrzna:</label>
+                    <p class="form-control">{{ order.external_diameter_reference|default_if_none:"" }}</p>
+                </div>
+            </div>
+            <span>
+                <a href="{% url 'orders:orders-list' %}" class="ml-2 mt-3 btn btn-primary">Wstecz</a>
+            </span>
+        </div>
+</div>
+{% endblock %}

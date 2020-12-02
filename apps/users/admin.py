@@ -6,17 +6,18 @@ from apps.users.forms import CxUserCreationForm, CxUserChangeForm
 
 
 class CxUserAdmin(UserAdmin):
+    """Django admin user list view customization."""
     add_form = CxUserCreationForm
     form = CxUserChangeForm
     model = CxUser
     list_display = ['username', 'first_name', 'last_name', 'email', 'group']
 
     @staticmethod
-    def group(obj):
+    def group(user: CxUser) -> str:
+        """Display user groups as a string separated by commas
+        or display empty string if user has no groups.
         """
-        get group, separate by comma, and display empty string if user has no group
-        """
-        return ','.join([g.name for g in obj.groups.all()]) if obj.groups.count() else ''
+        return ','.join([g.name for g in user.groups.all()]) if user.groups.count() else ''
 
 
 admin.site.register(CxUser, CxUserAdmin)

@@ -5,42 +5,43 @@
 <div class="card m-2 p-2 rounded" >
     <div class="header p-2 grey lighten-2">
         <h3 class="m-2">
-            {% if type == 'new' %} Dodaj nowe zlecenie produkcyjne {% elif type == 'detail' %}
-                Dane zlecenia produkcyjnego {% else %} Zaktualizuj dane zlecenia produkcyjnego {% endif %}
+            {% if object %} Zaktualizuj dane zlecenia produkcyjnego
+            {% else %}Dodaj nowe zlecenie produkcyjne
+            {% endif %}
         </h3>
     </div>
     <hr class="border border-default">
     <form method="post" class="mb-0 needs-validation" novalidate>
-        {{ order_form.media }}
         {% csrf_token %}
+        {{ form.media }}
         <div class="form-group card-body mb-0">
             <div class="row">
                 <div class="col-sm-4 mb-2">
-                    {{ order_form.order_sap_id.label_tag }}
-                    {{ order_form.order_sap_id }}
+                    {{ form.order_sap_id.label_tag }}
+                    {{ form.order_sap_id }}
                     <div class="invalid-feedback">
-                        {{ order_form.validation_hints|get_item:'order_sap_id' }}
+                        {{ form.validation_hints|get_item:'order_sap_id' }}
                     </div>
                 </div>
                 <div class="col-sm-4 mb-2">
-                    {{ order_form.client.label_tag }}
-                    {{ order_form.client }}
+                    {{ form.client.label_tag }}
+                    {{ form.client }}
                     <div class="invalid-feedback">
-                        {{ order_form.validation_hints|get_item:'client' }}
+                        {{ form.validation_hints|get_item:'client' }}
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-sm-4 mb-2">
-                    {{ order_form.product.label_tag }}
-                    {{ order_form.product }}
+                    {{ form.product.label_tag }}
+                    {{ form.product }}
                     <div class="invalid-feedback">
-                        {{ order_form.validation_hints|get_item:'product' }}
+                        {{ form.validation_hints|get_item:'product' }}
                     </div>
                 </div>
                 <div class="col-sm-4 mb-2">
-                    {{ order_form.date_of_production.label_tag }}
-                    {{ order_form.date_of_production }}
+                    {{ form.date_of_production.label_tag }}
+                    {{ form.date_of_production }}
                 </div>
             </div>
             <br>
@@ -48,34 +49,30 @@
             <br>
             <div class="row">
                 <div class="col-sm-4 mb-2">
-                    {{ order_form.length.label_tag }}
-                    {{ order_form.length }}
+                    {{ form.length.label_tag }}
+                    {{ form.length }}
                 </div>
                 <div class="col-sm-4 mb-2">
-                    {{ order_form.quantity.label_tag }}
-                    {{ order_form.quantity }}
+                    {{ form.quantity.label_tag }}
+                    {{ form.quantity }}
                     <div class="invalid-feedback">
-                        {{ order_form.validation_hints|get_item:'quantity' }}
+                        {{ form.validation_hints|get_item:'quantity' }}
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-sm-4 mb-2">
-                    {{ order_form.internal_diameter_reference.label_tag }}
-                    {{ order_form.internal_diameter_reference }}
+                    {{ form.internal_diameter_reference.label_tag }}
+                    {{ form.internal_diameter_reference }}
                 </div>
                 <div class="col-sm-4 mb-2">
-                    {{ order_form.external_diameter_reference.label_tag }}
-                    {{ order_form.external_diameter_reference }}
+                    {{ form.external_diameter_reference.label_tag }}
+                    {{ form.external_diameter_reference }}
                 </div>
             </div>
             <span>
-                {% if type == 'detail' %}
-                    <a href="{% url 'orders:orders_list' %}" class="mt-3 btn btn-primary">Wstecz</a>
-                {% else %}
-                    <input type="submit" value="Zapisz" class="mt-3 btn btn-secondary">
-                    <a href="{% url 'orders:orders_list' %}" class="ml-2 mt-3 btn btn-primary">Anuluj</a>
-                {% endif %}
+                <input type="submit" value="Zapisz" class="mt-3 btn btn-secondary">
+                <a href="{% url 'orders:orders-list' %}" class="ml-2 mt-3 btn btn-primary">Anuluj</a>
             </span>
         </div>
     </form>

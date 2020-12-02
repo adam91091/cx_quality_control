@@ -9,26 +9,31 @@ https://docs.djangoproject.com/en/2.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
-
 import os
+import json
+from django.core.exceptions import ImproperlyConfigured
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# with open(os.path.join(BASE_DIR, 'secrets.json')) as secrets_file:
+#     secrets = json.load(secrets_file)
+#
+#
+# def get_secret(setting, secret_data=secrets):
+#     """Get secret setting or fail with ImproperlyConfigured"""
+#     try:
+#         return secret_data[setting]
+#     except KeyError:
+#         raise ImproperlyConfigured("Set the {} setting".format(setting))
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ')t1^zg6sqtfxn1jhetg#j2#*s%j34#5_rltn1iicw+&uqsn31u'
+SECRET_KEY = "^%&=li)i-d*5wc$!=xlq&_b649nzr!qo9uk5cz@@zkwq506*ky"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-
-
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -41,6 +46,9 @@ INSTALLED_APPS = [
     'bootstrap4',
     'bootstrap_modal_forms',
     'bootstrap_datepicker_plus',
+    # backend tools
+    'django_filters',
+    'betterforms',
     # apps
     'apps.users',
     'apps.clients',
@@ -98,9 +106,9 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'mysql.connector.django',
-            'NAME': 'cx_quality_control_db',
-            'USER': 'cx_quality_control_user',
-            'PASSWORD': 'password1!A',
+            'NAME': "cx_quality_control_db",
+            'USER': "cx_quality_control_user",
+            'PASSWORD': "password1!A",
             'HOST': 'localhost',
             'PORT': '3306',
             'OPTIONS': {'use_pure': True, },
@@ -149,3 +157,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'collected_static')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
+
+LOGIN_REDIRECT_URL = '/clients/?clear_filters=true/'

@@ -4,13 +4,16 @@ from . import views
 app_name = 'orders'
 
 urlpatterns = [
-    path('', views.orders_list, name='orders_list'),
-    path('new/', views.order_new, name='order_new'),
-    path('update/<int:order_id>', views.order_update, name='order_update'),
-    path('delete/<int:order_id>', views.order_delete, name='order_delete'),
-    path('detail/<int:order_id>', views.order_detail, name='order_detail'),
-    path('measurement_report_new/<int:order_id>', views.measurement_report_new, name='measurement_report_new'),
-    path('measurement_report_detail/<int:order_id>', views.measurement_report_detail, name='measurement_report_detail'),
-    path('measurement_report_update/<int:order_id>', views.measurement_report_update, name='measurement_report_update'),
-    path('measurement_report_close/<int:order_id>', views.measurement_report_close, name='measurement_report_close'),
+    path('', views.OrderListView.as_view(), name='orders-list'),
+    path('new/', views.OrderCreateView.as_view(), name='order-new'),
+    path('detail/<int:pk>', views.OrderDetailView.as_view(), name='order-detail'),
+    path('update/<int:pk>', views.OrderUpdateView.as_view(), name='order-update'),
+    path('delete/<int:pk>', views.OrderDeleteView.as_view(), name='order-delete'),
+    path('measurement-report-new/<int:pk>', views.MeasurementReportCreateView.as_view(), name='measurement-report-new'),
+    path('measurement-report-detail/<int:pk>', views.MeasurementReportDetailView.as_view(),
+         name='measurement-report-detail'),
+    path('measurement-report-update/<int:pk>', views.MeasurementReportUpdateView.as_view(),
+         name='measurement-report-update'),
+    path('measurement-report-close/<int:pk>', views.MeasurementReportCloseView.as_view(),
+         name='measurement-report-close'),
 ]

@@ -24,8 +24,8 @@
                 <div class="invalid-feedback">
                     {{ form.validation_hints|get_item:'password' }}
                 </div>
-                <div class="mt-2">
-                <a href="{% url 'users:password_reset' %}">Nie pamiętam hasła</a>
+                <div class="invalid-feedback">
+                    {{ form.validation_hints|get_item:'lost_password' }}
                 </div>
                 <span>
                     <input type="submit" value="Zaloguj" class="mt-3 btn btn-secondary">

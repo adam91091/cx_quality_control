@@ -1,84 +1,53 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm, AuthenticationForm, \
+    UsernameField
 
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordResetForm, PasswordChangeForm, \
-    SetPasswordForm
-from .models import CxUser
-from ..forms_utils import BASIC_REQ_STYLE, USERNAME_STYLE, PASSWORD_STYLE
+from apps.user_texts import HINTS, ERROR_MSG, LABELS
+from apps.users.models import CxUser
+from apps.form_styles import USERNAME_STYLE, PASSWORD_STYLE
 
 
 class CxUserCreationForm(UserCreationForm):
-
+    """Customize user creation form in django admin."""
     class Meta:
         model = CxUser
-        fields = ('username', 'email')
+        fields = ('username', )
 
 
 class CxUserChangeForm(UserChangeForm):
-
+    """Customize user update form in django admin."""
     class Meta:
         model = CxUser
-        fields = ('username', 'email')
+        fields = ('username', )
 
 
-class CxUserLoginForm(forms.ModelForm):
-    validation_hints = {'username': "Login z pięciu pierwszych liter imienia i "
-                                    "nazwiska (np. Jan Kowalski - jkowa).",
-                        'password': "Przynajmniej 8 znakowe hasło z 1 cyfrą lub więcej."}
+class CxUserAuthenticationForm(AuthenticationForm):
+    """Customize user login form & add hint
+    messages for client side validation."""
+    validation_hints = HINTS['user']
 
-    class Meta:
-        model = CxUser
-        fields = ('username', 'password')
+    username = UsernameField(widget=forms.TextInput(attrs=USERNAME_STYLE))
+    password = forms.CharField(
+        label=LABELS['user']['password'],
+        strip=False,
+        widget=forms.PasswordInput(attrs=PASSWORD_STYLE),
+    )
 
-        labels = {
-            'username': "Login",
-            'password': "Hasło",
-        }
-
-        widgets = {
-            'username': forms.TextInput(attrs={**USERNAME_STYLE, **{'style': 'width: 30%'}}),
-            'password': forms.PasswordInput(attrs={**PASSWORD_STYLE, **{'style': 'width: 30%'}}),
-        }
-
-
-class CxUserEmailChangeForm(forms.ModelForm):
-    validation_hints = {'email': "Adres email w poprawnym formacie, np. user@domain.com"}
-
-    class Meta:
-        model = CxUser
-        fields = ('email', )
-
-        labels = {
-            'email': "Adres email",
-        }
-
-        widgets = {
-            'email': forms.EmailInput(attrs={**BASIC_REQ_STYLE, **{'style': 'width: 30%'}}),
-        }
-
-
-class CxUserPasswordResetForm(SetPasswordForm):
-    validation_hints = {'password': "Przynajmniej 8 znakowe hasło z 1 cyfrą lub więcej.", }
-
-    new_password1 = forms.CharField(required=True, label='Nowe hasło',
-                                    widget=forms.PasswordInput(attrs={**PASSWORD_STYLE, **{'style': 'width: 30%'}}),
-                                    error_messages={'required': 'To pole jest wymagane'})
-
-    new_password2 = forms.CharField(required=True, label='Nowe hasło (Powtórz)',
-                                    widget=forms.PasswordInput(attrs={**PASSWORD_STYLE, **{'style': 'width: 30%'}}),
-                                    error_messages={'required': 'To pole jest wymagane'})
+    error_messages = ERROR_MSG['user']['username']
 
 
 class CxUserPasswordChangeForm(PasswordChangeForm):
-    validation_hints = {'password': "Przynajmniej 8 znakowe hasło z 1 cyfrą lub więcej.", }
+    """Provide form for user password changing in user profile."""
+    validation_hints = HINTS['user']
 
-    old_password = forms.CharField(required=True, label='Stare hasło',
-                                   widget=forms.PasswordInput(attrs={**PASSWORD_STYLE, **{'style': 'width: 30%'}}),
-                                   error_messages={'required': 'To pole jest wymagane'})
+    old_password = forms.CharField(required=True, label=LABELS['user']['old_password'],
+                                   widget=forms.PasswordInput(attrs={**PASSWORD_STYLE, }),
+                                   error_messages=ERROR_MSG['user']['password'])
 
-    new_password1 = forms.CharField(required=True, label='Nowe hasło',
-                                    widget=forms.PasswordInput(attrs={**PASSWORD_STYLE, **{'style': 'width: 30%'}}),
-                                    error_messages={'required': 'To pole jest wymagane'})
+    new_password1 = forms.CharField(required=True, label=LABELS['user']['new_password'],
+                                    widget=forms.PasswordInput(attrs={**PASSWORD_STYLE, }),
+                                    error_messages=ERROR_MSG['user']['password'])
 
-    new_password2 = forms.CharField(required=True, label='Nowe hasło (Powtórz)',
-                                    widget=forms.PasswordInput(attrs={**PASSWORD_STYLE, **{'style': 'width: 30%'}}),
-                                    error_messages={'required': 'To pole jest wymagane'})
+    new_password2 = forms.CharField(required=True, label=LABELS['user']['new_password_confirm'],
+                                    widget=forms.PasswordInput(attrs={**PASSWORD_STYLE, }),
+                                    error_messages=ERROR_MSG['user']['password'])

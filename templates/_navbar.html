@@ -1,22 +1,22 @@
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
   <ul class="nav navbar-nav mr-auto">
       <li>
-          <a class="nav-link" href="{% url 'products:products_list' %}?clear_filters=true">Produkty</a>
+          <a class="nav-link" href="{% url 'products:products-list' %}?clear_filters=true">Produkty</a>
       </li>
       <li>
-          <a class="nav-link" href="{% url 'clients:clients_list' %}?clear_filters=true">Klienci</a>
+          <a class="nav-link" href="{% url 'clients:clients-list' %}?clear_filters=true">Klienci</a>
       </li>
       <li>
-          <a class="nav-link" href="{% url 'orders:orders_list' %}?clear_filters=true">Zlecenia produkcyjne</a>
+          <a class="nav-link" href="{% url 'orders:orders-list' %}?clear_filters=true">Zlecenia produkcyjne</a>
       </li>
   </ul>
     <ul class="navbar-nav ml-auto" >
         {% if user.is_authenticated %}
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'users:user_profile' %}">Moje konto</a>
+                <a class="nav-link" href="{% url 'users:user-profile' %}">Moje konto</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'users:user_logout' %}">Wyloguj się</a>
+                <a class="nav-link" href="{% url 'users:user-logout' %}">Wyloguj się</a>
             </li>
         {% endif %}
     </ul>

@@ -1,3 +1,4 @@
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import RegexValidator
 
 REGEXPS = {
@@ -8,6 +9,10 @@ REGEXPS = {
     'user': {'username': r'^([a-z]{5})$',
              'password': r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$', }
 }
+
+
+class CxUsernameValidator(UnicodeUsernameValidator):
+    regex = REGEXPS['user']['username']
 
 
 def validate_sap_id():
