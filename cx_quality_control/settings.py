@@ -15,20 +15,20 @@ from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-with open(os.path.join(BASE_DIR, 'secrets.json')) as secrets_file:
-    secrets = json.load(secrets_file)
-
-
-def get_secret(setting, secret_data=secrets):
-    """Get secret setting or fail with ImproperlyConfigured"""
-    try:
-        return secret_data[setting]
-    except KeyError:
-        raise ImproperlyConfigured("Set the {} setting".format(setting))
+# with open(os.path.join(BASE_DIR, 'secrets.json')) as secrets_file:
+#     secrets = json.load(secrets_file)
+#
+#
+# def get_secret(setting, secret_data=secrets):
+#     """Get secret setting or fail with ImproperlyConfigured"""
+#     try:
+#         return secret_data[setting]
+#     except KeyError:
+#         raise ImproperlyConfigured("Set the {} setting".format(setting))
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = get_secret('SECRET_KEY')
+SECRET_KEY = "^%&=li)i-d*5wc$!=xlq&_b649nzr!qo9uk5cz@@zkwq506*ky"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -106,9 +106,9 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'mysql.connector.django',
-            'NAME': get_secret('DB_NAME'),
-            'USER': get_secret('DB_USER'),
-            'PASSWORD': get_secret('DB_PASSWORD'),
+            'NAME': "cx_quality_control_db",
+            'USER': "cx_quality_control_user",
+            'PASSWORD': "password1!A",
             'HOST': 'localhost',
             'PORT': '3306',
             'OPTIONS': {'use_pure': True, },
