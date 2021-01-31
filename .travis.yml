@@ -14,7 +14,7 @@ script: skip
 jobs:
   include:
     - stage: lint
-      script: python -m flake8 --statistics --exclude venv_cx --ignore=E265,E501,F401,W605,W504,F841,*migrations --max-line-length 120 .
+      script: python -m flake8 --statistics --exclude venv_cx_1122020 --ignore=E265,E501,F401,W605,W504,F841,*migrations --max-line-length 120 .
 
     - stage: test
       script: python manage.py test apps --failfast

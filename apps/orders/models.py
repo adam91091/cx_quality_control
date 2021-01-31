@@ -42,7 +42,10 @@ class Order(models.Model):
         dates = {'min': Order.objects.aggregate(Min('date_of_production'))['date_of_production__min'],
                  'max': Order.objects.aggregate(Max('date_of_production'))['date_of_production__max'],
                  'today': datetime.date.today()}
-        return dates.get(value).strftime(STRFTIME_DATE)
+        date = dates.get(value)
+        if date is None:
+            date = datetime.date.today()
+        return date.strftime(STRFTIME_DATE)
 
 
 class MeasurementReport(models.Model):

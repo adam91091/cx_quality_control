@@ -12,4 +12,6 @@ urlpatterns = [
     path('specification-issue/<int:pk>', views.SpecificationIssueView.as_view(), name='specification-issue'),
     path('specification-pdf-render/<int:pk>/<str:date>/<str:client_name>', views.SpecificationPdfRenderView.as_view(),
          name='specification-pdf-render'),
+    path('specification-issue-delete/<int:pk>', views.SpecificationIssueDeleteView.as_view(),
+         name='specification-issue-delete'),
 ]

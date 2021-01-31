@@ -13,6 +13,7 @@ VIEW_MSG = {'client': {'new_success': "Utworzono nowego klienta",
                         'delete_success': "Produkt został usunięty", },
             'specification': {'issue_error': "Nie wystawiono specyfikacji dla klienta. "
                                              "Wystąpiły nastęþujące błędy formularza:",
+                              'issue_delete': "Wystawiona specyfikacja została usunięta.",
                               },
             'order': {'new_success': "Utworzono nowe zlecenie produkcyjne",
                       'new_error': "Nie utworzono nowego zlecenia produkcyjnego. "

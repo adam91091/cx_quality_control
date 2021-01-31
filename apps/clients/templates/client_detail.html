@@ -44,12 +44,26 @@
                 <td class="col-sm-2">
                     {{ spec.date_of_issue }}
                 </td>
-                <td class="col-sm-7">
+                <td class="col-sm-6">
                     {{ spec.product.description }}
                 </td>
                 <td class="col-sm-1">
                 <a href="{% url 'products:specification-pdf-render' spec.product.id spec.date_of_issue client.client_name %}">
                 Widok PDF</a>
+                </td>
+                <td class="col-sm-1">
+                    <div class="modal fade" tabindex="-1" role="dialog" id="modal">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content"></div>
+                        </div>
+                    </div>
+                    <button id="{{ spec.id }}" class="btn btn-secondary p-0 m-0" type="button" name="button">Usuń </button>
+                    <script type="text/javascript">
+                      $(function () {
+                        $("#{{ spec.id }}").modalForm(
+                            {formURL: "{% url 'products:specification-issue-delete' spec.id %}"});
+                      });
+                    </script>
                 </td>
             {% endfor %}
         </table>
